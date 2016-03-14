@@ -1,0 +1,20 @@
+<html>
+<head>
+<script src="3Dmol.js"></script>
+</head>
+<body>
+<div id="fourPocCartoonDiv" style="height: 400px; width: 400px; position: relative;"></div>
+</body>
+<script>
+$(document).ready(function() {
+    var myviewer = $3Dmol.createViewer("fourPocCartoonDiv");
+    myviewer.setBackgroundColor(0xffffff);
+
+    $3Dmol.download("pdb:4POC", myviewer, {}, function(m) {
+        myviewer.setStyle({}, {cartoon:{color:"spectrum"}});
+	myviewer.zoomTo();
+	myviewer.render();
+    });
+})
+</script>
+</html>
