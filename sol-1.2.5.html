@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="3Dmol.js"></script>
+</head>
+<body>
+<div id="hBondDiv" style="height: 400px; width: 400px; position: relative;"></div>
+</body>
+<script>
+$(document).ready(function() {
+	$.ajax({url: "4poc Q19-N29 alpha-helix.pdb", success: function(_4PocPdb) {
+		var myviewer = $3Dmol.createViewer("hBondDiv");
+		myviewer.setBackgroundColor(0xffffff);
+		myviewer.addModel(_4PocPdb, "pdb", {keepH:true});
+		myviewer.setStyle({}, {stick:{}});
+		
+		var myModel = myviewer.getModel();
+
+		var O291 = myModel.selectedAtoms({serial:291});
+		O291 = O291[0];
+		console.log(O291);
+		console.log(O291.x);
+		
+		var H348 = myModel.selectedAtoms({serial:348});
+		H348 = H348[0];
+		console.log(H348);
+		console.log(H348.x);
+
+		myviewer.addLine({dashed:true, start:{x:H348.x, y:H348.y, z:H348.z}, end:{x:O291.x, y:O291.y, z:O291.z},
+			linewidth:10, dashLength:0.25, gapLength:0.25});
+
+		myviewer.zoomTo({serial:291});
+		myviewer.rotate(60, "z");
+		myviewer.rotate(-30, "x");
+		myviewer.zoom(0.75);
+		myviewer.addResLabels({resi:[20,24]});
+		myviewer.render();
+		console.log(_4PocPdb.substring(0,100));
+	}});
+});
+</script>
+</html>
