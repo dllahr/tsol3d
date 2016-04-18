@@ -27,6 +27,10 @@
 <div id="fourPocSticksColoredBySideChainPropertyDiv" style="height: 400px; width: 400px; position: relative;"></div>
 <br/>
 
+1.2.6 1b ribbon with cyclinders for alpha helices
+<div id="fourPocCartoonAlphaHelicesCylindersDiv" style="height: 400px; width: 400px; position: relative;"></div>
+<br/>
+
 </body>
 <script>
 $(document).ready(function() {
@@ -36,7 +40,7 @@ $(document).ready(function() {
     myviewer.setBackgroundColor(0xffffff);
 
     $3Dmol.download("pdb:4POC", myviewer, {}, function(m) {
-        myviewer.setStyle({chain:"A"}, {cartoon:{color:"spectrum"}});
+        myviewer.setStyle({chain:"A"}, {cartoon:{color:"spectrum", arrows:true}});
 	myviewer.setStyle({chain:"B"}, {none:{}});
 	myviewer.zoomTo({chain:"A"});
 	myviewer.render();
@@ -48,7 +52,7 @@ $(document).ready(function() {
     myviewer2.setBackgroundColor(0xffffff);
 
     $3Dmol.download("pdb:4POC", myviewer2, {}, function(m) {
-        myviewer2.setStyle({chain:"A"}, {cartoon:{color:"spectrum"}});
+        myviewer2.setStyle({chain:"A"}, {cartoon:{color:"spectrum", arrows:true}});
 	myviewer2.setStyle({chain:"B"}, {none:{}});
 
         myviewer2.addSurface("VDW", {opacity:0.8,color:"white"}, {chain:"A"});
@@ -64,9 +68,9 @@ $(document).ready(function() {
     myviewer3.setBackgroundColor(0xffffff);
 
     $3Dmol.download("pdb:4POC", myviewer3, {keepH:true}, function(m) {
-        myviewer3.setStyle({}, {cartoon:{color:"spectrum"}});
+        myviewer3.setStyle({}, {cartoon:{color:"spectrum", arrows:true}});
 	myviewer3.setStyle({chain:"B"}, {none:{}});
-        myviewer3.setStyle({chain:"A", resi:residueIndexes}, {stick:{}, cartoon:{color:"spectrum"}});
+        myviewer3.setStyle({chain:"A", resi:residueIndexes}, {stick:{}, cartoon:{color:"spectrum", arrows:true}});
 	myviewer3.addResLabels({chain:"A", resi:residueIndexes}, {fontSize:8});
 
         var myModel = myviewer3.getModel();
@@ -93,9 +97,9 @@ $(document).ready(function() {
     myviewer4.setBackgroundColor(0xffffff);
 
     $3Dmol.download("pdb:4POC", myviewer4, {keepH:true}, function(m) {
-        myviewer4.setStyle({}, {cartoon:{color:"spectrum"}});
+        myviewer4.setStyle({}, {cartoon:{color:"spectrum", arrows:true}});
 	myviewer4.setStyle({chain:"B"}, {none:{}});
-        myviewer4.setStyle({chain:"A", resi:residueIndexes}, {sphere:{}, cartoon:{color:"spectrum"}});
+        myviewer4.setStyle({chain:"A", resi:residueIndexes}, {sphere:{}, cartoon:{color:"spectrum", arrows:true}});
 	myviewer4.zoomTo({chain:"A"});
 	myviewer4.render();
     });
@@ -106,9 +110,9 @@ $(document).ready(function() {
     myviewer5.setBackgroundColor(0xffffff);
 
     $3Dmol.download("pdb:4POC", myviewer5, {}, function(m) {
-        myviewer5.setStyle({chain:"A", resn:["ALA","PHE","ILE","LEU","MET","VAL","TRP","TYR","CYS"]}, {cartoon:{color:"purple"}});
-	myviewer5.setStyle({chain:"A", resn:["ASN","GLN","SER","THR","GLY"]}, {cartoon:{color:"lime"}});
-	myviewer5.setStyle({chain:"A", resn:["HIS","LYS","ARG","ASP","GLU","PRO"]}, {cartoon:{color:"silver"}});
+        myviewer5.setStyle({chain:"A", resn:["ALA","PHE","ILE","LEU","MET","VAL","TRP","TYR","CYS"]}, {cartoon:{color:"purple", arrows:true}});
+	myviewer5.setStyle({chain:"A", resn:["ASN","GLN","SER","THR","GLY"]}, {cartoon:{color:"lime", arrows:true}});
+	myviewer5.setStyle({chain:"A", resn:["HIS","LYS","ARG","ASP","GLU","PRO"]}, {cartoon:{color:"silver", arrows:true}});
 	myviewer5.setStyle({chain:"B"}, {none:{}});
 	myviewer5.zoomTo({chain:"A"});
 	myviewer5.render();
@@ -127,7 +131,18 @@ $(document).ready(function() {
 	myviewer6.zoomTo({chain:"A"});
 	myviewer6.render();
     });
+    
+    // *************************************
+    //1.2.6 1b ribbon with alpha helices as cylinders
+    var myviewer7 = $3Dmol.createViewer("fourPocCartoonAlphaHelicesCylindersDiv");
+    myviewer7.setBackgroundColor(0xffffff);
 
+    $3Dmol.download("pdb:4POC", myviewer7, {}, function(m) {
+        myviewer7.setStyle({chain:"A"}, {cartoon:{color:"spectrum", arrows:true, tubes:true}});
+	myviewer7.setStyle({chain:"B"}, {none:{}});
+	myviewer7.zoomTo({chain:"A"});
+	myviewer7.render();
+    });
 })
 </script>
 </html>
