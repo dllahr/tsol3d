@@ -70,7 +70,7 @@ $(document).ready(function() {
 		myviewer.setBackgroundColor(0xffffff);
 		myviewer.addModel(_4PocPdb, "pdb", {keepH:true});
 		myviewer.setStyle({atom:["CA","C","N","H","O"]}, {stick:{}});
-		myviewer.setStyle({atom:["CA","C","N","H","O"], invert:true}, {wire:{color:"0xffffff"}});
+		myviewer.setStyle({atom:["CA","C","N","H","O"], invert:true}, {none:{}});
 
 		var myModel = myviewer.getModel();
 
