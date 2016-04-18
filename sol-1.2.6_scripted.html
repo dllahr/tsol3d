@@ -3,18 +3,162 @@
 <script src="3Dmol.js"></script>
 </head>
 <body>
+1.2.6 1 ribbon only:
 <div id="fourPocCartoonDiv" style="height: 400px; width: 400px; position: relative;"></div>
+<br/>
+
+1.2.6 2 ribbon and surface:
+<div id="fourPocCartoonAndSurfaceDiv" style="height: 400px; width: 400px; position: relative;"></div>
+<br/>
+
+1.2.6 3 ribbon with several interacting pairs of amino acids:
+<div id="fourPocCartoonAndInteractingDiv" style="height: 400px; width: 400px; position: relative;"></div>
+<br/>
+
+1.2.6 4 ribbon with several interacting pairs of amino acids represented as spheres:
+<div id="fourPocCartoonAndInteractingSpheresDiv" style="height: 400px; width: 400px; position: relative;"></div>
+<br/>
+
+1.2.6 6a ribbon with amino acids colored by side chain properties:
+<div id="fourPocRibbonColoredBySideChainPropertyDiv" style="height: 400px; width: 400px; position: relative;"></div>
+<br/>
+
+1.2.6 6b sticks with amino acids colored by side chain properties:
+<div id="fourPocSticksColoredBySideChainPropertyDiv" style="height: 400px; width: 400px; position: relative;"></div>
+<br/>
+
 </body>
 <script>
 $(document).ready(function() {
+    // *************************************
+    //1.2.6 1 ribbon only
     var myviewer = $3Dmol.createViewer("fourPocCartoonDiv");
     myviewer.setBackgroundColor(0xffffff);
 
     $3Dmol.download("pdb:4POC", myviewer, {}, function(m) {
-        myviewer.setStyle({}, {cartoon:{color:"spectrum"}});
-	myviewer.zoomTo();
+        myviewer.setStyle({chain:"A"}, {cartoon:{color:"spectrum"}});
+	myviewer.setStyle({chain:"B"}, {wire:{color:"0xffffff"}});
+	myviewer.zoomTo({chain:"A"});
 	myviewer.render();
     });
+
+    // *************************************
+    //1.2.6 2 ribbon and surface
+    var myviewer2 = $3Dmol.createViewer("fourPocCartoonAndSurfaceDiv");
+    myviewer2.setBackgroundColor(0xffffff);
+
+    $3Dmol.download("pdb:4POC", myviewer2, {}, function(m) {
+        myviewer2.setStyle({chain:"A"}, {cartoon:{color:"spectrum"}});
+	myviewer2.setStyle({chain:"B"}, {wire:{color:"0xffffff"}});
+
+        myviewer2.addSurface("VDW", {opacity:0.8,color:"white"}, {chain:"A"});
+	myviewer2.zoomTo({chain:"A"});
+	myviewer2.render();
+    });
+
+    var residueIndexes = [68,111,49,53,187,140,213,216,38,205];
+
+    // **************************************
+    //1.2.6 3 ribbon and interacting amino acids
+    var myviewer3 = $3Dmol.createViewer("fourPocCartoonAndInteractingDiv");
+    myviewer3.setBackgroundColor(0xffffff);
+
+    $3Dmol.download("pdb:4POC", myviewer3, {keepH:true}, function(m) {
+        myviewer3.setStyle({}, {cartoon:{color:"spectrum"}});
+	myviewer3.setStyle({chain:"B"}, {wire:{color:"0xffffff"}});
+        myviewer3.setStyle({chain:"A", resi:residueIndexes}, {stick:{}, cartoon:{color:"spectrum"}});
+	myviewer3.addResLabels({chain:"A", resi:residueIndexes}, {fontSize:8});
+
+        var myModel = myviewer3.getModel();
+
+        var pairSerialNumbers = [[1020,1642],[706,781],[2822,2067],[3214,3240],[547,3103],[547,3101]];
+        for (var i = 0; i < pairSerialNumbers.length; i++) {
+            var pairAtoms = myModel.selectedAtoms({serial:pairSerialNumbers[i]});
+            console.log(pairSerialNumbers);
+            console.log(pairAtoms);
+
+            var p0 = pairAtoms[0];
+            var p1 = pairAtoms[1];
+
+            myviewer3.addLine({dashed:true, start:{x:p0.x, y:p0.y, z:p0.z}, end:{x:p1.x, y:p1.y, z:p1.z},
+                linewidth:10, dashLength:0.25, gapLength:0.25});
+        }
+	myviewer3.zoomTo({chain:"A"});
+	myviewer3.render();
+    });
+
+    //**************************************
+    //1.2.6 4 ribbon and interacting amino acids as spheres
+    var myviewer4 = $3Dmol.createViewer("fourPocCartoonAndInteractingSpheresDiv");
+    myviewer4.setBackgroundColor(0xffffff);
+
+    $3Dmol.download("pdb:4POC", myviewer4, {keepH:true}, function(m) {
+        myviewer4.setStyle({}, {cartoon:{color:"spectrum"}});
+	myviewer4.setStyle({chain:"B"}, {wire:{color:"0xffffff"}});
+        var myModel = myviewer4.getModel();
+
+	for (var i = 0; i < residueIndexes.length; i++) {
+            var residueAtoms = myModel.selectedAtoms({chain:"A", resi:residueIndexes[i]});
+            var aves = [0.0, 0.0, 0.0];
+	    for (var j = 0; j < residueAtoms.length; j++) {
+	        var ra = residueAtoms[j];
+	        aves[0] = aves[0] + ra.x;
+		aves[1] = aves[1] + ra.y;
+		aves[2] = aves[2] + ra.z;
+	    }
+	    aves[0] = aves[0] / residueAtoms.length;
+	    aves[1] = aves[1] / residueAtoms.length;
+	    aves[2] = aves[2] / residueAtoms.length;
+	    console.log(aves);
+
+	    mySphere = myviewer4.addSphere({radius:2, center:{x:aves[0], y:aves[1], z:aves[2]}});
+	    mySphere.wireframe = true;
+	    mySphere.color = $3Dmol.CC.color("purple");
+        }
+        var pairSerialNumbers = [[1020,1642],[706,781],[2822,2067],[3214,3240],[547,3103],[547,3101]];
+        for (var i = 0; i < pairSerialNumbers.length; i++) {
+            var pairAtoms = myModel.selectedAtoms({serial:pairSerialNumbers[i]});
+            //console.log(pairSerialNumbers);
+            //console.log(pairAtoms);
+
+            var p0 = pairAtoms[0];
+            var p1 = pairAtoms[1];
+
+            myviewer4.addLine({dashed:true, start:{x:p0.x, y:p0.y, z:p0.z}, end:{x:p1.x, y:p1.y, z:p1.z},
+                linewidth:10, dashLength:0.25, gapLength:0.25});
+        }
+	myviewer4.zoomTo({chain:"A"});
+	myviewer4.render();
+    });
+
+    // *************************************
+    //1.2.6 6a ribbons colored by side chain property
+    var myviewer5 = $3Dmol.createViewer("fourPocRibbonColoredBySideChainPropertyDiv");
+    myviewer5.setBackgroundColor(0xffffff);
+
+    $3Dmol.download("pdb:4POC", myviewer5, {}, function(m) {
+        myviewer5.setStyle({chain:"A", resn:["ALA","PHE","ILE","LEU","MET","VAL","TRP","TYR","CYS"]}, {cartoon:{color:"purple"}});
+	myviewer5.setStyle({chain:"A", resn:["ASN","GLN","SER","THR","GLY"]}, {cartoon:{color:"lime"}});
+	myviewer5.setStyle({chain:"A", resn:["HIS","LYS","ARG","ASP","GLU","PRO"]}, {cartoon:{color:"silver"}});
+	myviewer5.setStyle({chain:"B"}, {wire:{color:"0xffffff"}});
+	myviewer5.zoomTo({chain:"A"});
+	myviewer5.render();
+    });
+
+    // *************************************
+    //1.2.6 6b sticks colored by side chain property
+    var myviewer6 = $3Dmol.createViewer("fourPocSticksColoredBySideChainPropertyDiv");
+    myviewer6.setBackgroundColor(0xffffff);
+
+    $3Dmol.download("pdb:4POC", myviewer6, {}, function(m) {
+        myviewer6.setStyle({chain:"A", resn:["ALA","PHE","ILE","LEU","MET","VAL","TRP","TYR","CYS"]}, {stick:{color:"purple"}});
+	myviewer6.setStyle({chain:"A", resn:["ASN","GLN","SER","THR","GLY"]}, {stick:{color:"lime"}});
+	myviewer6.setStyle({chain:"A", resn:["HIS","LYS","ARG","ASP","GLU","PRO"]}, {stick:{color:"silver"}});
+	myviewer6.setStyle({chain:"B"}, {wire:{color:"0xffffff"}});
+	myviewer6.zoomTo({chain:"A"});
+	myviewer6.render();
+    });
+
 })
 </script>
 </html>

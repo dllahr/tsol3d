@@ -1,0 +1,58 @@
+<html>
+<head>
+<script src="3Dmol.js"></script>
+</head>
+<body>
+<h2>1.2.5 4. TIM (PDB 4POC) loop: Q64-I78</h2>
+1.2.5 3.1.  sticks (all atoms, gray + CPK colors as in 1.2.3)
+<div id="oneTwoFiveFourOne" style="height: 400px; width: 400px; position: relative;"></div>
+<br/>
+
+1.2.5 3.2 ribbon with side chain sticks [currently shown without hydrogens] 
+<div id="ribbonAndSticksDiv" style="height: 400px; width: 400px; position: relative;"></div>
+<br/>
+
+1.2.5 3.3 ribbon/cartoon only
+<div id="ribbonDiv" style="height: 400px; width: 400px; position: relative;"></div>
+<br/>
+
+</body>
+<script>
+$(document).ready(function() {
+	$.ajax({url: "4poc Q64-I78 loop.pdb", success: function(_4PocPdb) {
+		//*********************************
+		//1.2.5 4.1
+		var myviewer = $3Dmol.createViewer("oneTwoFiveFourOne");
+		myviewer.setBackgroundColor(0xffffff);
+		myviewer.addModel(_4PocPdb, "pdb");
+		myviewer.setStyle({}, {stick:{}});
+		myviewer.zoomTo();
+		//myviewer.rotate(45, "x");
+		//myviewer.rotate(30, "y");
+		myviewer.render();
+
+		//*********************************
+		//1.2.5 3.2 ribbon and stick example
+		myviewer = $3Dmol.createViewer("ribbonAndSticksDiv");
+		myviewer.setBackgroundColor(0xffffff);
+		myviewer.addModel(_4PocPdb, "pdb", {keepH:false});
+		myviewer.setStyle({}, {stick:{},cartoon:{}});
+		myviewer.zoomTo();
+		//myviewer.rotate(45, "x");
+		//myviewer.rotate(30, "y");
+		myviewer.render();
+
+		//*********************************
+		//1.2.5 3.3 just ribbon example
+		myviewer = $3Dmol.createViewer("ribbonDiv");
+		myviewer.setBackgroundColor(0xffffff);
+		myviewer.addModel(_4PocPdb, "pdb", {keepH:false});
+		myviewer.setStyle({}, {cartoon:{}});
+		myviewer.zoomTo();
+		//myviewer.rotate(45, "x");
+		//myviewer.rotate(30, "y");
+		myviewer.render();
+	}});
+});
+</script>
+</html>

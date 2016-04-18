@@ -3,69 +3,65 @@
 <script src="3Dmol.js"></script>
 </head>
 <body>
-<h2>1.2.5 1. TIM (PDB 4POC) α-helix: Q19-N</h2>
-1.2.5 1.1.  sticks (all atoms, gray + CPK colors as in 1.2.3)
-<div id="oneTwoFiveOneOne" style="height: 400px; width: 400px; position: relative;"></div>
+<h2>1.2.5 3. TIM (PDB 4POC) parallel β-sheet: F6-A4</h2>
+1.2.5 3.1.  sticks (all atoms, gray + CPK colors as in 1.2.3)
+<div id="oneTwoFiveThreeOne" style="height: 400px; width: 400px; position: relative;"></div>
 <br/>
 
-1.2.5 1.2 ribbon with side chain sticks [currently shown without hydrogens] 
+1.2.5 3.2 ribbon with side chain sticks [currently shown without hydrogens] 
 <div id="ribbonAndSticksDiv" style="height: 400px; width: 400px; position: relative;"></div>
 <br/>
 
-1.2.5 1.3 ribbon/cartoon only
+1.2.5 3.3 ribbon/cartoon only
 <div id="ribbonDiv" style="height: 400px; width: 400px; position: relative;"></div>
 <br/>
 
 1.2.5 1.4 backbone hydrogen bonding
-<div id="backboneHBondDiv" style="height: 600px; width: 600px; position: relative;"></div>
+<div id="backboneHBondDiv" style="height: 400px; width: 400px; position: relative;"></div>
 <br/>
 
 1.2.5 1.4 extra:  backbone hydrogen bonding just ribbon
-<div id="backboneHBondRibbonDiv" style="height: 600px; width: 600px; position: relative;"></div>
+<div id="backboneHBondRibbonDiv" style="height: 400px; width: 400px; position: relative;"></div>
 <br/>
 
 1.2.5 1.4 extra:  backbone hydrogen bonding ribbon and stick
-<div id="backboneHBondRibbonAndStickDiv" style="height: 600px; width: 600px; position: relative;"></div>
-<br/>
-
-original H-bond example:
-<div id="origHBondDiv" style="height: 400px; width: 400px; position: relative;"></div>
+<div id="backboneHBondRibbonAndStickDiv" style="height: 400px; width: 400px; position: relative;"></div>
 <br/>
 </body>
 <script>
 $(document).ready(function() {
-	$.ajax({url: "4poc Q19-N29 alpha-helix.pdb", success: function(_4PocPdb) {
+	$.ajax({url: "4poc F6-A42 parallel beta-sheet.pdb", success: function(_4PocPdb) {
 		//*********************************
-		//1.2.5 1.1
-		var myviewer = $3Dmol.createViewer("oneTwoFiveOneOne");
+		//1.2.5 3.1
+		var myviewer = $3Dmol.createViewer("oneTwoFiveThreeOne");
 		myviewer.setBackgroundColor(0xffffff);
 		myviewer.addModel(_4PocPdb, "pdb");
 		myviewer.setStyle({}, {stick:{}});
 		myviewer.zoomTo();
-		myviewer.rotate(60, "z");
-		myviewer.rotate(-30, "x");
+		myviewer.rotate(45, "x");
+		myviewer.rotate(30, "y");
 		myviewer.render();
 
 		//*********************************
-		//1.2.5 1.2 ribbon and stick example
+		//1.2.5 3.2 ribbon and stick example
 		myviewer = $3Dmol.createViewer("ribbonAndSticksDiv");
 		myviewer.setBackgroundColor(0xffffff);
 		myviewer.addModel(_4PocPdb, "pdb", {keepH:false});
 		myviewer.setStyle({}, {stick:{},cartoon:{}});
 		myviewer.zoomTo();
-		myviewer.rotate(60, "z");
-		myviewer.rotate(-30, "x");
+		myviewer.rotate(45, "x");
+		myviewer.rotate(30, "y");
 		myviewer.render();
 
 		//*********************************
-		//1.2.5 1.3 just ribbon example
+		//1.2.5 3.3 just ribbon example
 		myviewer = $3Dmol.createViewer("ribbonDiv");
 		myviewer.setBackgroundColor(0xffffff);
 		myviewer.addModel(_4PocPdb, "pdb", {keepH:false});
 		myviewer.setStyle({}, {cartoon:{}});
 		myviewer.zoomTo();
-		myviewer.rotate(60, "z");
-		myviewer.rotate(-30, "x");
+		myviewer.rotate(45, "x");
+		myviewer.rotate(30, "y");
 		myviewer.render();
 		
 		//*********************************
@@ -75,10 +71,10 @@ $(document).ready(function() {
 		myviewer.addModel(_4PocPdb, "pdb", {keepH:true});
 		myviewer.setStyle({atom:["CA","C","N","H","O"]}, {stick:{}});
 		myviewer.setStyle({atom:["CA","C","N","H","O"], invert:true}, {wire:{color:"0xffffff"}});
-		
+
 		var myModel = myviewer.getModel();
 
-		var pairSerialNumbers = [[291, 348], [274, 334], [302, 367], [321, 382], [328, 392], [343, 407], [362, 426]];
+		var pairSerialNumbers = [[60,549],[543,104],[100,578],[574,124],[123,603],[601,155]];//];
 		for (var i = 0; i < pairSerialNumbers.length; i++) {
 			var pairAtoms = myModel.selectedAtoms({serial:pairSerialNumbers[i]});
 			//console.log(pairSerialNumbers);
@@ -92,11 +88,9 @@ $(document).ready(function() {
 		}
 
 		myviewer.zoomTo();
-		myviewer.rotate(60, "z");
-		myviewer.rotate(-30, "x");
-		myviewer.zoom(1.75);
+		myviewer.rotate(45, "x");
+		myviewer.rotate(30, "y");
 		myviewer.render();
-		console.log(_4PocPdb.substring(0,100));
 
 		//*********************************
 		//1.2.5 1.4 backbone H-bonded ribbon example
@@ -120,9 +114,8 @@ $(document).ready(function() {
 		}
 
 		myviewer.zoomTo();
-		myviewer.rotate(60, "z");
-		myviewer.rotate(-30, "x");
-		myviewer.zoom(1.75);
+		myviewer.rotate(45, "x");
+		myviewer.rotate(30, "y");
 		myviewer.render();
 
 		//*********************************
@@ -147,39 +140,10 @@ $(document).ready(function() {
 		}
 
 		myviewer.zoomTo();
-		myviewer.rotate(60, "z");
-		myviewer.rotate(-30, "x");
-		myviewer.zoom(1.75);
+		myviewer.rotate(45, "x");
+		myviewer.rotate(30, "y");
 		myviewer.render();
 	
-		//*********************************
-		//original H-bonded example
-		myviewer = $3Dmol.createViewer("origHBondDiv");
-		myviewer.setBackgroundColor(0xffffff);
-		myviewer.addModel(_4PocPdb, "pdb", {keepH:true});
-		myviewer.setStyle({}, {stick:{}});
-		
-		var myModel = myviewer.getModel();
-
-		var O291 = myModel.selectedAtoms({serial:291});
-		O291 = O291[0];
-		//console.log(O291);
-		//console.log(O291.x);
-		
-		var H348 = myModel.selectedAtoms({serial:348});
-		H348 = H348[0];
-		//console.log(H348);
-		//console.log(H348.x);
-
-		myviewer.addLine({dashed:true, start:{x:H348.x, y:H348.y, z:H348.z}, end:{x:O291.x, y:O291.y, z:O291.z},
-			linewidth:10, dashLength:0.25, gapLength:0.25});
-
-		myviewer.zoomTo({serial:291});
-		myviewer.rotate(60, "z");
-		myviewer.rotate(-30, "x");
-		myviewer.zoom(0.75);
-		myviewer.addResLabels({resi:[20,24]});
-		myviewer.render();
 	}});
 });
 </script>
