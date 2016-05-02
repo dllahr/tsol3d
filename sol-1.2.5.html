@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="3Dmol.js"></script>
+<script src="http://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
 </head>
 <body>
 <h2>1.2.5 1. TIM (PDB 4POC) α-helix: Q19-N</h2>
@@ -28,13 +28,78 @@
 <div id="backboneHBondRibbonAndStickDiv" style="height: 600px; width: 600px; position: relative;"></div>
 <br/>
 
+<div id="swappingViewsDiv">
+swapping views example
+<input type="submit" value="stick" onclick="swapView(this.value)"/>
+<input type="submit" value="ribbon" onclick="swapView(this.value)"/>
+<input type="submit" value="ribbon and stick" onclick="swapView(this.value)"/>
+<input type="submit" value="backbone h-bonding" onclick="swapView(this.value)"/><br/>
+<input type="submit" value="stick with hydrogens" onclick="swapView(this.value)"/>
+<div id="swappingViews3DMolViewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
+</div>
 original H-bond example:
 <div id="origHBondDiv" style="height: 400px; width: 400px; position: relative;"></div>
 <br/>
 </body>
 <script>
+var swapViewer = null;
+var pdbData = null;
+
+function swapView(viewName) {
+	console.log("swapView viewName:  " + viewName);
+
+	swapViewer.removeAllModels();
+	swapViewer.removeAllShapes();
+
+	if ("stick with hydrogens" == viewName) {
+		swapViewer.addModel(pdbData, "pdb", {keepH:true});
+		swapViewer.setStyle({}, {stick:{}});
+	} else if ("ribbon" == viewName) {
+		swapViewer.addModel(pdbData, "pdb");
+		swapViewer.setStyle({}, {cartoon:{}});
+	} else if ("ribbon and stick" == viewName) {
+		swapViewer.addModel(pdbData, "pdb");
+		swapViewer.setStyle({}, {cartoon:{}, stick:{}});
+	} else if ("stick" == viewName) {
+		swapViewer.addModel(pdbData, "pdb");
+		swapViewer.setStyle({}, {stick:{}});
+	} else if ("backbone h-bonding" == viewName) {
+		swapViewer.addModel(pdbData, "pdb", {keepH:true});
+		swapViewer.setStyle({atom:["CA","C","N","H","O"]}, {stick:{}});
+		swapViewer.setStyle({atom:["CA","C","N","H","O"], invert:true}, {stick:{hidden:true}});
+		
+		var myModel = swapViewer.getModel();
+
+		var pairSerialNumbers = [[291, 348], [274, 334], [302, 367], [321, 382], [328, 392], [343, 407], [362, 426]];
+		for (var i = 0; i < pairSerialNumbers.length; i++) {
+			var pairAtoms = myModel.selectedAtoms({serial:pairSerialNumbers[i]});
+
+			var p0 = pairAtoms[0];
+			var p1 = pairAtoms[1];
+			
+			swapViewer.addLine({dashed:true, start:{x:p0.x, y:p0.y, z:p0.z}, end:{x:p1.x, y:p1.y, z:p1.z},
+				linewidth:10, dashLength:0.25, gapLength:0.25});
+		}
+	}
+	swapViewer.render();
+
+};
+
 $(document).ready(function() {
+	swapViewer = $3Dmol.createViewer("swappingViews3DMolViewerDiv");
+	
 	$.ajax({url: "4poc Q19-N29 alpha-helix.pdb", success: function(_4PocPdb) {
+		pdbData = _4PocPdb;
+
+		//********************************
+		//swapView
+		swapViewer.setBackgroundColor(0xffffff);
+		swapView("stick");
+		swapViewer.zoomTo();
+		swapViewer.rotate(60, "z");
+		swapViewer.rotate(-30, "x");
+		swapViewer.render();
+
 		//*********************************
 		//1.2.5 1.1
 		var myviewer = $3Dmol.createViewer("oneTwoFiveOneOne");
