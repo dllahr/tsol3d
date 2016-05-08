@@ -3,147 +3,67 @@
 <script src="http://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
 </head>
 <body>
-<h2>1.2.5 3. TIM (PDB 4POC) parallel β-sheet: F6-A4</h2>
-1.2.5 3.1.  sticks (all atoms, gray + CPK colors as in 1.2.3)
-<div id="oneTwoFiveThreeOne" style="height: 400px; width: 400px; position: relative;"></div>
-<br/>
-
-1.2.5 3.2 ribbon with side chain sticks [currently shown without hydrogens] 
-<div id="ribbonAndSticksDiv" style="height: 400px; width: 400px; position: relative;"></div>
-<br/>
-
-1.2.5 3.3 ribbon/cartoon only
-<div id="ribbonDiv" style="height: 400px; width: 400px; position: relative;"></div>
-<br/>
-
-1.2.5 1.4 backbone hydrogen bonding
-<div id="backboneHBondDiv" style="height: 400px; width: 400px; position: relative;"></div>
-<br/>
-
-1.2.5 1.4 extra:  backbone hydrogen bonding just ribbon
-<div id="backboneHBondRibbonDiv" style="height: 400px; width: 400px; position: relative;"></div>
-<br/>
-
-1.2.5 1.4 extra:  backbone hydrogen bonding ribbon and stick
-<div id="backboneHBondRibbonAndStickDiv" style="height: 400px; width: 400px; position: relative;"></div>
-<br/>
+<h2>1.2.5 part 3:  TIM (PDB 4POC) parallel beta-sheet: F6-A42</h2>
+<input type="submit" value="stick" onclick="swapView(this.value)"/>
+<input type="submit" value="ribbon" onclick="swapView(this.value)"/>
+<input type="submit" value="ribbon and stick" onclick="swapView(this.value)"/>
+<input type="submit" value="backbone h-bonding" onclick="swapView(this.value)"/><br/>
+<div id="3DMolViewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
 </body>
 <script>
+var swapViewer = null;
+var pdbData = null;
+
+function swapView(viewName) {
+	console.log("swapView viewName:  " + viewName);
+
+	swapViewer.removeAllModels();
+	swapViewer.removeAllShapes();
+
+	if ("ribbon" == viewName) {
+		swapViewer.addModel(pdbData, "pdb");
+		swapViewer.setStyle({}, {cartoon:{}});
+	} else if ("ribbon and stick" == viewName) {
+		swapViewer.addModel(pdbData, "pdb");
+		swapViewer.setStyle({}, {cartoon:{}, stick:{}});
+	} else if ("stick" == viewName) {
+		swapViewer.addModel(pdbData, "pdb");
+		swapViewer.setStyle({}, {stick:{}});
+	} else if ("backbone h-bonding" == viewName) {
+		swapViewer.addModel(pdbData, "pdb", {keepH:true});
+		swapViewer.setStyle({atom:["CA","C","N","H","O"]}, {stick:{}});
+		swapViewer.setStyle({atom:["CA","C","N","H","O"], invert:true}, {stick:{hidden:true}});
+		
+		var myModel = swapViewer.getModel();
+
+		var pairSerialNumbers = [[291, 348],[274, 334],[302, 367],[321, 382],[328, 392],[343, 407],[362, 426],[60,549],[543,104],[100,578],[574,124],[123,603],[601,155]];
+		for (var i = 0; i < pairSerialNumbers.length; i++) {
+			var pairAtoms = myModel.selectedAtoms({serial:pairSerialNumbers[i]});
+
+			var p0 = pairAtoms[0];
+			var p1 = pairAtoms[1];
+			
+			swapViewer.addLine({dashed:true, start:{x:p0.x, y:p0.y, z:p0.z}, end:{x:p1.x, y:p1.y, z:p1.z},
+				linewidth:10, dashLength:0.25, gapLength:0.25});
+		}
+	}
+	swapViewer.render();
+
+};
+
 $(document).ready(function() {
-	$.ajax({url: "4poc F6-A42 parallel beta-sheet.pdb", success: function(_4PocPdb) {
-		//*********************************
-		//1.2.5 3.1
-		var myviewer = $3Dmol.createViewer("oneTwoFiveThreeOne");
-		myviewer.setBackgroundColor(0xffffff);
-		myviewer.addModel(_4PocPdb, "pdb");
-		myviewer.setStyle({}, {stick:{}});
-		myviewer.zoomTo();
-		myviewer.rotate(45, "x");
-		myviewer.rotate(30, "y");
-		myviewer.render();
-
-		//*********************************
-		//1.2.5 3.2 ribbon and stick example
-		myviewer = $3Dmol.createViewer("ribbonAndSticksDiv");
-		myviewer.setBackgroundColor(0xffffff);
-		myviewer.addModel(_4PocPdb, "pdb", {keepH:false});
-		myviewer.setStyle({}, {stick:{},cartoon:{arrows:true}});
-		myviewer.zoomTo();
-		myviewer.rotate(45, "x");
-		myviewer.rotate(30, "y");
-		myviewer.render();
-
-		//*********************************
-		//1.2.5 3.3 just ribbon example
-		myviewer = $3Dmol.createViewer("ribbonDiv");
-		myviewer.setBackgroundColor(0xffffff);
-		myviewer.addModel(_4PocPdb, "pdb", {keepH:false});
-		myviewer.setStyle({}, {cartoon:{arrows:true}});
-		myviewer.zoomTo();
-		myviewer.rotate(45, "x");
-		myviewer.rotate(30, "y");
-		myviewer.render();
-		
-		//*********************************
-		//1.2.5 1.4 backbone H-bonded example
-		myviewer = $3Dmol.createViewer("backboneHBondDiv");
-		myviewer.setBackgroundColor(0xffffff);
-		myviewer.addModel(_4PocPdb, "pdb", {keepH:true});
-		myviewer.setStyle({atom:["CA","C","N","H","O"]}, {stick:{}});
-		myviewer.setStyle({atom:["CA","C","N","H","O"], invert:true}, {none:{}});
-
-		var myModel = myviewer.getModel();
-
-		var pairSerialNumbers = [[60,549],[543,104],[100,578],[574,124],[123,603],[601,155]];//];
-		for (var i = 0; i < pairSerialNumbers.length; i++) {
-			var pairAtoms = myModel.selectedAtoms({serial:pairSerialNumbers[i]});
-			//console.log(pairSerialNumbers);
-			//console.log(pairAtoms);
-
-			var p0 = pairAtoms[0];
-			var p1 = pairAtoms[1];
-			
-			myviewer.addLine({dashed:true, start:{x:p0.x, y:p0.y, z:p0.z}, end:{x:p1.x, y:p1.y, z:p1.z},
-				linewidth:10, dashLength:0.25, gapLength:0.25});
-		}
-
-		myviewer.zoomTo();
-		myviewer.rotate(45, "x");
-		myviewer.rotate(30, "y");
-		myviewer.render();
-
-		//*********************************
-		//1.2.5 1.4 backbone H-bonded ribbon example
-		myviewer = $3Dmol.createViewer("backboneHBondRibbonDiv");
-		myviewer.setBackgroundColor(0xffffff);
-		myviewer.addModel(_4PocPdb, "pdb", {keepH:true});
-		myviewer.setStyle({}, {cartoon:{arrows:true}});
-		
-		var myModel = myviewer.getModel();
-
-		for (var i = 0; i < pairSerialNumbers.length; i++) {
-			var pairAtoms = myModel.selectedAtoms({serial:pairSerialNumbers[i]});
-			//console.log(pairSerialNumbers);
-			//console.log(pairAtoms);
-
-			var p0 = pairAtoms[0];
-			var p1 = pairAtoms[1];
-			
-			myviewer.addLine({dashed:true, start:{x:p0.x, y:p0.y, z:p0.z}, end:{x:p1.x, y:p1.y, z:p1.z},
-				linewidth:10, dashLength:0.25, gapLength:0.25});
-		}
-
-		myviewer.zoomTo();
-		myviewer.rotate(45, "x");
-		myviewer.rotate(30, "y");
-		myviewer.render();
-
-		//*********************************
-		//1.2.5 1.4 backbone H-bonded ribbon and stick example
-		myviewer = $3Dmol.createViewer("backboneHBondRibbonAndStickDiv");
-		myviewer.setBackgroundColor(0xffffff);
-		myviewer.addModel(_4PocPdb, "pdb", {keepH:true});
-		myviewer.setStyle({}, {stick:{},cartoon:{arrows:true}});
-		
-		var myModel = myviewer.getModel();
-
-		for (var i = 0; i < pairSerialNumbers.length; i++) {
-			var pairAtoms = myModel.selectedAtoms({serial:pairSerialNumbers[i]});
-			//console.log(pairSerialNumbers);
-			//console.log(pairAtoms);
-
-			var p0 = pairAtoms[0];
-			var p1 = pairAtoms[1];
-			
-			myviewer.addLine({dashed:true, start:{x:p0.x, y:p0.y, z:p0.z}, end:{x:p1.x, y:p1.y, z:p1.z},
-				linewidth:10, dashLength:0.25, gapLength:0.25});
-		}
-
-		myviewer.zoomTo();
-		myviewer.rotate(45, "x");
-		myviewer.rotate(30, "y");
-		myviewer.render();
+	swapViewer = $3Dmol.createViewer("3DMolViewerDiv");
 	
+	$.ajax({url: "http://www.broadinstitute.org/~dlahr/3dmol/4poc F6-A42 parallel beta-sheet.pdb", success: function(_4PocPdb) {
+		pdbData = _4PocPdb;
+
+		swapViewer.setBackgroundColor(0xffffff);
+		swapView("stick");
+		swapViewer.zoomTo();
+		swapViewer.rotate(45, "x");
+		swapViewer.rotate(30, "y");
+
+		swapViewer.render();
 	}});
 });
 </script>
