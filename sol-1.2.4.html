@@ -3,56 +3,74 @@
 <script src="http://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
 </head>
 <body>
-<table>
-<tbody>
-<tr><td>sticks</td><td>
-<div id="sixMerFragmentStickAtomsDiv" style="height: 400px; width: 400px; position: relative;" 
-    class="viewer_3Dmoljs" data-href="4poc_A73-I78.pdb" data-backgroundcolor="0xffffff" 
-    data-style="stick" data-labelres="{}"></div></td></tr>
-<tr><td>sticks colored by AA</td><td>
-<div id="sixMerFragmentStickAaDiv" style="height: 400px; width: 400px; position: relative;" 
-    class="viewer_3Dmoljs" data-href="4poc_A73-I78.pdb" data-backgroundcolor="0xffffff" 
-    data-select2="resi:73" data-style2="stick:color=0xFF0000"
-    data-select3="resi:74" data-style3="stick:color=0xFF6600"
-    data-select4="resi:75" data-style4="stick:color=0xFFFF00"
-    data-select5="resi:76" data-style5="stick:color=0x008000"
-    data-select6="resi:77" data-style6="stick:color=0x0000FF"
-    data-select7="resi:78" data-style7="stick:color=0x800080"
-    data-labelres="{}"></div></td></tr>
-<tr><td>cartoon with side chains as sticks - not working yet</td><td>
-<div id="sixMerFragmentCartoonAndSideGroupsAaDiv" style="height: 400px; width: 400px; position: relative;" 
-    class="viewer_3Dmoljs" data-href="4poc_A73-I78.pdb" data-backgroundcolor="0xffffff" 
-    data-select2="resi:73" data-style2="cartoon:color=0xFF0000"
-    data-select3="resi:74" data-style3="cartoon:color=0xFF6600"
-    data-select4="resi:75" data-style4="cartoon:color=0xFFFF00"
-    data-select5="resi:76" data-style5="cartoon:color=0x008000"
-    data-select6="resi:77" data-style6="cartoon:color=0x0000FF"
-    data-select7="resi:78" data-style7="cartoon:color=0x800080"
-    data-labelres="{}"></div></td></tr>
-<tr><td>just cartoon</td><td>
-<div id="sixMerFragmentCartoonAaDiv" style="height: 400px; width: 400px; position: relative;" 
-    class="viewer_3Dmoljs" data-href="4poc_A73-I78.pdb" data-backgroundcolor="0xffffff" 
-    data-select2="resi:73" data-style2="cartoon:color=0xFF0000"
-    data-select3="resi:74" data-style3="cartoon:color=0xFF6600"
-    data-select4="resi:75" data-style4="cartoon:color=0xFFFF00"
-    data-select5="resi:76" data-style5="cartoon:color=0x008000"
-    data-select6="resi:77" data-style6="cartoon:color=0x0000FF"
-    data-select7="resi:78" data-style7="cartoon:color=0x800080"
-    data-labelres="{}"></div></td></tr>
-<tr><td>spheres</td><td>
-<div id="sixMerFragmentSphereAtomsDiv" style="height: 400px; width: 400px; position: relative;" 
-    class="viewer_3Dmoljs" data-href="4poc_A73-I78.pdb" data-backgroundcolor="0xffffff" 
-    data-style="sphere"
-    data-labelres="{}"></div></td></tr>
-<tr><td>translucent surface - not working yet</td><td>
-<div id="sixMerFragmentSphereAtomsDiv" style="height: 400px; width: 400px; position: relative;" 
-    class="viewer_3Dmoljs" data-href="4poc_A73-I78.pdb" data-backgroundcolor="0xffffff"
-    data-style="stick" 
-    data-surface="opacity=.2;color=0xFFFFFF"
-    data-labelres="{}"></div></td></tr>
-</tbody>
-</table>
+<h2>1.2.4 TIM (PDB 4POC) 6­mer fragment:A73-I78</h2>
+<input type="submit" value="stick" onclick="swapView(this.value)"/>
+<input type="submit" value="stick colored by amino acid" onclick="swapView(this.value)"/>
+<input type="submit" value="stick and ribbon" onclick="swapView(this.value)"/>
+<input type="submit" value="ribbon" onclick="swapView(this.value)"/>
+<input type="submit" value="spheres" onclick="swapView(this.value)"/>
+<input type="submit" value="surface" onclick="swapView(this.value)"/>
+
+<div id="3DMolViewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
+
 </body>
 <script>
+var swapViewer = null;
+var pdbData = null;
+
+var residueColorMap = {73:"0xFF0000", 74:"0xFF6600", 75:"0xFFFF00", 76:"0x008000", 77:"0x0000FF", 78:"0x800080"};
+function colorResidues(atomStyleList) {
+	for (var curResi in residueColorMap) {
+		var curColor = residueColorMap[curResi];
+		
+		var style = {};
+		for (var i = 0; i < atomStyleList.length; i++) {
+			var atomStyle = atomStyleList[i];
+			style[atomStyle] = {color:curColor};
+		}
+
+		swapViewer.setStyle({resi:curResi}, style);
+	}
+}
+
+function swapView(viewName) {
+	console.log("swapView viewName:  " + viewName);
+
+	swapViewer.removeAllModels();
+	swapViewer.removeAllShapes();
+	swapViewer.removeAllLabels();
+	swapViewer.removeAllSurfaces();
+	swapViewer.addModel(pdbData, "pdb");
+	swapViewer.addResLabels({}, {font:"Helvetica", fontSize:18, fontColor:"black", showBackground:false});
+
+	if ("ribbon" == viewName) {
+		colorResidues(["cartoon"]);
+	} else if ("stick" == viewName) {
+		swapViewer.setStyle({}, {stick:{}});
+	} else if ("stick colored by amino acid" == viewName) {
+		colorResidues(["stick"]);
+	} else if ("stick and ribbon" == viewName) {
+		colorResidues(["stick", "cartoon"]);
+	} else if ("spheres" == viewName) {
+		swapViewer.setStyle({}, {sphere:{}});
+	} else if ("surface" == viewName) {
+		swapViewer.setStyle({}, {stick:{}});
+		swapViewer.addSurface("VDW", {opacity:0.7, color:"white"}, {});
+	}
+	swapViewer.render();
+};
+
+$(document).ready(function() {
+	swapViewer = $3Dmol.createViewer("3DMolViewerDiv");
+	
+	$.ajax({url: "http://www.broadinstitute.org/~dlahr/3dmol/4poc_A73-I78.pdb", success: function(_4PocPdb) {
+		pdbData = _4PocPdb;
+
+		swapViewer.setBackgroundColor(0xffffff);
+		swapView("stick");
+		swapViewer.zoomTo();
+		swapViewer.render();
+	}});
+});
 </script>
 </html>
