@@ -3,146 +3,84 @@
 <script src="http://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
 </head>
 <body>
-1.2.6 1 ribbon only:
-<div id="fourPocCartoonDiv" style="height: 400px; width: 400px; position: relative;"></div>
-<br/>
+<h2>Tertiary structure TIM (PDB 4POC) monomer</h2>
+<input type="submit" value="ribbon" onclick="swapView(this.value)"/>
+<input type="submit" value="ribbon and surface" onclick="swapView(this.value)"/>
+<input type="submit" value="ribbon and interacting amino acids" onclick="swapView(this.value)"/>
+<input type="submit" value="ribbon and interacting amino acids as spheres" onclick="swapView(this.value)"/><br/>
+<input type="submit" value="ribbon with amino acids colored by side chain properties" onclick="swapView(this.value)"/>
+<input type="submit" value="stick with amino acids colored by side chain properties" onclick="swapView(this.value)"/>
 
-1.2.6 2 ribbon and surface:
-<div id="fourPocCartoonAndSurfaceDiv" style="height: 400px; width: 400px; position: relative;"></div>
-<br/>
-
-1.2.6 3 ribbon with several interacting pairs of amino acids:
-<div id="fourPocCartoonAndInteractingDiv" style="height: 400px; width: 400px; position: relative;"></div>
-<br/>
-
-1.2.6 4 ribbon with several interacting pairs of amino acids represented as spheres:
-<div id="fourPocCartoonAndInteractingSpheresDiv" style="height: 400px; width: 400px; position: relative;"></div>
-<br/>
-
-1.2.6 6a ribbon with amino acids colored by side chain properties:
-<div id="fourPocRibbonColoredBySideChainPropertyDiv" style="height: 400px; width: 400px; position: relative;"></div>
-<br/>
-
-1.2.6 6b sticks with amino acids colored by side chain properties:
-<div id="fourPocSticksColoredBySideChainPropertyDiv" style="height: 400px; width: 400px; position: relative;"></div>
-<br/>
-
-1.2.6 1b ribbon with cyclinders for alpha helices
-<div id="fourPocCartoonAlphaHelicesCylindersDiv" style="height: 400px; width: 400px; position: relative;"></div>
-<br/>
+<div id="3DMolViewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
 
 </body>
 <script>
+var swapViewer = null;
+var pdbData = null;
+
+var residueIndexes = [68,111,49,53,187,140,213,216,38,205];
+
+function swapView(viewName) {
+	console.log("swapView viewName:  " + viewName);
+
+	swapViewer.removeAllModels();
+	swapViewer.removeAllShapes();
+	swapViewer.removeAllLabels();
+	swapViewer.removeAllSurfaces();
+	swapViewer.addModel(pdbData, "pdb", {keepH:true});
+
+	if ("ribbon" == viewName) {
+		swapViewer.setStyle({}, {cartoon:{color:"spectrum", arrows:true}});
+	} else if ("ribbon and surface" == viewName) {
+		swapViewer.setStyle({}, {cartoon:{color:"spectrum", arrows:true}});
+        	swapViewer.addSurface("VDW", {opacity:0.8,color:"white"});
+	} else if ("ribbon and interacting amino acids" == viewName) {
+		swapViewer.setStyle({}, {cartoon:{color:"spectrum", arrows:true}});
+                swapViewer.setStyle({resi:residueIndexes}, {stick:{}, cartoon:{color:"spectrum", arrows:true}});
+		swapViewer.addResLabels({resi:residueIndexes}, {font:"Helvetica", fontSize:18, fontColor:"black", showBackground:false});
+
+		//add H-bonding
+		var myModel = swapViewer.getModel();
+
+		var pairSerialNumbers = [[1020,1642],[706,781],[2822,2067],[3214,3240],[547,3103],[547,3101]];
+		for (var i = 0; i < pairSerialNumbers.length; i++) {
+			var pairAtoms = myModel.selectedAtoms({serial:pairSerialNumbers[i]});
+			//console.log(pairSerialNumbers);
+			//console.log(pairAtoms);
+
+			var p0 = pairAtoms[0];
+			var p1 = pairAtoms[1];
+
+			swapViewer.addLine({dashed:true, start:{x:p0.x, y:p0.y, z:p0.z}, end:{x:p1.x, y:p1.y, z:p1.z},
+				linewidth:10, dashLength:0.25, gapLength:0.25});
+		}	
+	} else if ("ribbon and interacting amino acids as spheres" == viewName) {
+		swapViewer.setStyle({}, {cartoon:{color:"spectrum", arrows:true}});
+                swapViewer.setStyle({resi:residueIndexes}, {sphere:{}, cartoon:{color:"spectrum", arrows:true}});
+		swapViewer.addResLabels({resi:residueIndexes}, {font:"Helvetica", fontSize:18, fontColor:"black", showBackground:false});
+	} else if ("ribbon with amino acids colored by side chain properties" == viewName) {
+		swapViewer.setStyle({resn:["ALA","PHE","ILE","LEU","MET","VAL","TRP","TYR","CYS"]}, {cartoon:{color:"purple", arrows:true}});
+		swapViewer.setStyle({resn:["ASN","GLN","SER","THR","GLY"]}, {cartoon:{color:"lime", arrows:true}});
+		swapViewer.setStyle({resn:["HIS","LYS","ARG","ASP","GLU","PRO"]}, {cartoon:{color:"silver", arrows:true}});
+	} else if ("stick with amino acids colored by side chain properties" == viewName) {
+		swapViewer.setStyle({resn:["ALA","PHE","ILE","LEU","MET","VAL","TRP","TYR","CYS"]}, {stick:{color:"purple"}});
+		swapViewer.setStyle({resn:["ASN","GLN","SER","THR","GLY"]}, {stick:{color:"lime"}});
+		swapViewer.setStyle({resn:["HIS","LYS","ARG","ASP","GLU","PRO"]}, {stick:{color:"silver"}});
+	}
+	swapViewer.render();
+};
+
 $(document).ready(function() {
-    // *************************************
-    //1.2.6 1 ribbon only
-    var myviewer = $3Dmol.createViewer("fourPocCartoonDiv");
-    myviewer.setBackgroundColor(0xffffff);
+	swapViewer = $3Dmol.createViewer("3DMolViewerDiv");
+	
+	$.ajax({url: "http://www.broadinstitute.org/~dlahr/3dmol/4poc chain A monomer.pdb", success: function(_4PocPdb) {
+		pdbData = _4PocPdb;
 
-    $3Dmol.download("pdb:4POC", myviewer, {}, function(m) {
-        myviewer.setStyle({chain:"A"}, {cartoon:{color:"spectrum", arrows:true}});
-	myviewer.setStyle({chain:"B"}, {none:{}});
-	myviewer.zoomTo({chain:"A"});
-	myviewer.render();
-    });
-
-    // *************************************
-    //1.2.6 2 ribbon and surface
-    var myviewer2 = $3Dmol.createViewer("fourPocCartoonAndSurfaceDiv");
-    myviewer2.setBackgroundColor(0xffffff);
-
-    $3Dmol.download("pdb:4POC", myviewer2, {}, function(m) {
-        myviewer2.setStyle({chain:"A"}, {cartoon:{color:"spectrum", arrows:true}});
-	myviewer2.setStyle({chain:"B"}, {none:{}});
-
-        myviewer2.addSurface("VDW", {opacity:0.8,color:"white"}, {chain:"A"});
-	myviewer2.zoomTo({chain:"A"});
-	myviewer2.render();
-    });
-
-    var residueIndexes = [68,111,49,53,187,140,213,216,38,205];
-
-    // **************************************
-    //1.2.6 3 ribbon and interacting amino acids
-    var myviewer3 = $3Dmol.createViewer("fourPocCartoonAndInteractingDiv");
-    myviewer3.setBackgroundColor(0xffffff);
-
-    $3Dmol.download("pdb:4POC", myviewer3, {keepH:true}, function(m) {
-        myviewer3.setStyle({}, {cartoon:{color:"spectrum", arrows:true}});
-	myviewer3.setStyle({chain:"B"}, {none:{}});
-        myviewer3.setStyle({chain:"A", resi:residueIndexes}, {stick:{}, cartoon:{color:"spectrum", arrows:true}});
-	myviewer3.addResLabels({chain:"A", resi:residueIndexes}, {fontSize:8});
-
-        var myModel = myviewer3.getModel();
-
-        var pairSerialNumbers = [[1020,1642],[706,781],[2822,2067],[3214,3240],[547,3103],[547,3101]];
-        for (var i = 0; i < pairSerialNumbers.length; i++) {
-            var pairAtoms = myModel.selectedAtoms({serial:pairSerialNumbers[i]});
-            console.log(pairSerialNumbers);
-            console.log(pairAtoms);
-
-            var p0 = pairAtoms[0];
-            var p1 = pairAtoms[1];
-
-            myviewer3.addLine({dashed:true, start:{x:p0.x, y:p0.y, z:p0.z}, end:{x:p1.x, y:p1.y, z:p1.z},
-                linewidth:10, dashLength:0.25, gapLength:0.25});
-        }
-	myviewer3.zoomTo({chain:"A"});
-	myviewer3.render();
-    });
-
-    //**************************************
-    //1.2.6 4 ribbon and interacting amino acids as spheres
-    var myviewer4 = $3Dmol.createViewer("fourPocCartoonAndInteractingSpheresDiv");
-    myviewer4.setBackgroundColor(0xffffff);
-
-    $3Dmol.download("pdb:4POC", myviewer4, {keepH:true}, function(m) {
-        myviewer4.setStyle({}, {cartoon:{color:"spectrum", arrows:true}});
-	myviewer4.setStyle({chain:"B"}, {none:{}});
-        myviewer4.setStyle({chain:"A", resi:residueIndexes}, {sphere:{}, cartoon:{color:"spectrum", arrows:true}});
-	myviewer4.zoomTo({chain:"A"});
-	myviewer4.render();
-    });
-
-    // *************************************
-    //1.2.6 6a ribbons colored by side chain property
-    var myviewer5 = $3Dmol.createViewer("fourPocRibbonColoredBySideChainPropertyDiv");
-    myviewer5.setBackgroundColor(0xffffff);
-
-    $3Dmol.download("pdb:4POC", myviewer5, {}, function(m) {
-        myviewer5.setStyle({chain:"A", resn:["ALA","PHE","ILE","LEU","MET","VAL","TRP","TYR","CYS"]}, {cartoon:{color:"purple", arrows:true}});
-	myviewer5.setStyle({chain:"A", resn:["ASN","GLN","SER","THR","GLY"]}, {cartoon:{color:"lime", arrows:true}});
-	myviewer5.setStyle({chain:"A", resn:["HIS","LYS","ARG","ASP","GLU","PRO"]}, {cartoon:{color:"silver", arrows:true}});
-	myviewer5.setStyle({chain:"B"}, {none:{}});
-	myviewer5.zoomTo({chain:"A"});
-	myviewer5.render();
-    });
-
-    // *************************************
-    //1.2.6 6b sticks colored by side chain property
-    var myviewer6 = $3Dmol.createViewer("fourPocSticksColoredBySideChainPropertyDiv");
-    myviewer6.setBackgroundColor(0xffffff);
-
-    $3Dmol.download("pdb:4POC", myviewer6, {}, function(m) {
-        myviewer6.setStyle({chain:"A", resn:["ALA","PHE","ILE","LEU","MET","VAL","TRP","TYR","CYS"]}, {stick:{color:"purple"}});
-	myviewer6.setStyle({chain:"A", resn:["ASN","GLN","SER","THR","GLY"]}, {stick:{color:"lime"}});
-	myviewer6.setStyle({chain:"A", resn:["HIS","LYS","ARG","ASP","GLU","PRO"]}, {stick:{color:"silver"}});
-	myviewer6.setStyle({chain:"B"}, {none:{}});
-	myviewer6.zoomTo({chain:"A"});
-	myviewer6.render();
-    });
-    
-    // *************************************
-    //1.2.6 1b ribbon with alpha helices as cylinders
-    var myviewer7 = $3Dmol.createViewer("fourPocCartoonAlphaHelicesCylindersDiv");
-    myviewer7.setBackgroundColor(0xffffff);
-
-    $3Dmol.download("pdb:4POC", myviewer7, {}, function(m) {
-        myviewer7.setStyle({chain:"A"}, {cartoon:{color:"spectrum", arrows:true, tubes:true}});
-	myviewer7.setStyle({chain:"B"}, {none:{}});
-	myviewer7.zoomTo({chain:"A"});
-	myviewer7.render();
-    });
+		swapViewer.setBackgroundColor(0xffffff);
+		swapView("ribbon");
+		swapViewer.zoomTo();
+		swapViewer.render();
+	}});
 })
 </script>
 </html>
