@@ -1,0 +1,95 @@
+<html>
+<head>
+<script src="http://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
+</head>
+<body>
+<h2>Tertiary structure TIM (PDB 4POC) dimer</h2>
+<input type="submit" value="ribbon" onclick="swapView(this.value)"/>
+<input type="submit" value="ribbon and surface" onclick="swapView(this.value)"/>
+<input type="submit" value="ribbon and interacting amino acids" onclick="swapView(this.value)"/>
+<input type="submit" value="ribbon and interacting amino acids as spheres" onclick="swapView(this.value)"/><br/>
+
+<div id="3DMolViewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
+
+</body>
+<script>
+var swapViewer = null;
+var pdbData = null;
+
+var chainAResidueIndexes = [98, 70, 18, 75];
+var chainBResidueIndexes = [77, 17, 49, 11];
+
+//var chainAAtoms = [0
+
+function swapView(viewName) {
+	console.log("swapView viewName:  " + viewName);
+
+	swapViewer.removeAllModels();
+	swapViewer.removeAllShapes();
+	swapViewer.removeAllLabels();
+	swapViewer.removeAllSurfaces();
+	swapViewer.addModel(pdbData, "pdb", {keepH:true});
+
+	if ("ribbon" == viewName) {
+		swapViewer.setStyle({chain:"A"}, {cartoon:{color:"red", arrows:true}});
+		swapViewer.setStyle({chain:"B"}, {cartoon:{color:"blue", arrows:true}});
+	} else if ("ribbon and surface" == viewName) {
+		swapViewer.setStyle({chain:"A"}, {cartoon:{color:"red", arrows:true}});
+		swapViewer.setStyle({chain:"B"}, {cartoon:{color:"blue", arrows:true}});
+        	swapViewer.addSurface("VDW", {opacity:0.8,color:"red"}, {chain:"A"});
+		swapViewer.addSurface("VDW", {opacity:0.8,color:"blue"}, {chain:"B"});
+	} else if ("ribbon and interacting amino acids" == viewName) {
+		swapViewer.setStyle({chain:"A"}, {cartoon:{color:"red", arrows:true}});
+		swapViewer.setStyle({chain:"B"}, {cartoon:{color:"blue", arrows:true}});
+
+                swapViewer.setStyle({chain:"A", resi:chainAResidueIndexes}, {stick:{}, cartoon:{color:"red", arrows:true}});
+                swapViewer.setStyle({chain:"B", resi:chainBResidueIndexes}, {stick:{}, cartoon:{color:"blue", arrows:true}});
+//		swapViewer.addResLabels({resi:residueIndexes}, {font:"Helvetica", fontSize:18, fontColor:"black", showBackground:false});
+
+		swapViewer.setStyle({chain:"A", resi:98, atom:"HH"}, {sphere:{}});
+
+		//add H-bonding
+/*		var myModel = swapViewer.getModel();
+
+		var pairSerialNumbers = [[1020,1642],[706,781],[2822,2067],[3214,3240],[547,3103],[547,3101]];
+		for (var i = 0; i < pairSerialNumbers.length; i++) {
+			var pairAtoms = myModel.selectedAtoms({serial:pairSerialNumbers[i]});
+			//console.log(pairSerialNumbers);
+			//console.log(pairAtoms);
+
+			var p0 = pairAtoms[0];
+			var p1 = pairAtoms[1];
+
+			swapViewer.addLine({dashed:true, start:{x:p0.x, y:p0.y, z:p0.z}, end:{x:p1.x, y:p1.y, z:p1.z},
+				linewidth:10, dashLength:0.25, gapLength:0.25});
+		}*/
+	} else if ("ribbon and interacting amino acids as spheres" == viewName) {
+		swapViewer.setStyle({}, {cartoon:{color:"spectrum", arrows:true}});
+                swapViewer.setStyle({resi:residueIndexes}, {sphere:{}, cartoon:{color:"spectrum", arrows:true}});
+		swapViewer.addResLabels({resi:residueIndexes}, {font:"Helvetica", fontSize:18, fontColor:"black", showBackground:false});
+	} else if ("ribbon with amino acids colored by side chain properties" == viewName) {
+		swapViewer.setStyle({resn:["ALA","PHE","ILE","LEU","MET","VAL","TRP","TYR","CYS"]}, {cartoon:{color:"purple", arrows:true}});
+		swapViewer.setStyle({resn:["ASN","GLN","SER","THR","GLY"]}, {cartoon:{color:"lime", arrows:true}});
+		swapViewer.setStyle({resn:["HIS","LYS","ARG","ASP","GLU","PRO"]}, {cartoon:{color:"silver", arrows:true}});
+	} else if ("stick with amino acids colored by side chain properties" == viewName) {
+		swapViewer.setStyle({resn:["ALA","PHE","ILE","LEU","MET","VAL","TRP","TYR","CYS"]}, {stick:{color:"purple"}});
+		swapViewer.setStyle({resn:["ASN","GLN","SER","THR","GLY"]}, {stick:{color:"lime"}});
+		swapViewer.setStyle({resn:["HIS","LYS","ARG","ASP","GLU","PRO"]}, {stick:{color:"silver"}});
+	}
+	swapViewer.render();
+};
+
+$(document).ready(function() {
+	swapViewer = $3Dmol.createViewer("3DMolViewerDiv");
+	
+	$.ajax({url: "http://www.broadinstitute.org/~dlahr/3dmol/4poc.pdb", success: function(_4PocPdb) {
+		pdbData = _4PocPdb;
+
+		swapViewer.setBackgroundColor(0xffffff);
+		swapView("ribbon");
+		swapViewer.zoomTo();
+		swapViewer.render();
+	}});
+})
+</script>
+</html>
