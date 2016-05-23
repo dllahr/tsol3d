@@ -63,7 +63,7 @@ function swapView(viewName) {
 $(document).ready(function() {
 	swapViewer = $3Dmol.createViewer("3DMolViewerDiv");
 	
-	$.ajax({url: "http://www.broadinstitute.org/~dlahr/3dmol/4poc_A73-I78.pdb", success: function(_4PocPdb) {
+	$.ajax({url: "http://www.broadinstitute.org/~dlahr/3dmol/4poc_A73-I78_mixed_case.pdb", success: function(_4PocPdb) {
 		pdbData = _4PocPdb;
 
 		swapViewer.setBackgroundColor(0xffffff);
