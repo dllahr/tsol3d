@@ -22,7 +22,7 @@ function swapView(viewName) {
 
 	if ("ribbon" == viewName) {
 		swapViewer.addModel(pdbData, "pdb");
-		swapViewer.setStyle({}, {cartoon:{}});
+		swapViewer.setStyle({}, {cartoon:{style:"oval", outline:true}});
 	} else if ("ribbon and stick" == viewName) {
 		swapViewer.addModel(pdbData, "pdb");
 		swapViewer.setStyle({}, {cartoon:{}, stick:{}});
