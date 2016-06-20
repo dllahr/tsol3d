@@ -1,0 +1,53 @@
+<html>
+<head>
+<script src="http://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
+<script src="script_protein.js"></script>
+</head>
+<body>
+<div class="form-group form-inline">
+<input type="submit" value="change opacity" onclick="swapView()"/>
+Style test:
+opacity:  <input type="text" id="opacityInputText" value="0.8"/><br/>
+</div>
+
+<div id="3DMolViewerDiv" style="height: 600px; width: 600px; position: relative; border:solid 1px #999;"></div>
+
+<script>
+var swapViewer = null;
+var pdbData = null;
+
+
+function swapView() {
+	swapViewer.removeAllModels();
+	swapViewer.removeAllShapes();
+	swapViewer.removeAllLabels();
+	swapViewer.removeAllSurfaces();
+	swapViewer.addModel(pdbData, "pdb");
+//	swapViewer.addResLabels({}, {font:"Helvetica", fontSize:18, fontColor:"black", showBackground:false});
+
+	var inputOpacity = Number($("#opacityInputText").val());
+	console.log(inputOpacity);
+//	var curCartoonStyle = {"opacity":inputOpacity};
+//	console.log(curCartoonStyle);
+	swapViewer.setStyle({}, {cartoon:{style:"oval", opacity:inputOpacity, outline:true}, stick:{}});
+//	swapViewer.setStyle({}, {stick:{}, cartoon:{opacity:inputOpacity}});
+
+	swapViewer.render();
+};
+
+$(document).ready(function() {
+	swapViewer = $3Dmol.createViewer("3DMolViewerDiv");
+	
+	$.ajax({url: "4poc_A73-I78_mixed_case.pdb", success: function(_4PocPdb) {
+		pdbData = _4PocPdb;
+
+		swapViewer.setBackgroundColor(0xffffff);
+		swapView();
+		swapViewer.zoomTo();
+                swapViewer.zoom(0.95);
+		swapViewer.render();
+	}});
+});
+</script>
+</body>
+</html>
