@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <script src="http://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
+  </head>
+
+  <body>
+<div id="test36" style="width: 400px; height: 400px; position: relative;"></div>
+        <script>
+          (function() {
+            var viewer = $3Dmol.createViewer($("#test36"));
+            viewer.setBackgroundColor(0xffffff); 
+            
+            $.ajax({url: "4poc_A73-I78_mixed_case.pdb", success: function(_4PocPdb) {
+              var m = viewer.addModel(_4PocPdb, "pdb");
+	      var atoms = m.selectedAtoms({});
+	      for (var i = 0; i < atoms.length; i++) {
+	        var atom = atoms[i];
+		atom["dx"] = Math.random() - 0.5;
+		atom["dy"] = Math.random() - 0.5;
+		atom["dz"] = Math.random() - 0.5;
+	      }
+              m.setStyle({},{stick:{}});
+              m.vibrate(10, 0.5);
+              viewer.animate({loop: "backAndForth"});
+              viewer.zoomTo();
+              viewer.render();
+	      console.log(atoms);
+	    }});
+          })();
+        </script>
+  </body>
+</html>

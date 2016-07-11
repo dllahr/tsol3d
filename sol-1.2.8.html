@@ -1,0 +1,78 @@
+<html>
+<head>
+<script src="http://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
+<script src="http://www.broadinstitute.org/~dlahr/tsol_3dmol/script_protein.js"></script>
+</head>
+<body>
+<h2>1.2.8 protein flexibility TIM (PDB 4POC) dimer</h2>
+<input type="submit" value="random" onclick="swapView(this.value)"/>
+<input type="submit" value="still" onclick="swapView(this.value)"/>
+
+
+<div id="3DMolViewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
+
+</body>
+<script>
+var swapViewer = null;
+var pdbData = null;
+
+function swapView(viewName) {
+	console.log("swapView viewName:  " + viewName);
+
+//	swapViewer.removeAllModels();
+//	swapViewer.removeAllShapes();
+//	swapViewer.removeAllLabels();
+//	swapViewer.removeAllSurfaces();
+
+//	console.log("atoms.length:  " + atoms.length);
+
+	var model = swapViewer.getModel();
+	var atoms = model.selectedAtoms({});
+
+	if ("random" == viewName) {
+/*		swapViewer.mapAtomProperties(function(atom) {
+			atom["dx"] = Math.random();
+			atom["dy"] = Math.random();
+			atom["dz"] = Math.random();
+		});*/
+
+/*		for (var i = 0; i < 10; /*atoms.length;*//* i++) {
+			var atom = atoms[i];
+			atom["dx"] = Math.random();
+			atom["dy"] = Math.random();
+			atom["dz"] = Math.random();
+			console.log(atom);
+
+		}*/
+//		console.log(atoms[0]);
+		model.vibrate(10, 0.5);
+		swapViewer.animate({loop: "backAndForth"});
+//		console.log("swapViewer:");
+//		console.log(swapViewer);
+//		console.log("swapViewer.models.length:  " + swapViewer.models.length)
+	}
+	else if ("still" == viewName) {
+		console.log("atoms[0]['dx']:  " + atoms[0]["dx"]);
+		swapViewer.stopAnimate();
+	}
+
+	swapViewer.zoomTo();
+	swapViewer.render();
+};
+
+$(document).ready(function() {
+	swapViewer = $3Dmol.createViewer("3DMolViewerDiv");
+	
+	$.ajax({url: "http://www.broadinstitute.org/~dlahr/tsol_3dmol/4poc.pdb", success: function(_4PocPdb) {
+		pdbData = _4PocPdb;
+
+		swapViewer.setBackgroundColor(0xffffff);
+		swapViewer.addModel(pdbData, "pdb", {keepH:true});
+		swapViewer.setStyle({}, {stick:$tsol3d.defaultStickStyle});
+		swapView("random");
+		swapViewer.zoomTo();
+		swapViewer.render();
+	}});
+})
+</script>
+</html>
