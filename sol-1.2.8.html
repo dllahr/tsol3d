@@ -36,14 +36,14 @@ function swapView(viewName) {
 			atom["dz"] = Math.random();
 		});*/
 
-/*		for (var i = 0; i < 10; /*atoms.length;*//* i++) {
+		for (var i = 0; i < atoms.length; i++) {
 			var atom = atoms[i];
-			atom["dx"] = Math.random();
-			atom["dy"] = Math.random();
-			atom["dz"] = Math.random();
-			console.log(atom);
+			atom["dx"] = 2*Math.random() - 1.0;
+			atom["dy"] = 2*Math.random() - 1.0;
+			atom["dz"] = 2*Math.random() - 1.0;
+//			console.log(atom);
 
-		}*/
+		}
 //		console.log(atoms[0]);
 		model.vibrate(10, 0.5);
 		swapViewer.animate({loop: "backAndForth"});
