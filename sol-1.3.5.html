@@ -1,0 +1,68 @@
+<html>
+<head>
+<script src="https://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
+<script src="script_protein.js"></script>
+</head>
+<body>
+<h2>1.3.5 An enzyme-catalyzed reaction: DHAP to G3P</h2>
+<input type="submit" value="surface" onclick="swapView(this.value)"/>
+<input type="submit" value="surface and ligand" onclick="swapView(this.value)"/>
+<input type="submit" value="surface and ligand as spheres" onclick="swapView(this.value)"/>
+<br/>
+
+surface parameters<br/>
+opacity:  <input type="text" id="surfaceOpacityInput" value="0.6"/>  
+color:  <input type="text" id="surfaceColorInput" value="#3090C7"/>  
+<input type="submit" value="redraw surface" onclick="redrawSurface()"/><br/>
+
+<div id="3DMolViewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
+
+</body>
+<script>
+var swapViewer = null;
+var pdbData = null;
+
+var residueIndexes = [68,111,49,53,187,140,213,216,38,205];
+
+function swapView(viewName) {
+	console.log("swapView viewName:  " + viewName);
+
+	swapViewer.removeAllShapes();
+
+	if ("surface" == viewName) {
+		swapViewer.setStyle({}, {stick:{hidden:true}});
+	} else if ("surface and ligand" == viewName) {
+		swapViewer.setStyle({}, {stick:{hidden:true}});
+		swapViewer.setStyle({resn:"13P"}, {stick:$tsol3d.defaultStickStyle});
+	} else if ("surface and ligand as spheres" == viewName) {
+		swapViewer.setStyle({}, {stick:{hidden:true}});
+		swapViewer.setStyle({resn:"13P"}, {sphere:{colorscheme:$tsol3d.defaultElementColors}});
+	}
+
+	swapViewer.render();
+};
+
+function redrawSurface() {
+	swapViewer.removeAllSurfaces();
+	var curOpacity = $("#surfaceOpacityInput").val();
+	var curColor = $("#surfaceColorInput").val();
+        swapViewer.addSurface("VDW", {opacity:curOpacity, color:curColor});
+	
+};
+
+$(document).ready(function() {
+	swapViewer = $3Dmol.createViewer("3DMolViewerDiv");
+	
+	$.ajax({url: "https://www.broadinstitute.org/~dlahr/tsol_3dmol/1ney_cleanedHETATM_justChainB.pdb", success: function(_4PocPdb) {
+		pdbData = _4PocPdb;
+
+		swapViewer.addModel(pdbData, "pdb", {keepH:true});
+		swapViewer.setBackgroundColor(0xffffff);
+		redrawSurface();
+		swapView("surface");
+		swapViewer.zoomTo();
+		swapViewer.render();
+	}});
+})
+</script>
+</html>
