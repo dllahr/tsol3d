@@ -22,8 +22,6 @@ color:  <input type="text" id="surfaceColorInput" value="0x3090C7"/>
 var swapViewer = null;
 var pdbData = null;
 
-var residueIndexes = [68,111,49,53,187,140,213,216,38,205];
-
 function swapView(viewName) {
 	console.log("swapView viewName:  " + viewName);
 
@@ -32,10 +30,8 @@ function swapView(viewName) {
 	if ("surface" == viewName) {
 		swapViewer.setStyle({}, {stick:{hidden:true}});
 	} else if ("surface and ligand" == viewName) {
-		swapViewer.setStyle({}, {stick:{hidden:true}});
 		swapViewer.setStyle({resn:"13P"}, {stick:$tsol3d.defaultStickStyle});
 	} else if ("surface and ligand as spheres" == viewName) {
-		swapViewer.setStyle({}, {stick:{hidden:true}});
 		swapViewer.setStyle({resn:"13P"}, {sphere:{colorscheme:$tsol3d.defaultElementColors}});
 	}
 
@@ -59,6 +55,7 @@ $(document).ready(function() {
 		swapViewer.addModel(pdbData, "pdb", {keepH:true});
 		swapViewer.setBackgroundColor(0xffffff);
 		redrawSurface();
+		swapViewer.setStyle({}, {stick:{hidden:true}});
 		swapView("surface");
 		swapViewer.zoomTo();
 		swapViewer.render();
