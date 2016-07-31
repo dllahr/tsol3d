@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="http://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
+<script src="https://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
 </head>
 <body>
 <h2>Tertiary structure TIM (PDB 4POC) monomer</h2>
@@ -73,7 +73,7 @@ function swapView(viewName) {
 $(document).ready(function() {
 	swapViewer = $3Dmol.createViewer("3DMolViewerDiv");
 	
-	$.ajax({url: "http://www.broadinstitute.org/~dlahr/3dmol/4poc chain A monomer.pdb", success: function(_4PocPdb) {
+	$.ajax({url: "https://www.broadinstitute.org/~dlahr/tsol_3dmol/4poc chain A monomer.pdb", success: function(_4PocPdb) {
 		pdbData = _4PocPdb;
 
 		swapViewer.setBackgroundColor(0xffffff);
