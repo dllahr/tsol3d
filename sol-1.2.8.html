@@ -1,7 +1,7 @@
 <html>
 <head>
 <script src="https://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
-<script src="https://www.broadinstitute.org/~dlahr/tsol_3dmol/script_protein.js"></script>
+<script src="script_protein.js"></script>
 </head>
 <body>
 <h2>1.2.8 protein flexibility TIM (PDB 4POC) dimer</h2>
@@ -63,7 +63,7 @@ function swapView(viewName) {
 $(document).ready(function() {
 	swapViewer = $3Dmol.createViewer("3DMolViewerDiv");
 	
-	$.ajax({url: "https://www.broadinstitute.org/~dlahr/tsol_3dmol/4poc.pdb", success: function(_4PocPdb) {
+	$.ajax({url: "4poc.pdb", success: function(_4PocPdb) {
 		pdbData = _4PocPdb;
 
 		swapViewer.setBackgroundColor(0xffffff);

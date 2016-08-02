@@ -110,7 +110,7 @@ function styleTest(styleTestName) {
 };
 
 function getImage() {
-    var canvas = $("canvas").get(1);
+    var canvas = $("canvas").get(0);
     var img = canvas.toDataURL("image/png");
     $("#staticImageSnapshotDiv").html("<img src='" + img + "' style='width: 600px;height: 600px;'/>");
 };

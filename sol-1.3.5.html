@@ -49,7 +49,7 @@ function redrawSurface() {
 $(document).ready(function() {
 	swapViewer = $3Dmol.createViewer("3DMolViewerDiv");
 	
-	$.ajax({url: "https://www.broadinstitute.org/~dlahr/tsol_3dmol/1ney_cleanedHETATM_justChainB.pdb", success: function(_4PocPdb) {
+	$.ajax({url: "1ney_cleanedHETATM_justChainB.pdb", success: function(_4PocPdb) {
 		pdbData = _4PocPdb;
 
 		swapViewer.addModel(pdbData, "pdb", {keepH:true});
