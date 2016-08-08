@@ -1,0 +1,17 @@
+<html>
+<head>
+<script src="https://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
+<script src="log4javascript.js"></script>
+<script src="script_protein.js"></script>
+</head>
+<body>
+<div id="viewerButtonsDiv"></div>
+<div id="viewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
+<div id="viewerAdminDiv"></div>
+<script>
+	$(document).ready(function() {
+		$tsol3d.TIM_6mer_fragment_A73_I78.build("viewerDiv", "viewerButtonsDiv", "viewerAdminDiv", "4poc_A73-I78_mixed_case.pdb");
+	});
+</script>
+</body>
+</html>
