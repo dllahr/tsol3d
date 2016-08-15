@@ -487,3 +487,113 @@ $tsol3d.TIM_loop_Q64_I78.build = function(viewerDivId, buttonsDivId, adminDivId,
 	}});
 };
 
+/**********************************************
+ * TIM_tertiary_structure_monomer
+ *********************************************/
+$tsol3d.TIM_tertiary_structure_monomer = (function(window) {
+	var my = window['$tsol3d.TIM_tertiary_structure_monomer'] || {};
+	return my;
+})(window);
+
+
+$tsol3d.TIM_tertiary_structure_monomer.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
+	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
+	var swapViewer = initialSetup.swapViewer;
+	var usingAdmin = initialSetup.usingAdmin;
+
+	if (usingAdmin) {
+		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
+	}
+
+	var buttonValues = ['ribbon', 'ribbon and surface', 'ribbon and interacting amino acids', 'ribbon and interacting amino acids as spheres', 
+		'ribbon with amino acids colored by hydrophobicity', 'stick with amino acids colored by hydrophobicity'];
+	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
+
+	if (typeof pdbUrl == 'undefined' || pdbUrl == null) {
+		pdbUrl = 'https://www.secretoflife.org/sites/default/files/pdb/4poc chain A monomer mixed case.pdb';
+	}
+
+	$.ajax({url: pdbUrl, success: function(pdbData) {
+		logger.trace('$tsol3d.TIM_tertiary_structure_monomer.build retrieved pdbData:  ' + pdbData.substring(0,100));
+
+		swapViewer.addModel(pdbData, "pdb", {keepH:true});
+		
+		var terminalAtoms = swapViewer.getModel().selectedAtoms({serial:[1,3716]});
+                var terminalAtomsMap = {};
+		terminalAtomsMap["N"] = terminalAtoms[0];
+		terminalAtomsMap["O"] = terminalAtoms[1];
+
+		for (var i = 0; i < buttons.length; i++) {
+			var bv = buttonValues[i];
+			var b = buttons[i];
+
+			var eventData = {'swapViewer':swapViewer, viewName:bv, 'terminalAtomMap':terminalAtomsMap};
+			b.click(eventData, $tsol3d.TIM_tertiary_structure_monomer.swapView);
+		}
+		
+		swapViewer.setBackgroundColor(0xffffff);
+		$tsol3d.TIM_tertiary_structure_monomer.swapView({'data':{'swapViewer':swapViewer, viewName:'ribbon', 'terminalAtomsMap':terminalAtomsMap}});
+		swapViewer.zoomTo();
+		swapViewer.render();
+	}});
+};
+
+$tsol3d.TIM_tertiary_structure_monomer.residueIndexes = [68,111,49,53,187,140,213,216,38,205];
+
+$tsol3d.TIM_tertiary_structure_monomer.hBondAtomPairs = [[1020,1642],[706,781],[2822,2067],[3214,3240],[547,3103],[547,3101]];
+
+$tsol3d.TIM_tertiary_structure_monomer.swapView = function(event) {
+	var viewName = event.data.viewName;
+	logger.debug("$tsol3d.TIM_tertiary_structure_monomer.swapView viewName:  " + viewName);
+
+	var swapViewer = event.data.swapViewer;
+	var pdbData = event.data.pdbData;
+	var terminalAtomsMap = event.data.terminalAtomsMap;
+
+	swapViewer.removeAllShapes();
+	swapViewer.removeAllLabels();
+	swapViewer.removeAllSurfaces();
+
+	if ("ribbon" == viewName) {
+		var curCartoonStyle = {color:"spectrum"};
+		$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
+		swapViewer.setStyle({}, {cartoon:curCartoonStyle});
+
+                for (terminalAtomLabel in terminalAtomsMap) {
+                        var terminalAtom = terminalAtomsMap[terminalAtomLabel];
+
+                        swapViewer.addLabel(terminalAtomLabel, {font:"Helvetica", fontSize: 18, fontColor:"black", position:{x:terminalAtom.x, y:terminalAtom.y, z:terminalAtom.z}, 
+                                showBackground:false});
+                }
+	} else if ("ribbon and surface" == viewName) {
+		var curCartoonStyle = {color:"spectrum"};
+		$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
+		swapViewer.setStyle({}, {cartoon:curCartoonStyle});
+
+        	swapViewer.addSurface("VDW", {opacity:0.8,color:"white"});
+	} else if ("ribbon and interacting amino acids" == viewName) {
+		var curCartoonStyle = {};
+		$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
+		swapViewer.setStyle({}, {cartoon:curCartoonStyle});
+
+                swapViewer.setStyle({resi:$tsol3d.TIM_tertiary_structure_monomer.residueIndexes}, {stick:$tsol3d.defaultStickStyle, cartoon:curCartoonStyle});
+		swapViewer.addResLabels({resi:$tsol3d.TIM_tertiary_structure_monomer.residueIndexes}, {font:"Helvetica", fontSize:18, fontColor:"black", showBackground:false});
+
+		$tsol3d.addHBonds(swapViewer, $tsol3d.TIM_tertiary_structure_monomer.hBondAtomPairs);
+	} else if ("ribbon and interacting amino acids as spheres" == viewName) {
+		var curCartoonStyle = {};
+		$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
+		swapViewer.setStyle({}, {cartoon:curCartoonStyle});
+
+                swapViewer.setStyle({resi:$tsol3d.TIM_tertiary_structure_monomer.residueIndexes}, {sphere:{colorscheme:$tsol3d.defaultElementColors}, cartoon:curCartoonStyle});
+		swapViewer.addResLabels({resi:$tsol3d.TIM_tertiary_structure_monomer.residueIndexes}, {font:"Helvetica", fontSize:18, fontColor:"black", showBackground:false});
+	} else if ("ribbon with amino acids colored by hydrophobicity" == viewName) {
+//		setHydrophobicityColors();
+		$tsol3d.applyHydrophobicColors(swapViewer, 'cartoon', $tsol3d.defaultCartoonStyle);
+	} else if ("stick with amino acids colored by hydrophobicity" == viewName) {
+//		setHydrophobicityColors();
+		$tsol3d.applyHydrophobicColors(swapViewer, 'stick', {singleBonds:true});
+	}
+	swapViewer.render();
+};
+

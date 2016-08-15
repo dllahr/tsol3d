@@ -1,0 +1,18 @@
+<html>
+<head>
+<script src="https://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
+<script src="log4javascript.js"></script>
+<script src="script_protein.js"></script>
+</head>
+<body>
+<h2>TIM_tertiary_structure_monomer</h2>
+<div id="viewerButtonsDiv"></div>
+<div id="viewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
+<div id="viewerAdminDiv"></div>
+<script>
+	$(document).ready(function() {
+		$tsol3d.TIM_tertiary_structure_monomer.build("viewerDiv", "viewerButtonsDiv", "viewerAdminDiv", "4poc chain A monomer mixed case.pdb");
+	});
+</script>
+</body>
+</html>
