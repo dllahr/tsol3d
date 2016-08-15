@@ -316,6 +316,44 @@ $tsol3d.TIM_6mer_fragment_A73_I78.addStyleControls = function(adminDivId, swapVi
 	adminDiv.append('<br/>');
 };
 
+/*********************************************
+ * reused fragment swapview
+ ********************************************/
+$tsol3d.fragmentSwapView = function(event) {
+	var viewName = event.data.viewName;
+	logger.debug("$tsol3d.fragmentSwapView viewName:  " + viewName);
+
+	var swapViewer = event.data.swapViewer;
+	var pdbData = event.data.pdbData;
+	var hbondAtomPairs = event.data.hbondAtomPairs;
+
+	swapViewer.removeAllModels();
+	swapViewer.removeAllShapes();
+
+	if ('ribbon' == viewName) {
+		swapViewer.addModel(pdbData, 'pdb');
+		swapViewer.setStyle({}, {cartoon:$tsol3d.defaultCartoonStyle});
+	} else if ('stick and ribbon' == viewName) {
+		swapViewer.addModel(pdbData, 'pdb');
+		var curCartoonStyle = {opacity:$tsol3d.defaultCartoonOpacity};
+		$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
+		swapViewer.setStyle({}, {cartoon:curCartoonStyle, stick:$tsol3d.defaultStickStyle});
+	} else if ('stick' == viewName) {
+		swapViewer.addModel(pdbData, 'pdb');
+		swapViewer.setStyle({}, {stick:$tsol3d.defaultStickStyle});
+	} else if ('backbone H-bonding' == viewName) {
+		swapViewer.addModel(pdbData, 'pdb', {keepH:true});
+		swapViewer.setStyle({atom:['CA','C','N','H','O']}, {stick:$tsol3d.defaultStickStyle});
+		swapViewer.setStyle({atom:['CA','C','N','H','O'], invert:true}, {stick:{hidden:true}});
+		$tsol3d.addHBonds(swapViewer, hbondAtomPairs);
+	} else if ('ribbon H-bonding' == viewName) {
+		swapViewer.addModel(pdbData, 'pdb', {keepH:true});
+		swapViewer.setStyle({}, {cartoon:$tsol3d.defaultCartoonStyle});
+		$tsol3d.addHBonds(swapViewer, hbondAtomPairs);
+	}
+
+	swapViewer.render();
+};
 
 /**********************************************
  * TIM_fragment_alpha_helix_Q19_N29
@@ -325,12 +363,53 @@ $tsol3d.TIM_fragment_alpha_helix_Q19_N29 = (function(window) {
 	return my;
 })(window);
 
-$tsol3d.TIM_fragment_alpha_helix_Q19_N29.hbondAtomPairs = [[291, 348], [274, 334], [302, 367], [321, 382], [328, 392], [343, 407], [362, 426]];
+$tsol3d.TIM_fragment_alpha_helix_Q19_N29.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
+	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
+	var swapViewer = initialSetup.swapViewer;
+	var usingAdmin = initialSetup.usingAdmin;
 
+	if (usingAdmin) {
+		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
+	}
 
-$tsol3d.TIM_fragment_alpha_helix_Q19_N29.swapView = function(event) {
+	var buttonValues = ['stick', 'ribbon', 'stick and ribbon', 'backbone H-bonding', 'ribbon H-bonding'];
+	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
+
+	if (typeof pdbUrl == 'undefined' || pdbUrl == null) {
+		pdbUrl = 'https://www.secretoflife.org/sites/default/files/pdb/4poc Q19-N29 alpha-helix.pdb';
+	}
+
+	var hbondAtomPairs = [[291, 348], [274, 334], [302, 367], [321, 382], [328, 392], [343, 407], [362, 426]];
+
+	$.ajax({url: pdbUrl, success: function(pdbData) {
+		logger.trace('$tsol3d.TIM_fragment_alpha_helix_Q19_N29.build retrieved pdbData:  ' + pdbData.substring(0,100));
+
+		for (var i = 0; i < buttons.length; i++) {
+			var bv = buttonValues[i];
+			var b = buttons[i];
+
+			var eventData = {'swapViewer':swapViewer, viewName:bv, "pdbData":pdbData, "hbondAtomPairs":hbondAtomPairs};
+			b.click(eventData, $tsol3d.fragmentSwapView);
+		}
+
+		swapViewer.setBackgroundColor(0xffffff);
+		$tsol3d.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'stick', 'pdbData':pdbData, "hbondAtomPairs":hbondAtomPairs}});
+		swapViewer.setView([-25.5488,8.0181,-3.7173,79.6871,0.3267,0.6791,-0.3059,-0.5817]);
+		swapViewer.render();
+	}});
+};
+
+/**********************************************
+ * TIM_fragment_parallel_beta_sheet_F6_A42
+ *********************************************/
+$tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42 = (function(window) {
+	var my = window['$tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42'] || {};
+	return my;
+})(window);
+
+$tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.swapView = function(event) {
 	var viewName = event.data.viewName;
-	logger.debug("$tsol3d.TIM_fragment_alpha_helix_Q19_N29.swapView viewName:  " + viewName);
+	logger.debug("$tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.swapView viewName:  " + viewName);
 
 	var swapViewer = event.data.swapViewer;
 	var pdbData = event.data.pdbData;
@@ -353,17 +432,17 @@ $tsol3d.TIM_fragment_alpha_helix_Q19_N29.swapView = function(event) {
 		swapViewer.addModel(pdbData, 'pdb', {keepH:true});
 		swapViewer.setStyle({atom:['CA','C','N','H','O']}, {stick:$tsol3d.defaultStickStyle});
 		swapViewer.setStyle({atom:['CA','C','N','H','O'], invert:true}, {stick:{hidden:true}});
-		$tsol3d.addHBonds(swapViewer, $tsol3d.TIM_fragment_alpha_helix_Q19_N29.hbondAtomPairs);
+		$tsol3d.addHBonds(swapViewer, $tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.hbondAtomPairs);
 	} else if ('ribbon H-bonding' == viewName) {
 		swapViewer.addModel(pdbData, 'pdb', {keepH:true});
 		swapViewer.setStyle({}, {cartoon:$tsol3d.defaultCartoonStyle});
-		$tsol3d.addHBonds(swapViewer, $tsol3d.TIM_fragment_alpha_helix_Q19_N29.hbondAtomPairs);
+		$tsol3d.addHBonds(swapViewer, $tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.hbondAtomPairs);
 	}
 
 	swapViewer.render();
 };
 
-$tsol3d.TIM_fragment_alpha_helix_Q19_N29.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
+$tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
 	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
 	var swapViewer = initialSetup.swapViewer;
 	var usingAdmin = initialSetup.usingAdmin;
@@ -372,27 +451,31 @@ $tsol3d.TIM_fragment_alpha_helix_Q19_N29.build = function(viewerDivId, buttonsDi
 		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
 	}
 
-	var buttonValues = ['stick', 'ribbon', 'stick and ribbon', 'backbone H-bonding', 'ribbon H-bonding'];
+	var buttonValues = ['stick', 'stick and ribbon', 'ribbon', 'backbone H-bonding', 'ribbon H-bonding'];
 	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
 
 	if (typeof pdbUrl == 'undefined' || pdbUrl == null) {
-		pdbUrl = "https://www.secretoflife.org/sites/default/files/pdb/4poc Q19-N29 alpha-helix.pdb";
+		pdbUrl = 'https://www.secretoflife.org/sites/default/files/pdb/4poc F6-A42 parallel beta-sheet.pdb';
 	}
 
+	var hbondAtomPairs = [[60,549],[543,104],[100,578],[574,124],[123,603],[601,155]];
+
 	$.ajax({url: pdbUrl, success: function(pdbData) {
-		logger.trace('$tsol3d.TIM_fragment_alpha_helix_Q19_N29.build retrieved pdbData:  ' + pdbData.substring(0,100));
+		logger.trace('$tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.build retrieved pdbData:  ' + pdbData.substring(0,100));
 
 		for (var i = 0; i < buttons.length; i++) {
 			var bv = buttonValues[i];
 			var b = buttons[i];
 
-			var eventData = {'swapViewer':swapViewer, viewName:bv, "pdbData":pdbData};
-			b.click(eventData, $tsol3d.TIM_fragment_alpha_helix_Q19_N29.swapView);
+			var eventData = {'swapViewer':swapViewer, viewName:bv, "pdbData":pdbData, "hbondAtomPairs":hbondAtomPairs};
+			b.click(eventData, $tsol3d.fragmentSwapView);
 		}
 
 		swapViewer.setBackgroundColor(0xffffff);
-		$tsol3d.TIM_fragment_alpha_helix_Q19_N29.swapView({'data':{'swapViewer':swapViewer, viewName:'stick', 'pdbData':pdbData}});
-		swapViewer.setView([-25.5488,8.0181,-3.7173,79.6871,0.3267,0.6791,-0.3059,-0.5817]);
+		$tsol3d.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'stick', 'pdbData':pdbData, "hbondAtomPairs":hbondAtomPairs}});
+		swapViewer.zoomTo();
+		swapViewer.rotate(45, "x");
+		swapViewer.rotate(30, "y");
 		swapViewer.render();
 	}});
 };
