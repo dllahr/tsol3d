@@ -86,8 +86,33 @@ $tsol3d.buildUtils.buttonHtml = function(value) {
 	return '<input type="submit" value="' + value + '" class="btn btn-xs btn-default" />'
 };
 
+$tsol3d.buildUtils.initialSetup = function(viewerDivId, adminDivId) {
+	var swapViewer = $3Dmol.createViewer(viewerDivId);
+	
+	var usingAdmin = (typeof adminDivId != 'undefined') && (adminDivId != null);
+
+	return {"swapViewer":swapViewer, "usingAdmin":usingAdmin};
+};
+
+$tsol3d.buildUtils.basicButtonSetup = function(buttonValues, buttonsDivId) {
+	var buttons = [];
+
+	var buttonsDiv = $('#' + buttonsDivId);
+	for (var i = 0; i < buttonValues.length; i++) {
+		var bv = buttonValues[i];
+
+		var buttonHtml = $tsol3d.buildUtils.buttonHtml(bv);
+		buttonsDiv.append(buttonHtml);
+		
+		var b = buttonsDiv.children('input[value="' + bv + '"]');
+		buttons.push(b);
+	}
+
+	return buttons;
+};
+
 /***********************************************************
- * admin functions and setup common things
+ * admin functions and setup common admin things
  **********************************************************/
 
 $tsol3d.getImage = function(event) {
@@ -225,9 +250,9 @@ $tsol3d.TIM_6mer_fragment_A73_I78.adjustStyle = function(event) {
 
 
 $tsol3d.TIM_6mer_fragment_A73_I78.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
-	var swapViewer = $3Dmol.createViewer(viewerDivId);
-	
-	var usingAdmin = (typeof adminDivId != 'undefined') && (adminDivId != null);
+	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
+	var swapViewer = initialSetup.swapViewer;
+	var usingAdmin = initialSetup.usingAdmin;
 
 	var opacityFun = null;
 	if (usingAdmin) {
@@ -243,21 +268,17 @@ $tsol3d.TIM_6mer_fragment_A73_I78.build = function(viewerDivId, buttonsDivId, ad
 		opacityFun = function() {return $tsol3d.TIM_6mer_fragment_A73_I78.defaultRibbonOpacity;};
 	}
 
-	var buttonsDiv = $('#' + buttonsDivId);
 	var buttonValues = ['stick', 'stick and ribbon', 'ribbon', 'spheres', 'surface'];
-	for (var i = 0; i < buttonValues.length; i++) {
+	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
+	for (var i = 0; i < buttons.length; i++) {
 		var bv = buttonValues[i];
-
-		var buttonHtml = $tsol3d.buildUtils.buttonHtml(bv);
-		buttonsDiv.append(buttonHtml);
-		
-		var b = buttonsDiv.children('input[value="' + bv + '"]');
+		var b = buttons[i];
 
 		var eventData = {'swapViewer':swapViewer, viewName:bv, opacity:opacityFun};
 		b.click(eventData, $tsol3d.TIM_6mer_fragment_A73_I78.swapView);
 	}
 
-	if (typeof pdbUrl == 'underfined' || pdbUrl == null) {
+	if (typeof pdbUrl == 'undefined' || pdbUrl == null) {
 		pdbUrl = 'https://www.secretoflife.org/sites/default/files/pdb/4poc_A73-I78.pdb';
 	}
 
@@ -293,5 +314,86 @@ $tsol3d.TIM_6mer_fragment_A73_I78.addStyleControls = function(adminDivId, swapVi
 		$tsol3d.TIM_6mer_fragment_A73_I78.defaultRibbonOpacity + '"/>';
 	adminDiv.append(opacityHtml);
 	adminDiv.append('<br/>');
+};
+
+
+/**********************************************
+ * TIM_fragment_alpha_helix_Q19_N29
+ *********************************************/
+$tsol3d.TIM_fragment_alpha_helix_Q19_N29 = (function(window) {
+	var my = window['$tsol3d.TIM_fragment_alpha_helix_Q19_N29'] || {};
+	return my;
+})(window);
+
+$tsol3d.TIM_fragment_alpha_helix_Q19_N29.hbondAtomPairs = [[291, 348], [274, 334], [302, 367], [321, 382], [328, 392], [343, 407], [362, 426]];
+
+
+$tsol3d.TIM_fragment_alpha_helix_Q19_N29.swapView = function(event) {
+	var viewName = event.data.viewName;
+	logger.debug("$tsol3d.TIM_fragment_alpha_helix_Q19_N29.swapView viewName:  " + viewName);
+
+	var swapViewer = event.data.swapViewer;
+	var pdbData = event.data.pdbData;
+
+	swapViewer.removeAllModels();
+	swapViewer.removeAllShapes();
+
+	if ('ribbon' == viewName) {
+		swapViewer.addModel(pdbData, 'pdb');
+		swapViewer.setStyle({}, {cartoon:$tsol3d.defaultCartoonStyle});
+	} else if ('stick and ribbon' == viewName) {
+		swapViewer.addModel(pdbData, 'pdb');
+		var curCartoonStyle = {opacity:$tsol3d.defaultCartoonOpacity};
+		$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
+		swapViewer.setStyle({}, {cartoon:curCartoonStyle, stick:$tsol3d.defaultStickStyle});
+	} else if ('stick' == viewName) {
+		swapViewer.addModel(pdbData, 'pdb');
+		swapViewer.setStyle({}, {stick:$tsol3d.defaultStickStyle});
+	} else if ('backbone H-bonding' == viewName) {
+		swapViewer.addModel(pdbData, 'pdb', {keepH:true});
+		swapViewer.setStyle({atom:['CA','C','N','H','O']}, {stick:$tsol3d.defaultStickStyle});
+		swapViewer.setStyle({atom:['CA','C','N','H','O'], invert:true}, {stick:{hidden:true}});
+		$tsol3d.addHBonds(swapViewer, $tsol3d.TIM_fragment_alpha_helix_Q19_N29.hbondAtomPairs);
+	} else if ('ribbon H-bonding' == viewName) {
+		swapViewer.addModel(pdbData, 'pdb', {keepH:true});
+		swapViewer.setStyle({}, {cartoon:$tsol3d.defaultCartoonStyle});
+		$tsol3d.addHBonds(swapViewer, $tsol3d.TIM_fragment_alpha_helix_Q19_N29.hbondAtomPairs);
+	}
+
+	swapViewer.render();
+};
+
+$tsol3d.TIM_fragment_alpha_helix_Q19_N29.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
+	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
+	var swapViewer = initialSetup.swapViewer;
+	var usingAdmin = initialSetup.usingAdmin;
+
+	if (usingAdmin) {
+		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
+	}
+
+	var buttonValues = ['stick', 'ribbon', 'stick and ribbon', 'backbone H-bonding', 'ribbon H-bonding'];
+	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
+
+	if (typeof pdbUrl == 'undefined' || pdbUrl == null) {
+		pdbUrl = "https://www.secretoflife.org/sites/default/files/pdb/4poc Q19-N29 alpha-helix.pdb";
+	}
+
+	$.ajax({url: pdbUrl, success: function(pdbData) {
+		logger.trace('$tsol3d.TIM_fragment_alpha_helix_Q19_N29.build retrieved pdbData:  ' + pdbData.substring(0,100));
+
+		for (var i = 0; i < buttons.length; i++) {
+			var bv = buttonValues[i];
+			var b = buttons[i];
+
+			var eventData = {'swapViewer':swapViewer, viewName:bv, "pdbData":pdbData};
+			b.click(eventData, $tsol3d.TIM_fragment_alpha_helix_Q19_N29.swapView);
+		}
+
+		swapViewer.setBackgroundColor(0xffffff);
+		$tsol3d.TIM_fragment_alpha_helix_Q19_N29.swapView({'data':{'swapViewer':swapViewer, viewName:'stick', 'pdbData':pdbData}});
+		swapViewer.setView([-25.5488,8.0181,-3.7173,79.6871,0.3267,0.6791,-0.3059,-0.5817]);
+		swapViewer.render();
+	}});
 };
 
