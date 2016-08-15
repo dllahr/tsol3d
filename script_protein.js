@@ -445,3 +445,45 @@ $tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.build = function(viewerDivId, bu
 	}});
 };
 
+/**********************************************
+ * TIM_loop_Q64_I78
+ *********************************************/
+$tsol3d.TIM_loop_Q64_I78 = (function(window) {
+	var my = window['$tsol3d.TIM_loop_Q64_I78'] || {};
+	return my;
+})(window);
+
+$tsol3d.TIM_loop_Q64_I78.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
+	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
+	var swapViewer = initialSetup.swapViewer;
+	var usingAdmin = initialSetup.usingAdmin;
+
+	if (usingAdmin) {
+		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
+	}
+
+	var buttonValues = ['stick', 'stick and ribbon', 'ribbon'];
+	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
+
+	if (typeof pdbUrl == 'undefined' || pdbUrl == null) {
+		pdbUrl = 'https://www.secretoflife.org/sites/default/files/pdb/4poc Q64-I78 loop.pdb';
+	}
+
+	$.ajax({url: pdbUrl, success: function(pdbData) {
+		logger.trace('$tsol3d.TIM_loop_Q64_I78.build retrieved pdbData:  ' + pdbData.substring(0,100));
+
+		for (var i = 0; i < buttons.length; i++) {
+			var bv = buttonValues[i];
+			var b = buttons[i];
+
+			var eventData = {'swapViewer':swapViewer, viewName:bv, "pdbData":pdbData, "hbondAtomPairs":null};
+			b.click(eventData, $tsol3d.fragmentSwapView);
+		}
+
+		swapViewer.setBackgroundColor(0xffffff);
+		$tsol3d.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'stick', 'pdbData':pdbData, "hbondAtomPairs":null}});
+		swapViewer.zoomTo();
+		swapViewer.render();
+	}});
+};
+
