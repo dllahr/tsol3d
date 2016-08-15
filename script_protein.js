@@ -61,11 +61,15 @@ $tsol3d.residueHydrophobicity = {hydrophobic:['Ala','Phe','Ile','Leu','Met','Val
 	polar:['Asn','Gln','Ser','Thr','Gly'],
 	charged:['His','Lys','Arg','Asp','Glu','Pro']};
 
-$tsol3d.applyHydrophobicColors = function(swapViewer, styleType, baseStyle) {
+$tsol3d.applyHydrophobicityColors = function(swapViewer, styleType, baseStyle, hydrophobicityColors) {
+	if (typeof hydrophobicityColors == 'undefined' || hydrophobicityColors == null) {
+		hydrophobicColors = $tsol3d.hydrophobicityColors;
+	}
+
 	var curStyle = $.extend({}, baseStyle);
 
-	for (var hp in $tsol3d.hydrophobicityColors) {
-		curStyle['color'] = $tsol3d.hydrophobicityColors[hp];
+	for (var hp in hydrophobicityColors) {
+		curStyle['color'] = hydrophobicityColors[hp];
 		residues = $tsol3d.residueHydrophobicity[hp];
 
 		styleMap = {};
@@ -501,8 +505,22 @@ $tsol3d.TIM_tertiary_structure_monomer.build = function(viewerDivId, buttonsDivI
 	var swapViewer = initialSetup.swapViewer;
 	var usingAdmin = initialSetup.usingAdmin;
 
+	var hydrophobicityColorFun = null;
 	if (usingAdmin) {
+		var hydrophobicityInputs = $tsol3d.TIM_tertiary_structure_monomer.addStyleControls(adminDivId);
 		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
+
+		hydrophobicityColorFun = function() {
+			var r = {};
+			for (var t in hydrophobicityInputs) {
+				r[t] = hydrophobicityInputs[t].val();
+			}
+			return r;
+		};
+	} else {
+		hydrophobicityColorFun = function() {
+			return $tsol3d.hydrophobicityColors
+		};
 	}
 
 	var buttonValues = ['ribbon', 'ribbon and surface', 'ribbon and interacting amino acids', 'ribbon and interacting amino acids as spheres', 
@@ -527,15 +545,34 @@ $tsol3d.TIM_tertiary_structure_monomer.build = function(viewerDivId, buttonsDivI
 			var bv = buttonValues[i];
 			var b = buttons[i];
 
-			var eventData = {'swapViewer':swapViewer, viewName:bv, 'terminalAtomMap':terminalAtomsMap};
+			var eventData = {'swapViewer':swapViewer, viewName:bv, 'terminalAtomMap':terminalAtomsMap, 'hydrophobicityColorFun':hydrophobicityColorFun};
 			b.click(eventData, $tsol3d.TIM_tertiary_structure_monomer.swapView);
 		}
 		
 		swapViewer.setBackgroundColor(0xffffff);
-		$tsol3d.TIM_tertiary_structure_monomer.swapView({'data':{'swapViewer':swapViewer, viewName:'ribbon', 'terminalAtomsMap':terminalAtomsMap}});
+		$tsol3d.TIM_tertiary_structure_monomer.swapView({'data':{'swapViewer':swapViewer, viewName:'ribbon', 'terminalAtomsMap':terminalAtomsMap, 
+			'hydrophobicityColorFun':hydrophobicityColorFun}});
 		swapViewer.zoomTo();
 		swapViewer.render();
 	}});
+};
+
+$tsol3d.TIM_tertiary_structure_monomer.addStyleControls = function(adminDivId) {
+	var adminDiv = $('#' + adminDivId);
+
+	adminDiv.append('hydrophobicity colors:<br/>');
+	
+	var inputs = {};
+	adminDiv.append('hydrophobic:  <input id="hydrophobicColorInput" type="text" value="0x97d4db"/><br/>');
+	inputs['hydrophobic'] = adminDiv.children('#' + 'hydrophobicColorInput');
+
+	adminDiv.append('polar:  <input id="polarColorInput" type="text" value="0xbce3eb"/><br/>');
+	inputs['polar'] = adminDiv.children('#' + 'polarColorInput');
+
+	adminDiv.append('charged:  <input id="chargedColorInput" type="text" value="0xe1fbff"/><br/>');
+	inputs['charged'] = adminDiv.children('#' + 'chargedColorInput');
+
+	return inputs;
 };
 
 $tsol3d.TIM_tertiary_structure_monomer.residueIndexes = [68,111,49,53,187,140,213,216,38,205];
@@ -547,8 +584,8 @@ $tsol3d.TIM_tertiary_structure_monomer.swapView = function(event) {
 	logger.debug("$tsol3d.TIM_tertiary_structure_monomer.swapView viewName:  " + viewName);
 
 	var swapViewer = event.data.swapViewer;
-	var pdbData = event.data.pdbData;
 	var terminalAtomsMap = event.data.terminalAtomsMap;
+	var hydrophobicityColorFun = event.data.hydrophobicityColorFun;
 
 	swapViewer.removeAllShapes();
 	swapViewer.removeAllLabels();
@@ -588,11 +625,11 @@ $tsol3d.TIM_tertiary_structure_monomer.swapView = function(event) {
                 swapViewer.setStyle({resi:$tsol3d.TIM_tertiary_structure_monomer.residueIndexes}, {sphere:{colorscheme:$tsol3d.defaultElementColors}, cartoon:curCartoonStyle});
 		swapViewer.addResLabels({resi:$tsol3d.TIM_tertiary_structure_monomer.residueIndexes}, {font:"Helvetica", fontSize:18, fontColor:"black", showBackground:false});
 	} else if ("ribbon with amino acids colored by hydrophobicity" == viewName) {
-//		setHydrophobicityColors();
-		$tsol3d.applyHydrophobicColors(swapViewer, 'cartoon', $tsol3d.defaultCartoonStyle);
+		var hydrophobicityColors = hydrophobicityColorFun();
+		$tsol3d.applyHydrophobicityColors(swapViewer, 'cartoon', $tsol3d.defaultCartoonStyle, hydrophobicityColors);
 	} else if ("stick with amino acids colored by hydrophobicity" == viewName) {
-//		setHydrophobicityColors();
-		$tsol3d.applyHydrophobicColors(swapViewer, 'stick', {singleBonds:true});
+		var hydrophobicityColors = hydrophobicityColorFun();
+		$tsol3d.applyHydrophobicityColors(swapViewer, 'stick', {singleBonds:true}, hydrophobicityColors);
 	}
 	swapViewer.render();
 };
