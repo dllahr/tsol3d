@@ -407,41 +407,6 @@ $tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42 = (function(window) {
 	return my;
 })(window);
 
-$tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.swapView = function(event) {
-	var viewName = event.data.viewName;
-	logger.debug("$tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.swapView viewName:  " + viewName);
-
-	var swapViewer = event.data.swapViewer;
-	var pdbData = event.data.pdbData;
-
-	swapViewer.removeAllModels();
-	swapViewer.removeAllShapes();
-
-	if ('ribbon' == viewName) {
-		swapViewer.addModel(pdbData, 'pdb');
-		swapViewer.setStyle({}, {cartoon:$tsol3d.defaultCartoonStyle});
-	} else if ('stick and ribbon' == viewName) {
-		swapViewer.addModel(pdbData, 'pdb');
-		var curCartoonStyle = {opacity:$tsol3d.defaultCartoonOpacity};
-		$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
-		swapViewer.setStyle({}, {cartoon:curCartoonStyle, stick:$tsol3d.defaultStickStyle});
-	} else if ('stick' == viewName) {
-		swapViewer.addModel(pdbData, 'pdb');
-		swapViewer.setStyle({}, {stick:$tsol3d.defaultStickStyle});
-	} else if ('backbone H-bonding' == viewName) {
-		swapViewer.addModel(pdbData, 'pdb', {keepH:true});
-		swapViewer.setStyle({atom:['CA','C','N','H','O']}, {stick:$tsol3d.defaultStickStyle});
-		swapViewer.setStyle({atom:['CA','C','N','H','O'], invert:true}, {stick:{hidden:true}});
-		$tsol3d.addHBonds(swapViewer, $tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.hbondAtomPairs);
-	} else if ('ribbon H-bonding' == viewName) {
-		swapViewer.addModel(pdbData, 'pdb', {keepH:true});
-		swapViewer.setStyle({}, {cartoon:$tsol3d.defaultCartoonStyle});
-		$tsol3d.addHBonds(swapViewer, $tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.hbondAtomPairs);
-	}
-
-	swapViewer.render();
-};
-
 $tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
 	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
 	var swapViewer = initialSetup.swapViewer;
