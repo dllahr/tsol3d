@@ -29,7 +29,7 @@ $tsol3d.helloWorld = function() {
 
 
 $tsol3d.defaultElementColors = $.extend({}, $3Dmol.elementColors.defaultColors);
-$tsol3d.defaultElementColors['C'] = '0xe7e7e7';
+$tsol3d.defaultElementColors['C'] = '0xC8C8C8'; //previous:  '0xe7e7e7';
 $tsol3d.defaultElementColors['N'] = '0x0070ff';
 $tsol3d.defaultElementColors['O'] = '0xF00000';
 $tsol3d.defaultElementColors['S'] = '0xFFC832';
@@ -215,14 +215,14 @@ $tsol3d.TIM_6mer_fragment_A73_I78.swapView = function(event) {
 	} else if ("stick" == viewName) {
 		$tsol3d.TIM_6mer_fragment_A73_I78.colorResidues({"stick":{}}, swapViewer);
 		swapViewer.setStyle({elem:"C",invert:true}, {stick:$tsol3d.defaultStickStyle});
-	} else if ("stick and ribbon" == viewName) {
+	} else if ("sticks + ribbon" == viewName) {
 		var curCartoonStyle = {'opacity':event.data.opacity()};
 		$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
 		$tsol3d.TIM_6mer_fragment_A73_I78.colorResidues({stick:{}, cartoon:curCartoonStyle}, swapViewer);
 		swapViewer.addStyle({elem:"C",invert:true}, {stick:$tsol3d.defaultStickStyle, cartoon:curCartoonStyle});
 	} else if ("spheres" == viewName) {
 		swapViewer.setStyle({}, {sphere:{colorscheme:$tsol3d.defaultElementColors}});
-	} else if ("surface" == viewName) {
+	} else if ("sticks + surface" == viewName) {
 		$tsol3d.TIM_6mer_fragment_A73_I78.colorResidues({"stick":{}}, swapViewer);
 		swapViewer.setStyle({elem:"C",invert:true}, {stick:$tsol3d.defaultStickStyle});
 		swapViewer.addSurface("VDW", {opacity:0.7, color:"white"}, {});
@@ -275,7 +275,7 @@ $tsol3d.TIM_6mer_fragment_A73_I78.build = function(viewerDivId, buttonsDivId, ad
 		opacityFun = function() {return $tsol3d.TIM_6mer_fragment_A73_I78.defaultRibbonOpacity;};
 	}
 
-	var buttonValues = ['stick', 'stick and ribbon', 'ribbon', 'spheres', 'surface'];
+	var buttonValues = ['stick', 'sticks + ribbon', 'ribbon', 'spheres', 'sticks + surface'];
 	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
 	for (var i = 0; i < buttons.length; i++) {
 		var bv = buttonValues[i];
@@ -340,20 +340,20 @@ $tsol3d.fragmentSwapView = function(event) {
 	if ('ribbon' == viewName) {
 		swapViewer.addModel(pdbData, 'pdb');
 		swapViewer.setStyle({}, {cartoon:$tsol3d.defaultCartoonStyle});
-	} else if ('stick and ribbon' == viewName) {
+	} else if ('ribbon + sticks' == viewName) {
 		swapViewer.addModel(pdbData, 'pdb');
 		var curCartoonStyle = {opacity:$tsol3d.defaultCartoonOpacity};
 		$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
 		swapViewer.setStyle({}, {cartoon:curCartoonStyle, stick:$tsol3d.defaultStickStyle});
-	} else if ('stick' == viewName) {
+	} else if ('sticks' == viewName) {
 		swapViewer.addModel(pdbData, 'pdb');
 		swapViewer.setStyle({}, {stick:$tsol3d.defaultStickStyle});
-	} else if ('backbone H-bonding' == viewName) {
+	} else if ('backbone sticks + H-bonding' == viewName) {
 		swapViewer.addModel(pdbData, 'pdb', {keepH:true});
 		swapViewer.setStyle({atom:['CA','C','N','H','O']}, {stick:$tsol3d.defaultStickStyle});
 		swapViewer.setStyle({atom:['CA','C','N','H','O'], invert:true}, {stick:{hidden:true}});
 		$tsol3d.addHBonds(swapViewer, hbondAtomPairs);
-	} else if ('ribbon H-bonding' == viewName) {
+	} else if ('ribbon + H-bonding' == viewName) {
 		swapViewer.addModel(pdbData, 'pdb', {keepH:true});
 		swapViewer.setStyle({}, {cartoon:$tsol3d.defaultCartoonStyle});
 		$tsol3d.addHBonds(swapViewer, hbondAtomPairs);
@@ -379,7 +379,7 @@ $tsol3d.TIM_fragment_alpha_helix_Q19_N29.build = function(viewerDivId, buttonsDi
 		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
 	}
 
-	var buttonValues = ['stick', 'ribbon', 'stick and ribbon', 'backbone H-bonding', 'ribbon H-bonding'];
+	var buttonValues = ['ribbon + sticks', 'backbone sticks + H-bonding', 'ribbon + H-bonding', 'ribbon', 'sticks'];
 	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
 
 	if (typeof pdbUrl == 'undefined' || pdbUrl == null) {
@@ -400,7 +400,7 @@ $tsol3d.TIM_fragment_alpha_helix_Q19_N29.build = function(viewerDivId, buttonsDi
 		}
 
 		swapViewer.setBackgroundColor(0xffffff);
-		$tsol3d.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'stick', 'pdbData':pdbData, "hbondAtomPairs":hbondAtomPairs}});
+		$tsol3d.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'sticks', 'pdbData':pdbData, "hbondAtomPairs":hbondAtomPairs}});
 		swapViewer.setView([-25.5488,8.0181,-3.7173,79.6871,0.3267,0.6791,-0.3059,-0.5817]);
 		swapViewer.render();
 	}});
@@ -423,7 +423,7 @@ $tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.build = function(viewerDivId, bu
 		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
 	}
 
-	var buttonValues = ['stick', 'stick and ribbon', 'ribbon', 'backbone H-bonding', 'ribbon H-bonding'];
+	var buttonValues = ['ribbon + sticks', 'backbone sticks + H-bonding', 'ribbon + H-bonding', 'ribbon', 'sticks'];
 	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
 
 	if (typeof pdbUrl == 'undefined' || pdbUrl == null) {
@@ -444,7 +444,7 @@ $tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.build = function(viewerDivId, bu
 		}
 
 		swapViewer.setBackgroundColor(0xffffff);
-		$tsol3d.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'stick', 'pdbData':pdbData, "hbondAtomPairs":hbondAtomPairs}});
+		$tsol3d.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'sticks', 'pdbData':pdbData, "hbondAtomPairs":hbondAtomPairs}});
 		swapViewer.zoomTo();
 		swapViewer.rotate(45, "x");
 		swapViewer.rotate(30, "y");
@@ -469,7 +469,7 @@ $tsol3d.TIM_loop_Q64_I78.build = function(viewerDivId, buttonsDivId, adminDivId,
 		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
 	}
 
-	var buttonValues = ['stick', 'stick and ribbon', 'ribbon'];
+	var buttonValues = ['ribbon + sticks', 'ribbon', 'sticks'];
 	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
 
 	if (typeof pdbUrl == 'undefined' || pdbUrl == null) {
@@ -488,7 +488,7 @@ $tsol3d.TIM_loop_Q64_I78.build = function(viewerDivId, buttonsDivId, adminDivId,
 		}
 
 		swapViewer.setBackgroundColor(0xffffff);
-		$tsol3d.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'stick', 'pdbData':pdbData, "hbondAtomPairs":null}});
+		$tsol3d.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'sticks', 'pdbData':pdbData, "hbondAtomPairs":null}});
 		swapViewer.zoomTo();
 		swapViewer.render();
 	}});
