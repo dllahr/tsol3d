@@ -634,3 +634,30 @@ $tsol3d.TIM_tertiary_structure_monomer.swapView = function(event) {
 	swapViewer.render();
 };
 
+
+/*******************************************
+ * build caller map & function
+ *******************************************/
+$tsol3d.builderMap = {
+	TIM_6mer_fragment_A73_I78:$tsol3d.TIM_6mer_fragment_A73_I78.build, 
+	TIM_fragment_alpha_helix_Q19_N29:$tsol3d.TIM_fragment_alpha_helix_Q19_N29.build,
+	TIM_fragment_parallel_beta_sheet_F6_A42:$tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.build, 
+	TIM_loop_Q64_I78:$tsol3d.TIM_loop_Q64_I78.build,
+	TIM_tertiary_structure_monomer:$tsol3d.TIM_tertiary_structure_monomer.build,
+	TIM_tertiary_structure_dimer:$tsol3d.TIM_tertiary_structure_dimer.build
+};
+
+
+function callTsol3d(fragmentName, viewerName, adminFlag) {
+	var buildFunction = $tsol3d.builderMap[fragmentName];
+	var viewerDivId = viewerName + "Div";
+	var viewerButtonsDivId = viewerName + "ButtonsDiv";
+
+	var adminDivId = null;
+	if ("admin" == adminFlag) {
+		adminDivId = viewerName + "AdminDiv";
+	}
+
+	buildFunction(viewerDivId, viewerButtonsDivId, adminDivId);
+};
+
