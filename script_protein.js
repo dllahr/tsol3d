@@ -494,7 +494,7 @@ $tsol3d.TIM_loop_Q64_I78.build = function(viewerDivId, buttonsDivId, adminDivId,
 		}
 
 		swapViewer.setBackgroundColor(0xffffff);
-		$tsol3d.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'sticks', 'pdbData':pdbData, "hbondAtomPairs":null}});
+		$tsol3d.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'ribbon + sticks', 'pdbData':pdbData, "hbondAtomPairs":null}});
 		swapViewer.zoomTo();
 		swapViewer.render();
 	}});
@@ -532,8 +532,8 @@ $tsol3d.TIM_tertiary_structure_monomer.build = function(viewerDivId, buttonsDivI
 		};
 	}
 
-	var buttonValues = ['ribbon', 'ribbon and surface', 'ribbon and interacting amino acids', 'ribbon and interacting amino acids as spheres', 
-		'ribbon with amino acids colored by hydrophobicity', 'stick with amino acids colored by hydrophobicity'];
+	var buttonValues = ['ribbon', 'ribbon + surface', 'interacting amino acids (sticks)', 'interacting amino acids (spheres)', 
+		'hydrophobicity (ribbon)', 'hydrophobicity (sticks)'];
 	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
 
 	if (typeof pdbUrl == 'undefined' || pdbUrl == null) {
@@ -590,7 +590,7 @@ $tsol3d.TIM_tertiary_structure_monomer.hBondAtomPairs = [[1020,1642],[706,781],[
 
 $tsol3d.TIM_tertiary_structure_monomer.swapView = function(event) {
 	var viewName = event.data.viewName;
-	logger.debug("$tsol3d.TIM_tertiary_structure_monomer.swapView viewName:  " + viewName);
+	logger.debug('$tsol3d.TIM_tertiary_structure_monomer.swapView viewName:  ' + viewName);
 
 	var swapViewer = event.data.swapViewer;
 	var terminalAtomsMap = event.data.terminalAtomsMap;
@@ -600,25 +600,28 @@ $tsol3d.TIM_tertiary_structure_monomer.swapView = function(event) {
 	swapViewer.removeAllLabels();
 	swapViewer.removeAllSurfaces();
 
-	if ("ribbon" == viewName) {
-		var curCartoonStyle = {color:"spectrum"};
+	if ('ribbon' == viewName) {
+		var curCartoonStyle = {color:'spectrum'};
 		$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
 		swapViewer.setStyle({}, {cartoon:curCartoonStyle});
+
+		var labelMap = $.extend({showBackground:false}, $tsol3d.defaultResidueLabelStyle);
 
                 for (terminalAtomLabel in terminalAtomsMap) {
                         var terminalAtom = terminalAtomsMap[terminalAtomLabel];
 
-                        swapViewer.addLabel(terminalAtomLabel, {font:"Helvetica", fontSize: 18, fontColor:"black", position:{x:terminalAtom.x, y:terminalAtom.y, z:terminalAtom.z}, 
-                                showBackground:false});
+			labelMap['position'] = {x:terminalAtom.x, y:terminalAtom.y, z:terminalAtom.z};
+			
+                        swapViewer.addLabel(terminalAtomLabel, labelMap);
                 }
-	} else if ("ribbon and surface" == viewName) {
+	} else if ('ribbon + surface' == viewName) {
 		//this extra dictionary is not necessary however I'm leaving it in case extra styling is requested
-		var curCartoonStyle = {color:"spectrum"};
+		var curCartoonStyle = {color:'spectrum'};
 		$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
 		swapViewer.setStyle({}, {cartoon:curCartoonStyle});
 
-        	swapViewer.addSurface("VDW", {opacity:0.8,color:"white"});
-	} else if ("ribbon and interacting amino acids" == viewName) {
+        	swapViewer.addSurface('VDW', {opacity:0.8,color:'white'});
+	} else if ('interacting amino acids (sticks)' == viewName) {
 		//this extra dictionary is not necessary however I'm leaving it in case extra styling is requested
 		var curCartoonStyle = {};
 		$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
@@ -628,7 +631,7 @@ $tsol3d.TIM_tertiary_structure_monomer.swapView = function(event) {
 		swapViewer.addResLabels({resi:$tsol3d.TIM_tertiary_structure_monomer.residueIndexes}, $tsol3d.defaultResidueLabelStyle);
 
 		$tsol3d.addHBonds(swapViewer, $tsol3d.TIM_tertiary_structure_monomer.hBondAtomPairs);
-	} else if ("ribbon and interacting amino acids as spheres" == viewName) {
+	} else if ('interacting amino acids (spheres)' == viewName) {
 		//this extra dictionary is not necessary however I'm leaving it in case extra styling is requested
 		var curCartoonStyle = {};
 		$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
@@ -636,10 +639,10 @@ $tsol3d.TIM_tertiary_structure_monomer.swapView = function(event) {
 
                 swapViewer.setStyle({resi:$tsol3d.TIM_tertiary_structure_monomer.residueIndexes}, {sphere:{colorscheme:$tsol3d.defaultElementColors}, cartoon:curCartoonStyle});
 		swapViewer.addResLabels({resi:$tsol3d.TIM_tertiary_structure_monomer.residueIndexes}, $tsol3d.defaultResidueLabelStyle);
-	} else if ("ribbon with amino acids colored by hydrophobicity" == viewName) {
+	} else if ('hydrophobicity (ribbon)' == viewName) {
 		var hydrophobicityColors = hydrophobicityColorFun();
 		$tsol3d.applyHydrophobicityColors(swapViewer, 'cartoon', $tsol3d.defaultCartoonStyle, hydrophobicityColors);
-	} else if ("stick with amino acids colored by hydrophobicity" == viewName) {
+	} else if ('hydrophobicity (sticks)' == viewName) {
 		var hydrophobicityColors = hydrophobicityColorFun();
 		$tsol3d.applyHydrophobicityColors(swapViewer, 'stick', {singleBonds:true}, hydrophobicityColors);
 	}
@@ -668,7 +671,7 @@ $tsol3d.TIM_tertiary_structure_dimer.build = function(viewerDivId, buttonsDivId,
 		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
 	}
 
-	var buttonValues = ['ribbon', 'ribbon and surface', 'ribbon and interacting amino acids', 'ribbon and interacting amino acids as spheres'];
+	var buttonValues = ['ribbon', 'ribbon + surface', 'interacting amino acids (sticks)', 'interacting amino acids (spheres)'];
 	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
 
 	if (typeof pdbUrl == 'undefined' || pdbUrl == null) {
@@ -698,7 +701,7 @@ $tsol3d.TIM_tertiary_structure_dimer.build = function(viewerDivId, buttonsDivId,
 
 $tsol3d.TIM_tertiary_structure_dimer.swapView = function(event) {
 	var viewName = event.data.viewName;
-	logger.debug("$tsol3d.TIM_tertiary_structure_monomer.swapView viewName:  " + viewName);
+	logger.debug('$tsol3d.TIM_tertiary_structure_monomer.swapView viewName:  ' + viewName);
 
 	var swapViewer = event.data.swapViewer;
 
@@ -706,22 +709,23 @@ $tsol3d.TIM_tertiary_structure_dimer.swapView = function(event) {
 	swapViewer.removeAllLabels();
 	swapViewer.removeAllSurfaces();
 
-	var chainColorMap = {A:"red", B:"blue"};
+	var chainColorMap = {A:'red', B:'blue'};
 	var curCartoonStyle = {};
 	$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
 	for (var chn in chainColorMap) {
-		curCartoonStyle["color"] = chainColorMap[chn];
+		curCartoonStyle['color'] = chainColorMap[chn];
 		
 		swapViewer.setStyle({chain:chn}, {cartoon:curCartoonStyle});
 	}
 
 	//no if entry for style "ribbon" since it is default - its style is applied to all
-	if ("ribbon and surface" == viewName) {
-        	swapViewer.addSurface("VDW", {opacity:0.8, color:"red"}, {chain:"A"});
-		swapViewer.addSurface("VDW", {opacity:0.8, color:"blue"}, {chain:"B"});
-	} else if ("ribbon and interacting amino acids" == viewName) {
+	if ('ribbon + surface' == viewName) {
 		for (var chn in chainColorMap) {
-			curCartoonStyle["color"] = chainColorMap[chn];
+        		swapViewer.addSurface('VDW', {opacity:0.8, color:chainColorMap[chn]}, {chain:chn});
+		}
+	} else if ('interacting amino acids (sticks)' == viewName) {
+		for (var chn in chainColorMap) {
+			curCartoonStyle['color'] = chainColorMap[chn];
 			
 			swapViewer.setStyle({chain:chn, resi:$tsol3d.TIM_tertiary_structure_dimer.residueIndexes[chn]}, 
 				{stick:$tsol3d.defaultStickStyle, cartoon:curCartoonStyle});
@@ -730,9 +734,9 @@ $tsol3d.TIM_tertiary_structure_dimer.swapView = function(event) {
 		}
                 
 		$tsol3d.addHBonds(swapViewer, $tsol3d.TIM_tertiary_structure_dimer.hBondAtomPairs);
-	} else if ("ribbon and interacting amino acids as spheres" == viewName) {
+	} else if ('interacting amino acids (spheres)' == viewName) {
 		for (var chn in chainColorMap) {
-			curCartoonStyle["color"] = chainColorMap[chn];
+			curCartoonStyle['color'] = chainColorMap[chn];
 			
 			swapViewer.setStyle({chain:chn, resi:$tsol3d.TIM_tertiary_structure_dimer.residueIndexes[chn]}, 
 				{sphere:{colorscheme:$tsol3d.defaultElementColors}, cartoon:curCartoonStyle});
@@ -759,12 +763,12 @@ $tsol3d.builderMap = {
 
 function callTsol3d(fragmentName, viewerName, adminFlag) {
 	var buildFunction = $tsol3d.builderMap[fragmentName];
-	var viewerDivId = viewerName + "Div";
-	var viewerButtonsDivId = viewerName + "ButtonsDiv";
+	var viewerDivId = viewerName + 'Div';
+	var viewerButtonsDivId = viewerName + 'ButtonsDiv';
 
 	var adminDivId = null;
 	if ("admin" == adminFlag) {
-		adminDivId = viewerName + "AdminDiv";
+		adminDivId = viewerName + 'AdminDiv';
 	}
 
 	buildFunction(viewerDivId, viewerButtonsDivId, adminDivId);
