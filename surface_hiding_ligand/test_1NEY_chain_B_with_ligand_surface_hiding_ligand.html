@@ -3,7 +3,7 @@
 <script src="https://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
 </head>
 <body>
-<h2>1NEY_chain_B_with_ligand: surface rendered before ligand added, hides ligand:</h2>
+<h2>1NEY_chain_B_with_ligand: surface rendered before ligand added, <del>hides ligand</del> FIXED:</h2>
 <div id="viewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
 <br/>
 <h2>protein rendered as spheres does not hide ligand:</h2>
@@ -47,7 +47,7 @@ H 58.176 44.075 14.404
 
 			swapViewer.setBackgroundColor(0xffffff);
 			
-			swapViewer.addSurface("VDW", {opacity:0.6, color:'0x3090C7'});
+			swapViewer.addSurface($3Dmol.SurfaceType.VDW, {opacity:0.8, color:'0x3090C7'});
 			swapViewer.setStyle({}, {stick:{hidden:true}});
 
 			var m = swapViewer.addModel($('#data').val(), 'xyz');
