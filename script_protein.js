@@ -47,9 +47,10 @@ $tsol3d.defaultResidueLabelStyle = {font:"Helvetica", fontSize:18, fontColor:"bl
 $tsol3d.addHBonds = function(swapViewer, atomPairSerialNumbers) {
 	var myModel = swapViewer.getModel();
 
-
 	for (var i = 0; i < atomPairSerialNumbers.length; i++) {
 		var pairAtoms = myModel.selectedAtoms({serial:atomPairSerialNumbers[i]});
+		logger.debug('$tsol3d.addHBonds pairAtoms.length:  ' + pairAtoms.length);
+		logger.trace('$tsol3d.addHBonds pairAtoms:  ' + JSON.stringify(pairAtoms));
 
 		var p0 = pairAtoms[0];
 		var p1 = pairAtoms[1];
@@ -757,7 +758,7 @@ $tsol3d._1NEY_chain_B_with_ligand = (function(window) {
 	return my;
 })(window);
 
-$tsol3d._1NEY_chain_B_with_ligand.defaults = {surfaceOpacity:0.6, color:'0x3090C7', sphereScale:1.0, stickRadius:0.25};
+$tsol3d._1NEY_chain_B_with_ligand.defaults = {surfaceOpacity:0.8, color:'0x3090C7', sphereScale:1.0, stickRadius:0.25};
 
 $tsol3d._1NEY_chain_B_with_ligand.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
 	logger.debug('$tsol3d._1NEY_chain_B_with_ligand.build');
@@ -790,7 +791,7 @@ $tsol3d._1NEY_chain_B_with_ligand.build = function(viewerDivId, buttonsDivId, ad
 	}
 
 	$.ajax({url: pdbUrl, success: function(pdbData) {
-		logger.trace('$tsol3d.TIM_tertiary_structure_dimer.build retrieved pdbData:  ' + pdbData.substring(0,100));
+		logger.trace('$tsol3d._1NEY_chain_B_with_ligand.build retrieved pdbData:  ' + pdbData.substring(0,100));
 
 		swapViewer.addModel(pdbData, "pdb");
 		
@@ -806,6 +807,7 @@ $tsol3d._1NEY_chain_B_with_ligand.build = function(viewerDivId, buttonsDivId, ad
 		
 		swapViewer['$tsol3dHasSurface'] = false;
 		$tsol3d._1NEY_chain_B_with_ligand.swapView({'data':{'swapViewer':swapViewer, viewName:'surface', 'styleInputsFun':styleInputsFun}});
+
 		swapViewer.setView([-58.0,-42.0,-19.4,-15.2,0.113,-0.988,0.0699,0.0814]);
 		swapViewer.render();
 	}});
@@ -820,7 +822,7 @@ $tsol3d._1NEY_chain_B_with_ligand.drawSurface = function(swapViewer, curOpacity,
 	}
 
 	swapViewer.removeAllSurfaces();
-        swapViewer.addSurface("VDW", {opacity:curOpacity, color:curColor}, {resn:"13P", invert:true});
+        swapViewer.addSurface($3Dmol.SurfaceType.VDW, {opacity:curOpacity, color:curColor}, {resn:"13P", invert:true});
 };
 
 $tsol3d._1NEY_chain_B_with_ligand.addStyleControls = function(adminDivId, swapViewer) {
@@ -899,6 +901,153 @@ $tsol3d._1NEY_chain_B_with_ligand.swapView = function(event) {
 };
 
 /*******************************************
+ * 1NEY_chain_B_with_ligand_and_residues
+ *******************************************/
+$tsol3d._1NEY_chain_B_with_ligand_and_residues = (function(window) {
+	var my = window['$tsol3d._1NEY_chain_B_with_ligand_and_residues'] || {};
+	return my;
+})(window);
+
+$tsol3d._1NEY_chain_B_with_ligand_and_residues.defaults = {surfaceOpacity:0.8, color:'0x3090C7', sphereScale:1.0, stickRadius:0.25};
+
+$tsol3d._1NEY_chain_B_with_ligand_and_residues.data = {resi:[165, 95], hBondPairs:[[6400,7662], [6401,7662], [7655,5263], [7657,5263]]};
+
+$tsol3d._1NEY_chain_B_with_ligand_and_residues.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl, resi, hBondPairs) {
+	logger.debug('$tsol3d._1NEY_chain_B_with_ligand_and_residues.build');
+	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
+	var swapViewer = initialSetup.swapViewer;
+	var usingAdmin = initialSetup.usingAdmin;
+
+	if (typeof(resi) == 'undefined' || null == resi) {
+		resi = $tsol3d._1NEY_chain_B_with_ligand_and_residues.data['resi'];
+	}
+	if (typeof(hBondPairs) == 'undefined' || null == hBondPairs) {
+		hBondPairs = $tsol3d._1NEY_chain_B_with_ligand_and_residues.data['hBondPairs'];
+	}
+
+	if (usingAdmin) {
+		$tsol3d._1NEY_chain_B_with_ligand_and_residues.addStyleControls(adminDivId, swapViewer);
+		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
+	}
+
+	var buttonValues = ['surface + ligand (sticks)', 'surface + ligand (spheres)', 'surface + ligand H-bonding'];
+	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
+
+	var hBondZoomButton = $tsol3d.buildUtils.basicButtonSetup(['zoom to H-bonding'], buttonsDivId);
+	hBondZoomButton[0].click(function() {
+		var curEvent = {'data':{'swapViewer':swapViewer, viewName:'surface + ligand H-bonding', 'resi':resi, 'hBondPairs':hBondPairs}};
+		$tsol3d._1NEY_chain_B_with_ligand_and_residues.swapView(curEvent);
+		swapViewer.setView([-55.3,-40.6,-14.4,92.3,-0.1257,0.8117,0.3655,-0.4383]);
+	});
+
+	if (typeof(pdbUrl) == 'undefined' || pdbUrl == null) {
+		pdbUrl = 'https://www.secretoflife.org/sites/default/files/pdb/1ney_cleanedHETATM_justChainB.pdb';
+	}
+
+	$.ajax({url: pdbUrl, success: function(pdbData) {
+		logger.trace('$tsol3d._1NEY_chain_B_with_ligand_and_residues.build retrieved pdbData:  ' + pdbData.substring(0,100));
+
+		swapViewer.addModel(pdbData, "pdb", {keepH:true});
+		
+		for (var i = 0; i < buttons.length; i++) {
+			var bv = buttonValues[i];
+			var b = buttons[i];
+
+			var eventData = {'swapViewer':swapViewer, viewName:bv, 'resi':resi, 'hBondPairs':hBondPairs};
+			b.click(eventData, $tsol3d._1NEY_chain_B_with_ligand_and_residues.swapView);
+		}
+		
+		swapViewer.setBackgroundColor(0xffffff);
+
+		swapViewer.setStyle({}, {stick:{hidden:true}});
+		$tsol3d._1NEY_chain_B_with_ligand_and_residues.drawSurface(swapViewer);
+
+		var curEvent = {'data':{'swapViewer':swapViewer, viewName:'surface + ligand (sticks)', 'resi':resi, 'hBondPairs':hBondPairs}};
+		$tsol3d._1NEY_chain_B_with_ligand_and_residues.swapView(curEvent);
+		swapViewer.setView([-58.0,-42.0,-19.4,-15.2,0.113,-0.988,0.0699,0.0814]);
+		swapViewer.render();
+	}});
+};
+
+$tsol3d._1NEY_chain_B_with_ligand_and_residues.drawSurface = function(swapViewer, curOpacity, curColor) {
+	if (typeof(curOpacity) == 'undefined' || null == curOpacity) {
+		curOpacity = $tsol3d._1NEY_chain_B_with_ligand_and_residues.defaults['surfaceOpacity'];
+	}
+	if (typeof(curColor) == 'undefined' || null == curColor) {
+		curColor = $tsol3d._1NEY_chain_B_with_ligand_and_residues.defaults['color'];
+	}
+
+	swapViewer.removeAllSurfaces();
+        swapViewer.addSurface($3Dmol.SurfaceType.VDW, {opacity:curOpacity, color:curColor}, {resn:"13P", invert:true});
+};
+
+$tsol3d._1NEY_chain_B_with_ligand_and_residues.addStyleControls = function(adminDivId, swapViewer) {
+	var adminDiv = $('#' + adminDivId);
+
+	var defaultOpacity = $tsol3d._1NEY_chain_B_with_ligand_and_residues.defaults['surfaceOpacity'];
+	var defaultColor = $tsol3d._1NEY_chain_B_with_ligand_and_residues.defaults['color'];
+
+	adminDiv.append('surface parameters - ');
+	adminDiv.append('opacity:  <input type="text" id="surfaceOpacityInput" value="' + defaultOpacity + '"/>');
+	adminDiv.append('color:  <input type="text" id="surfaceColorInput" value="' + defaultColor + '"/>');
+	adminDiv.append('<input type="submit" value="redraw surface" /><br/>');
+
+	var redrawSurfaceButton = adminDiv.children('input[value="redraw surface"]');
+	redrawSurfaceButton.click(function() {
+		var curOpacity = adminDiv.children('#surfaceOpacityInput').val();
+		var curColor = adminDiv.children('#surfaceColorInput').val();
+		$tsol3d._1NEY_chain_B_with_ligand_and_residues.drawSurface(swapViewer, curOpacity, curColor);
+		swapViewer['$tsol3dHasSurface'] = true;
+	});
+};
+
+$tsol3d._1NEY_chain_B_with_ligand_and_residues.swapView = function(event) {
+	var viewName = event.data.viewName;
+	logger.debug('$tsol3d._1NEY_chain_B_with_ligand_and_residues.swapView viewName:  ' + viewName);
+
+	var swapViewer = event.data.swapViewer;
+
+	swapViewer.removeAllShapes();
+
+	var residueIndexes = event.data.resi;
+
+	if ('surface + ligand (sticks)' == viewName) {
+		swapViewer.setStyle({resn:"13P"}, {stick:$tsol3d.defaultStickStyle});
+		swapViewer.setStyle({resi:residueIndexes}, {stick:$tsol3d.defaultStickStyle});
+	} else if ('surface + ligand (spheres)' == viewName) {
+		swapViewer.setStyle({resn:"13P"}, {sphere:{colorscheme:$tsol3d.defaultElementColors}});
+		swapViewer.setStyle({resi:residueIndexes}, {sphere:{colorscheme:$tsol3d.defaultElementColors}});
+	} else if ('surface + ligand H-bonding' == viewName) {
+		swapViewer.setStyle({resn:"13P"}, {stick:$tsol3d.defaultStickStyle});
+		swapViewer.setStyle({resi:residueIndexes}, {stick:$tsol3d.defaultStickStyle});
+		
+		var hBondPairs = event.data.hBondPairs;
+		logger.debug('$tsol3d._1NEY_chain_B_with_ligand_and_residues.swapView hBondPairs:  ' + JSON.stringify(hBondPairs));
+
+		$tsol3d.addHBonds(swapViewer, hBondPairs);
+	}
+
+	swapViewer.render();
+};
+
+/*******************************************
+ * 1NEY_chain_B_with_ligand_and_residue_Lys12
+ *******************************************/
+$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12 = (function(window) {
+	var my = window['$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12'] || {};
+	return my;
+})(window);
+
+$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.data = {resi:[12], hBondPairs:[[3980,7655], [3980,7652]]};
+
+$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
+	var resi = $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.data['resi'];
+	var hBondPairs = $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.data['hBondPairs'];
+
+	$tsol3d._1NEY_chain_B_with_ligand_and_residues.build(viewerDivId, buttonsDivId, adminDivId, pdbUrl, resi, hBondPairs);
+};
+	
+/*******************************************
  * Caller function & map
  *******************************************/
 $tsol3d.builderMap = {
@@ -908,9 +1057,10 @@ $tsol3d.builderMap = {
 	TIM_loop_Q64_I78:$tsol3d.TIM_loop_Q64_I78.build,
 	TIM_tertiary_structure_monomer:$tsol3d.TIM_tertiary_structure_monomer.build,
 	TIM_tertiary_structure_dimer:$tsol3d.TIM_tertiary_structure_dimer.build,
-	_1NEY_chain_B_with_ligand:$tsol3d._1NEY_chain_B_with_ligand.build
+	_1NEY_chain_B_with_ligand:$tsol3d._1NEY_chain_B_with_ligand.build,
+	_1NEY_chain_B_with_ligand_and_residues:$tsol3d._1NEY_chain_B_with_ligand_and_residues.build,
+	_1NEY_chain_B_with_ligand_and_residue_Lys12:$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build
 };
-
 
 function callTsol3d(fragmentName, viewerName, adminFlag) {
 	var buildFunction = $tsol3d.builderMap[fragmentName];
