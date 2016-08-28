@@ -1,0 +1,76 @@
+<html>
+<head>
+<script src="https://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
+</head>
+<body>
+<h2>1NEY_chain_B_with_ligand: surface rendered before ligand added, hides ligand:</h2>
+<div id="viewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
+<br/>
+<h2>protein rendered as spheres does not hide ligand:</h2>
+<div id="viewerDiv2" style="height: 600px; width: 600px; position: relative;"></div>
+
+<textarea id="data" style="display: none;">
+25
+* (null), Energy   -1000.0000000
+P 61.288 43.983 8.965
+P 1467 1031 1518
+O 60.667 43.409 7.659
+O 1298 1022 1442
+O 62.043 45.286 8.755
+O 1172 769 1040
+O 62.127 42.883 9.681
+O 1318 1194 1053
+O 59.904 44.357 9.929
+O 1378 2142 1623
+C 60.263 44.769 11.322
+C 2192 3757 1817
+C 58.888 44.683 11.981
+C 2802 2774 2386
+O 58.079 45.523 11.758
+O 2777 2095 1799
+C 58.595 43.455 12.732
+C 1299 1459 1904
+O 57.811 43.569 13.872
+O 2641 3236 1871
+H 60.621 45.671 11.350
+H 60.897 44.157 11.727
+H 58.155 42.835 12.130
+H 59.439 43.054 12.990
+H 58.176 44.075 14.404
+</textarea>
+
+<script>
+	$(document).ready(function() {
+		$.ajax({url: '1ney_cleanedHETATM_justChainB_noLigand.pdb', success: function(pdbData) {
+			var swapViewer = $3Dmol.createViewer('viewerDiv');
+			swapViewer.addModel(pdbData, "pdb");
+
+			swapViewer.setBackgroundColor(0xffffff);
+			
+			swapViewer.addSurface("VDW", {opacity:0.6, color:'0x3090C7'});
+			swapViewer.setStyle({}, {stick:{hidden:true}});
+
+			var m = swapViewer.addModel($('#data').val(), 'xyz');
+			swapViewer.setStyle({model:m}, {stick:{}});
+
+			swapViewer.setView([-58.0,-42.0,-19.4,-15.2,0.113,-0.988,0.0699,0.0814]);
+			swapViewer.render();
+		}});
+		
+		$.ajax({url: '../1ney_cleanedHETATM_justChainB.pdb', success: function(pdbData) {
+			var swapViewer = $3Dmol.createViewer('viewerDiv2');
+			swapViewer.addModel(pdbData, "pdb");
+
+			swapViewer.setBackgroundColor(0xffffff);
+			
+			swapViewer.setStyle({resn:'13P', invert:true}, {sphere:{scale:0.75, color:'blue'}});
+			swapViewer.setStyle({resn:'13P'}, {stick:{}});
+
+			swapViewer.setView([-58.0,-42.0,-19.4,-15.2,0.113,-0.988,0.0699,0.0814]);
+			swapViewer.render();
+		}});
+	});
+</script>
+</body>
+</html>
+
