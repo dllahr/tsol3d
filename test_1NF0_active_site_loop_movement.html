@@ -1,0 +1,18 @@
+<html>
+<head>
+<script src="https://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
+<script src="log4javascript.js"></script>
+<script src="script_protein.js"></script>
+</head>
+<body>
+<h2>_1NF0_active_site_loop_movement</h2>
+<div id="viewerButtonsDiv"></div>
+<div id="viewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
+<div id="viewerAdminDiv"></div>
+<script>
+	$(document).ready(function() {
+		$tsol3d._1NF0_active_site_loop_movement.build("viewerDiv", "viewerButtonsDiv", "viewerAdminDiv", "1nf0_cleanedHETATM_justChainA.pdb");
+	});
+</script>
+</body>
+</html>

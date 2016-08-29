@@ -1046,7 +1046,124 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build = function(viewerDivId
 
 	$tsol3d._1NEY_chain_B_with_ligand_and_residues.build(viewerDivId, buttonsDivId, adminDivId, pdbUrl, resi, hBondPairs);
 };
+
+/******************************************
+ * 1NF0_active_site_loop_movement
+ * ****************************************/
+$tsol3d._1NF0_active_site_loop_movement = (function(window) {
+	var my = window['$tsol3d._1NF0_active_site_loop_movement'] || {};
+	return my;
+})(window);
+
+$tsol3d._1NF0_active_site_loop_movement.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
+	logger.debug('$tsol3d._1NEY_active_site_loop_movement.build');
+	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
+	var swapViewer = initialSetup.swapViewer;
+	var usingAdmin = initialSetup.usingAdmin;
 	
+	if (usingAdmin) {
+		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
+	}
+	
+	var buttonValues = ['sticks', 'spheres', 'add labels'];
+	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
+
+	for (var i = 0; i < buttons.length; i++) {
+		var bv = buttonValues[i];
+		var b = buttons[i];
+
+		var eventData = {'swapViewer':swapViewer, viewName:bv};
+		b.click(eventData, $tsol3d._1NF0_active_site_loop_movement.swapView);
+	}
+
+	if (typeof(pdbUrl) == 'undefined' || pdbUrl == null) {
+		pdbUrl = 'https://www.secretoflife.org/sites/default/files/pdb/1nf0_cleanedHETATM_justChainA.pdb';
+	}
+
+	$.ajax({url: pdbUrl, success: function(pdbData) {
+		logger.trace('$tsol3d._1NF0_active_site_loop_movement.build retrieved pdbData:  ' + pdbData.substring(0,100));
+
+		var model = swapViewer.addModel(pdbData, "pdb", {keepH:true, altLoc:'*'});
+
+		swapViewer.setBackgroundColor(0xffffff);
+	        swapViewer.addSurface($3Dmol.SurfaceType.VDW, {opacity:0.8, color:'0x3090C7'}, {altLoc:' '});
+		swapViewer.setStyle({}, {stick:{hidden:true}});
+		swapViewer.setStyle({altLoc:'A'}, {stick:$tsol3d.defaultStickStyle});
+
+		var allAtoms = model.selectedAtoms({});
+
+		var startAtoms = model.selectedAtoms({altLoc:'A'});
+		logger.debug('$tsol3d._1NF0_active_site_loop_movement.build startAtoms[0]:');
+		logger.debug(startAtoms[0]);
+
+		var endAtoms = model.selectedAtoms({altLoc:'B'});
+	
+		var numFrames = 10;
+		var gradient = {};
+		var startAtomsMap = {};
+		for (var i = 0; i < startAtoms.length; i++) {
+			var sa = startAtoms[i];
+			startAtomsMap[sa.serial] = sa;
+
+			var ea = endAtoms[i];
+			
+			var g = {};
+			g['dx'] = (ea.x - sa.x) / numFrames;
+			g['dy'] = (ea.y - sa.y) / numFrames;
+			g['dz'] = (ea.z - sa.z) / numFrames;
+
+			gradient[sa.serial] = g;
+		}
+		logger.debug('$tsol3d._1NF0_active_site_loop_movement.build gradient:  ' + JSON.stringify(gradient));
+
+		for (var f = 1; f <= numFrames; f++) {
+			var frame = [];
+
+			for (var i = 0; i < allAtoms.length; i++) {
+				var atom = allAtoms[i];
+
+				var newAtom = {};
+				for (var k in atom) {
+					newAtom[k] = atom[k];
+				}
+				frame.push(newAtom);
+
+				if (atom.serial in startAtomsMap) {
+					var sa = startAtomsMap[atom.serial];
+					var g = gradient[atom.serial];
+
+					newAtom.x = sa.x + f*g.dx;
+					newAtom.y = sa.y + f*g.dy;
+					newAtom.z = sa.z + f*g.dz;
+				}
+			}	
+			model.addFrame(frame);
+		}
+
+		swapViewer.setView([-23.46,-10.79,-144.9,-8.1027,-0.1585,0.3274,0,-0.9314]);
+//		swapViewer.zoomTo();
+		swapViewer.render();
+		swapViewer.animate({loop:'back and forth'});
+	}});
+};
+
+$tsol3d._1NF0_active_site_loop_movement.swapView = function(event) {
+	var viewName = event.data.viewName;
+	logger.debug('$tsol3d._1NF0_active_site_loop_movement.swapView viewName:  ' + viewName);
+
+	var swapViewer = event.data.swapViewer;
+
+	if ('sticks' == viewName) {
+		swapViewer.setStyle({altLoc:'A'}, {stick:$tsol3d.defaultStickStyle});
+	} else if ('spheres' == viewName) {
+		swapViewer.setStyle({altLoc:'A'}, {sphere:{colorscheme:$tsol3d.defaultElementColors}});
+	} else if ('add labels' == viewName) {
+		swapViewer.addResLabels({altLoc:'A'}, $tsol3d.defaultResidueLabelStyle);
+	}
+
+	swapViewer.render();
+};
+
 /*******************************************
  * Caller function & map
  *******************************************/
@@ -1059,7 +1176,8 @@ $tsol3d.builderMap = {
 	TIM_tertiary_structure_dimer:$tsol3d.TIM_tertiary_structure_dimer.build,
 	_1NEY_chain_B_with_ligand:$tsol3d._1NEY_chain_B_with_ligand.build,
 	_1NEY_chain_B_with_ligand_and_residues:$tsol3d._1NEY_chain_B_with_ligand_and_residues.build,
-	_1NEY_chain_B_with_ligand_and_residue_Lys12:$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build
+	_1NEY_chain_B_with_ligand_and_residue_Lys12:$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build,
+	_1NF0_active_site_loop_movement:$tsol3d._1NF0_active_site_loop_movement.build
 };
 
 function callTsol3d(fragmentName, viewerName, adminFlag) {
