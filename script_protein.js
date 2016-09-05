@@ -50,7 +50,6 @@ $tsol3d.addHBonds = function(swapViewer, atomPairSerialNumbers) {
 	for (var i = 0; i < atomPairSerialNumbers.length; i++) {
 		var pairAtoms = myModel.selectedAtoms({serial:atomPairSerialNumbers[i]});
 		logger.debug('$tsol3d.addHBonds pairAtoms.length:  ' + pairAtoms.length);
-		logger.trace('$tsol3d.addHBonds pairAtoms:  ' + JSON.stringify(pairAtoms));
 
 		var p0 = pairAtoms[0];
 		var p1 = pairAtoms[1];
@@ -585,9 +584,9 @@ $tsol3d.TIM_tertiary_structure_monomer.addStyleControls = function(adminDivId) {
 	return inputs;
 };
 
-$tsol3d.TIM_tertiary_structure_monomer.residueIndexes = [68,111,49,53,187,140,213,216,38,205];
+$tsol3d.TIM_tertiary_structure_monomer.residueIndexes = [38,205,187,140,68,111,49,53,,213,216];
 
-$tsol3d.TIM_tertiary_structure_monomer.hBondAtomPairs = [[1020,1642],[706,781],[2822,2067],[3214,3240],[547,3103],[547,3101]];
+$tsol3d.TIM_tertiary_structure_monomer.hBondAtomPairs = [[1008,1642],[706,781],[2809,2067],[3214,3240],[547,3103],[547,3101]];
 
 $tsol3d.TIM_tertiary_structure_monomer.swapView = function(event) {
 	var viewName = event.data.viewName;
