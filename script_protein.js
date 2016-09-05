@@ -750,14 +750,14 @@ $tsol3d.TIM_tertiary_structure_dimer.swapView = function(event) {
 
 
 /******************************************
- * 1NEY_chain_B_with_ligand
+ * _1NEY_chain_B_with_ligand
  ******************************************/
 $tsol3d._1NEY_chain_B_with_ligand = (function(window) {
 	var my = window['$tsol3d.1NEY_chain_B_with_ligand'] || {};
 	return my;
 })(window);
 
-$tsol3d._1NEY_chain_B_with_ligand.defaults = {surfaceOpacity:0.8, color:'0x3090C7', sphereScale:1.0, stickRadius:0.25};
+$tsol3d._1NEY_chain_B_with_ligand.defaults = {surfaceOpacity:1.0, color:'0x33a4e6'};
 
 $tsol3d._1NEY_chain_B_with_ligand.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
 	logger.debug('$tsol3d._1NEY_chain_B_with_ligand.build');
@@ -765,24 +765,12 @@ $tsol3d._1NEY_chain_B_with_ligand.build = function(viewerDivId, buttonsDivId, ad
 	var swapViewer = initialSetup.swapViewer;
 	var usingAdmin = initialSetup.usingAdmin;
 
-	var styleInputsFun = null;
 	if (usingAdmin) {
 		$tsol3d._1NEY_chain_B_with_ligand.addStyleControls(adminDivId, swapViewer);
-		
-		styleInputsFun = function() {
-			var r = {};
-			r['sphereScale'] = $('#' + adminDivId).children('#sphereScaleInput').val();
-			r['stickRadius'] = $('#' + adminDivId).children('#stickRadiusInput').val();
-			return r;
-		};
 		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
-	} else {
-		sphereScaleInputFun = function() {return {sphereScale:$tsol3d._1NEY_chain_B_with_ligand.defaults['sphereScale'], 
-			stickRadius:$tsol3d._1NEY_chain_B_with_ligand.defaults['stickRadius']};};
 	}
 
-	var buttonValues = ['surface', 'surface + ligand (sticks)', 'surface + ligand (spheres)', 'sticks + ligand (spheres)',
-		'sticks + ligand (sticks)', 'spheres + ligand (sticks)', 'spheres + ligand (spheres)'];
+	var buttonValues = ['TIM (surface)', 'TIM (surface) + DHAP (sticks)', 'TIM (surface) + DHAP (spheres)'];
 	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
 
 	if (typeof pdbUrl == 'undefined' || pdbUrl == null) {
@@ -798,14 +786,16 @@ $tsol3d._1NEY_chain_B_with_ligand.build = function(viewerDivId, buttonsDivId, ad
 			var bv = buttonValues[i];
 			var b = buttons[i];
 
-			var eventData = {'swapViewer':swapViewer, viewName:bv, 'styleInputsFun':styleInputsFun};
+			var eventData = {'swapViewer':swapViewer, viewName:bv};
 			b.click(eventData, $tsol3d._1NEY_chain_B_with_ligand.swapView);
 		}
 		
 		swapViewer.setBackgroundColor(0xffffff);
 		
-		swapViewer['$tsol3dHasSurface'] = false;
-		$tsol3d._1NEY_chain_B_with_ligand.swapView({'data':{'swapViewer':swapViewer, viewName:'surface', 'styleInputsFun':styleInputsFun}});
+		$tsol3d._1NEY_chain_B_with_ligand.drawSurface(swapViewer);
+		swapViewer.setStyle({}, {stick:{hidden:true}});
+	
+		$tsol3d._1NEY_chain_B_with_ligand.swapView({'data':{'swapViewer':swapViewer, viewName:buttonValues[0]}});
 
 		swapViewer.setView([-58.0,-42.0,-19.4,-15.2,0.113,-0.988,0.0699,0.0814]);
 		swapViewer.render();
@@ -840,59 +830,20 @@ $tsol3d._1NEY_chain_B_with_ligand.addStyleControls = function(adminDivId, swapVi
 		var curOpacity = adminDiv.children('#surfaceOpacityInput').val();
 		var curColor = adminDiv.children('#surfaceColorInput').val();
 		$tsol3d._1NEY_chain_B_with_ligand.drawSurface(swapViewer, curOpacity, curColor);
-		swapViewer['$tsol3dHasSurface'] = true;
 	});
-
-	adminDiv.append('sphere scale:  <input type="text" id="sphereScaleInput" value="' + $tsol3d._1NEY_chain_B_with_ligand.defaults['sphereScale'] + '" /><br/>');
-	adminDiv.append('stick radius:  <input type="test" id="stickRadiusInput" value="' + $tsol3d._1NEY_chain_B_with_ligand.defaults['stickRadius'] + '" /><br/>');
 };
 
 $tsol3d._1NEY_chain_B_with_ligand.swapView = function(event) {
 	var viewName = event.data.viewName;
 	logger.debug('$tsol3d._1NEY_chain_B_with_ligand.swapView viewName:  ' + viewName);
 
-	var styleInputsFun = event.data.styleInputsFun;
-
 	var swapViewer = event.data.swapViewer;
-	var hasSurface = swapViewer['$tsol3dHasSurface'];
-	logger.debug('$tsol3d._1NEY_chain_B_with_ligand.swapView hasSurface:  ' + hasSurface);
 
-	swapViewer.removeAllShapes();
-
-	if ('surface' == viewName.substring(0,7) && (! hasSurface)) {
-		$tsol3d._1NEY_chain_B_with_ligand.drawSurface(swapViewer);
-		swapViewer.setStyle({}, {stick:{hidden:true}});
-		swapViewer['$tsol3dHasSurface'] = true;
-	} else if ('surface' != viewName.substring(0,7) && hasSurface) {
-		swapViewer.removeAllSurfaces();
-		swapViewer['$tsol3dHasSurface'] = false;
-	}
-
-	if ('surface' == viewName) {
+	if ('TIM (surface)' == viewName) {
 		swapViewer.setStyle({resn:"13P"}, {stick:{hidden:true}});
-	} else if ('surface + ligand (sticks)' == viewName) {
+	} else if ('TIM (surface) + DHAP (sticks)' == viewName) {
 		swapViewer.setStyle({resn:"13P"}, {stick:$tsol3d.defaultStickStyle});
-	} else if ('surface + ligand (spheres)' == viewName) {
-		swapViewer.setStyle({resn:"13P"}, {sphere:{colorscheme:$tsol3d.defaultElementColors}});
-	} else if ('sticks + ligand (spheres)' == viewName) {
-		var defaultColor = $tsol3d._1NEY_chain_B_with_ligand.defaults['color'];
-		var stickRadius = styleInputsFun()['stickRadius'];
-		swapViewer.setStyle({resn:'13P', invert:true}, {stick:{color:defaultColor, radius:stickRadius}});
-		swapViewer.setStyle({resn:"13P"}, {sphere:{colorscheme:$tsol3d.defaultElementColors}});
-	} else if ('sticks + ligand (sticks)' == viewName) {
-		var defaultColor = $tsol3d._1NEY_chain_B_with_ligand.defaults['color'];
-		var stickRadius = styleInputsFun()['stickRadius'];
-		swapViewer.setStyle({resn:'13P', invert:true}, {stick:{color:defaultColor, radius:stickRadius}});
-		swapViewer.setStyle({resn:"13P"}, {stick:$tsol3d.defaultStickStyle});
-	} else if ('spheres + ligand (sticks)' == viewName) {
-		var defaultColor = $tsol3d._1NEY_chain_B_with_ligand.defaults['color'];
-		var sphereScale = styleInputsFun()['sphereScale'];
-		swapViewer.setStyle({resn:'13P', invert:true}, {sphere:{color:defaultColor, scale:sphereScale}});
-		swapViewer.setStyle({resn:"13P"}, {stick:$tsol3d.defaultStickStyle});
-	} else if ('spheres + ligand (spheres)' == viewName) {
-		var defaultColor = $tsol3d._1NEY_chain_B_with_ligand.defaults['color'];
-		var sphereScale = styleInputsFun()['sphereScale'];
-		swapViewer.setStyle({resn:'13P', invert:true}, {sphere:{color:defaultColor, scale:sphereScale}});
+	} else if ('TIM (surface) + DHAP (spheres)' == viewName) {
 		swapViewer.setStyle({resn:"13P"}, {sphere:{colorscheme:$tsol3d.defaultElementColors}});
 	}
 
