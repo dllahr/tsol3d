@@ -858,11 +858,11 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residues = (function(window) {
 	return my;
 })(window);
 
-$tsol3d._1NEY_chain_B_with_ligand_and_residues.defaults = {surfaceOpacity:0.8, color:'0x3090C7', sphereScale:1.0, stickRadius:0.25};
+$tsol3d._1NEY_chain_B_with_ligand_and_residues.defaults = {surfaceOpacity:0.6, color:'0x33a4e6'};
 
-$tsol3d._1NEY_chain_B_with_ligand_and_residues.data = {resi:[165, 95], hBondPairs:[[6400,7662], [6401,7662], [7655,5263], [7657,5263]]};
+$tsol3d._1NEY_chain_B_with_ligand_and_residues.data = {resi:[165, 95]};
 
-$tsol3d._1NEY_chain_B_with_ligand_and_residues.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl, resi, hBondPairs) {
+$tsol3d._1NEY_chain_B_with_ligand_and_residues.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl, resi) {
 	logger.debug('$tsol3d._1NEY_chain_B_with_ligand_and_residues.build');
 	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
 	var swapViewer = initialSetup.swapViewer;
@@ -871,24 +871,14 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residues.build = function(viewerDivId, but
 	if (typeof(resi) == 'undefined' || null == resi) {
 		resi = $tsol3d._1NEY_chain_B_with_ligand_and_residues.data['resi'];
 	}
-	if (typeof(hBondPairs) == 'undefined' || null == hBondPairs) {
-		hBondPairs = $tsol3d._1NEY_chain_B_with_ligand_and_residues.data['hBondPairs'];
-	}
 
 	if (usingAdmin) {
 		$tsol3d._1NEY_chain_B_with_ligand_and_residues.addStyleControls(adminDivId, swapViewer);
 		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
 	}
 
-	var buttonValues = ['surface + ligand (sticks)', 'surface + ligand (spheres)', 'surface + ligand H-bonding'];
+	var buttonValues = ['TIM (surface) + Glu165,His95 (sticks) + DHAP (sticks)', 'TIM (surface) + Glu165,His95 (spheres) + DHAP (spheres)'];
 	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
-
-	var hBondZoomButton = $tsol3d.buildUtils.basicButtonSetup(['zoom to H-bonding'], buttonsDivId);
-	hBondZoomButton[0].click(function() {
-		var curEvent = {'data':{'swapViewer':swapViewer, viewName:'surface + ligand H-bonding', 'resi':resi, 'hBondPairs':hBondPairs}};
-		$tsol3d._1NEY_chain_B_with_ligand_and_residues.swapView(curEvent);
-		swapViewer.setView([-55.3,-40.6,-14.4,92.3,-0.1257,0.8117,0.3655,-0.4383]);
-	});
 
 	if (typeof(pdbUrl) == 'undefined' || pdbUrl == null) {
 		pdbUrl = 'https://www.secretoflife.org/sites/default/files/pdb/1ney_cleanedHETATM_justChainB.pdb';
@@ -903,7 +893,7 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residues.build = function(viewerDivId, but
 			var bv = buttonValues[i];
 			var b = buttons[i];
 
-			var eventData = {'swapViewer':swapViewer, viewName:bv, 'resi':resi, 'hBondPairs':hBondPairs};
+			var eventData = {'swapViewer':swapViewer, viewName:bv, 'resi':resi};
 			b.click(eventData, $tsol3d._1NEY_chain_B_with_ligand_and_residues.swapView);
 		}
 		
@@ -912,7 +902,7 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residues.build = function(viewerDivId, but
 		swapViewer.setStyle({}, {stick:{hidden:true}});
 		$tsol3d._1NEY_chain_B_with_ligand_and_residues.drawSurface(swapViewer);
 
-		var curEvent = {'data':{'swapViewer':swapViewer, viewName:'surface + ligand (sticks)', 'resi':resi, 'hBondPairs':hBondPairs}};
+		var curEvent = {'data':{'swapViewer':swapViewer, viewName:buttonValues[0], 'resi':resi}};
 		$tsol3d._1NEY_chain_B_with_ligand_and_residues.swapView(curEvent);
 		swapViewer.setView([-58.0,-42.0,-19.4,-15.2,0.113,-0.988,0.0699,0.0814]);
 		swapViewer.render();
@@ -947,7 +937,6 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residues.addStyleControls = function(admin
 		var curOpacity = adminDiv.children('#surfaceOpacityInput').val();
 		var curColor = adminDiv.children('#surfaceColorInput').val();
 		$tsol3d._1NEY_chain_B_with_ligand_and_residues.drawSurface(swapViewer, curOpacity, curColor);
-		swapViewer['$tsol3dHasSurface'] = true;
 	});
 };
 
@@ -957,24 +946,14 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residues.swapView = function(event) {
 
 	var swapViewer = event.data.swapViewer;
 
-	swapViewer.removeAllShapes();
-
 	var residueIndexes = event.data.resi;
 
-	if ('surface + ligand (sticks)' == viewName) {
+	if ('TIM (surface) + Glu165,His95 (sticks) + DHAP (sticks)' == viewName) {
 		swapViewer.setStyle({resn:"13P"}, {stick:$tsol3d.defaultStickStyle});
 		swapViewer.setStyle({resi:residueIndexes}, {stick:$tsol3d.defaultStickStyle});
-	} else if ('surface + ligand (spheres)' == viewName) {
+	} else if ('TIM (surface) + Glu165,His95 (spheres) + DHAP (spheres)' == viewName) {
 		swapViewer.setStyle({resn:"13P"}, {sphere:{colorscheme:$tsol3d.defaultElementColors}});
 		swapViewer.setStyle({resi:residueIndexes}, {sphere:{colorscheme:$tsol3d.defaultElementColors}});
-	} else if ('surface + ligand H-bonding' == viewName) {
-		swapViewer.setStyle({resn:"13P"}, {stick:$tsol3d.defaultStickStyle});
-		swapViewer.setStyle({resi:residueIndexes}, {stick:$tsol3d.defaultStickStyle});
-		
-		var hBondPairs = event.data.hBondPairs;
-		logger.debug('$tsol3d._1NEY_chain_B_with_ligand_and_residues.swapView hBondPairs:  ' + JSON.stringify(hBondPairs));
-
-		$tsol3d.addHBonds(swapViewer, hBondPairs);
 	}
 
 	swapViewer.render();
