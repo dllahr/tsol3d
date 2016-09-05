@@ -862,15 +862,11 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residues.defaults = {surfaceOpacity:0.6, c
 
 $tsol3d._1NEY_chain_B_with_ligand_and_residues.data = {resi:[165, 95]};
 
-$tsol3d._1NEY_chain_B_with_ligand_and_residues.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl, resi) {
+$tsol3d._1NEY_chain_B_with_ligand_and_residues.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
 	logger.debug('$tsol3d._1NEY_chain_B_with_ligand_and_residues.build');
 	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
 	var swapViewer = initialSetup.swapViewer;
 	var usingAdmin = initialSetup.usingAdmin;
-
-	if (typeof(resi) == 'undefined' || null == resi) {
-		resi = $tsol3d._1NEY_chain_B_with_ligand_and_residues.data['resi'];
-	}
 
 	if (usingAdmin) {
 		$tsol3d._1NEY_chain_B_with_ligand_and_residues.addStyleControls(adminDivId, swapViewer);
@@ -889,11 +885,13 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residues.build = function(viewerDivId, but
 
 		swapViewer.addModel(pdbData, "pdb", {keepH:true});
 		
+		var residueIndexes = $tsol3d._1NEY_chain_B_with_ligand_and_residues.data['resi'];
+
 		for (var i = 0; i < buttons.length; i++) {
 			var bv = buttonValues[i];
 			var b = buttons[i];
 
-			var eventData = {'swapViewer':swapViewer, viewName:bv, 'resi':resi};
+			var eventData = {'swapViewer':swapViewer, viewName:bv, 'resi':residueIndexes};
 			b.click(eventData, $tsol3d._1NEY_chain_B_with_ligand_and_residues.swapView);
 		}
 		
@@ -902,7 +900,7 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residues.build = function(viewerDivId, but
 		swapViewer.setStyle({}, {stick:{hidden:true}});
 		$tsol3d._1NEY_chain_B_with_ligand_and_residues.drawSurface(swapViewer);
 
-		var curEvent = {'data':{'swapViewer':swapViewer, viewName:buttonValues[0], 'resi':resi}};
+		var curEvent = {'data':{'swapViewer':swapViewer, viewName:buttonValues[0], 'resi':residueIndexes}};
 		$tsol3d._1NEY_chain_B_with_ligand_and_residues.swapView(curEvent);
 		swapViewer.setView([-58.0,-42.0,-19.4,-15.2,0.113,-0.988,0.0699,0.0814]);
 		swapViewer.render();
@@ -967,13 +965,43 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12 = (function(window) {
 	return my;
 })(window);
 
-$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.data = {resi:[12], hBondPairs:[[3980,7655], [3980,7652]]};
+$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.data = {resi:[12], hBondPairs:[[3968,7655], [3980,7652]]};
 
 $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
-	var resi = $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.data['resi'];
-	var hBondPairs = $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.data['hBondPairs'];
+	logger.debug('$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build');
 
-	$tsol3d._1NEY_chain_B_with_ligand_and_residues.build(viewerDivId, buttonsDivId, adminDivId, pdbUrl, resi, hBondPairs);
+	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
+	var swapViewer = initialSetup.swapViewer;
+	var usingAdmin = initialSetup.usingAdmin;
+
+	if (usingAdmin) {
+		$tsol3d._1NEY_chain_B_with_ligand_and_residues.addStyleControls(adminDivId, swapViewer);
+		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
+	}
+
+	if (typeof(pdbUrl) == 'undefined' || pdbUrl == null) {
+		pdbUrl = 'https://www.secretoflife.org/sites/default/files/pdb/1ney_cleanedHETATM_justChainB.pdb';
+	}
+
+	$.ajax({url: pdbUrl, success: function(pdbData) {
+		logger.trace('$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build retrieved pdbData:  ' + pdbData.substring(0,100));
+
+		swapViewer.addModel(pdbData, "pdb", {keepH:true});
+
+		swapViewer.setBackgroundColor(0xffffff);
+
+		swapViewer.setStyle({}, {stick:{hidden:true}});
+		$tsol3d._1NEY_chain_B_with_ligand_and_residues.drawSurface(swapViewer);
+
+		swapViewer.setStyle({resn:"13P"}, {stick:$tsol3d.defaultStickStyle});
+		swapViewer.setStyle({resi:$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.data['resi']}, {stick:$tsol3d.defaultStickStyle});
+
+		$tsol3d.addHBonds(swapViewer, $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.data['hBondPairs']);
+
+		swapViewer.setView([-58.0,-42.0,-19.4,-15.2,0.113,-0.988,0.0699,0.0814]);
+		swapViewer.render();
+	}});
+
 };
 
 /******************************************
@@ -993,17 +1021,6 @@ $tsol3d._1NF0_active_site_loop_movement.build = function(viewerDivId, buttonsDiv
 	if (usingAdmin) {
 		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
 	}
-	
-	var buttonValues = ['sticks', 'spheres', 'add labels'];
-	var buttons = $tsol3d.buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
-
-	for (var i = 0; i < buttons.length; i++) {
-		var bv = buttonValues[i];
-		var b = buttons[i];
-
-		var eventData = {'swapViewer':swapViewer, viewName:bv};
-		b.click(eventData, $tsol3d._1NF0_active_site_loop_movement.swapView);
-	}
 
 	if (typeof(pdbUrl) == 'undefined' || pdbUrl == null) {
 		pdbUrl = 'https://www.secretoflife.org/sites/default/files/pdb/1nf0_cleanedHETATM_justChainA.pdb';
@@ -1015,9 +1032,10 @@ $tsol3d._1NF0_active_site_loop_movement.build = function(viewerDivId, buttonsDiv
 		var model = swapViewer.addModel(pdbData, "pdb", {keepH:true, altLoc:'*'});
 
 		swapViewer.setBackgroundColor(0xffffff);
-	        swapViewer.addSurface($3Dmol.SurfaceType.VDW, {opacity:0.8, color:'0x3090C7'}, {altLoc:' '});
+	        swapViewer.addSurface($3Dmol.SurfaceType.VDW, {opacity:0.8, color:'0x33a4e6'}, {altLoc:' '});
 		swapViewer.setStyle({}, {stick:{hidden:true}});
 		swapViewer.setStyle({altLoc:'A'}, {stick:$tsol3d.defaultStickStyle});
+		swapViewer.setStyle({resi:[209,210,211,212]}, {stick:{hidden:true}});
 
 		var allAtoms = model.selectedAtoms({});
 
@@ -1044,6 +1062,23 @@ $tsol3d._1NF0_active_site_loop_movement.build = function(viewerDivId, buttonsDiv
 			gradient[sa.serial] = g;
 		}
 		logger.debug('$tsol3d._1NF0_active_site_loop_movement.build gradient:  ' + JSON.stringify(gradient));
+		
+		const numPauseFrames = 4;
+		//add initial pause frames
+		for (var f = 1; f <= numPauseFrames; f++) {
+			var frame = [];
+
+			for (var i = 0; i < allAtoms.length; i++) {
+				var atom = allAtoms[i];
+
+				var newAtom = {};
+				for (var k in atom) {
+					newAtom[k] = atom[k];
+				}
+				frame.push(newAtom);
+			}	
+			model.addFrame(frame);
+		}
 
 		for (var f = 1; f <= numFrames; f++) {
 			var frame = [];
@@ -1068,29 +1103,36 @@ $tsol3d._1NF0_active_site_loop_movement.build = function(viewerDivId, buttonsDiv
 			}	
 			model.addFrame(frame);
 		}
+		
+		//add final pause frames
+		for (var f = 1; f <= numPauseFrames; f++) {
+			var frame = [];
+
+			for (var i = 0; i < allAtoms.length; i++) {
+				var atom = allAtoms[i];
+
+				var newAtom = {};
+				for (var k in atom) {
+					newAtom[k] = atom[k];
+				}
+				frame.push(newAtom);
+				
+				if (atom.serial in startAtomsMap) {
+					var sa = startAtomsMap[atom.serial];
+					var g = gradient[atom.serial];
+
+					newAtom.x = sa.x + numFrames*g.dx;
+					newAtom.y = sa.y + numFrames*g.dy;
+					newAtom.z = sa.z + numFrames*g.dz;
+				}
+			}	
+			model.addFrame(frame);
+		}
 
 		swapViewer.setView([-23.46,-10.79,-144.9,-8.1027,-0.1585,0.3274,0,-0.9314]);
-//		swapViewer.zoomTo();
 		swapViewer.render();
 		swapViewer.animate({loop:'back and forth'});
 	}});
-};
-
-$tsol3d._1NF0_active_site_loop_movement.swapView = function(event) {
-	var viewName = event.data.viewName;
-	logger.debug('$tsol3d._1NF0_active_site_loop_movement.swapView viewName:  ' + viewName);
-
-	var swapViewer = event.data.swapViewer;
-
-	if ('sticks' == viewName) {
-		swapViewer.setStyle({altLoc:'A'}, {stick:$tsol3d.defaultStickStyle});
-	} else if ('spheres' == viewName) {
-		swapViewer.setStyle({altLoc:'A'}, {sphere:{colorscheme:$tsol3d.defaultElementColors}});
-	} else if ('add labels' == viewName) {
-		swapViewer.addResLabels({altLoc:'A'}, $tsol3d.defaultResidueLabelStyle);
-	}
-
-	swapViewer.render();
 };
 
 /*******************************************
