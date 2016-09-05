@@ -654,7 +654,7 @@ $tsol3d.TIM_tertiary_structure_monomer.swapView = function(event) {
  * TIM_tertiary_structure_dimer
  * *****************************************/
 $tsol3d.TIM_tertiary_structure_dimer = (function(window) {
-	var my = window['$tsol3d.TIM_tertiary_structure_monomer'] || {};
+	var my = window['$tsol3d.TIM_tertiary_structure_dimer'] || {};
 	return my;
 })(window);
 
@@ -701,7 +701,7 @@ $tsol3d.TIM_tertiary_structure_dimer.build = function(viewerDivId, buttonsDivId,
 
 $tsol3d.TIM_tertiary_structure_dimer.swapView = function(event) {
 	var viewName = event.data.viewName;
-	logger.debug('$tsol3d.TIM_tertiary_structure_monomer.swapView viewName:  ' + viewName);
+	logger.debug('$tsol3d.TIM_tertiary_structure_dimer.swapView viewName:  ' + viewName);
 
 	var swapViewer = event.data.swapViewer;
 
@@ -748,6 +748,52 @@ $tsol3d.TIM_tertiary_structure_dimer.swapView = function(event) {
 	swapViewer.render();
 };
 
+/*******************************************
+ * TIM_thermal_motion
+ * *****************************************/
+$tsol3d.TIM_thermal_motion = (function(window) {
+	var my = window['$tsol3d.TIM_thermal_motion'] || {};
+	return my;
+})(window);
+
+$tsol3d.TIM_thermal_motion.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
+	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
+	var swapViewer = initialSetup.swapViewer;
+	var usingAdmin = initialSetup.usingAdmin;
+
+	if (usingAdmin) {
+		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
+	}
+
+	if (typeof pdbUrl == 'undefined' || pdbUrl == null) {
+		pdbUrl = 'https://www.secretoflife.org/sites/default/files/pdb/4poc_mixed_case.pdb';
+	}
+
+	$.ajax({url: pdbUrl, success: function(pdbData) {
+		logger.trace('$tsol3d.TIM_thermal_motion.build retrieved pdbData:  ' + pdbData.substring(0,100));
+
+		swapViewer.addModel(pdbData, "pdb");
+
+		var model = swapViewer.getModel();
+		var atoms = model.selectedAtoms({});
+		for (var i = 0; i < atoms.length; i++) {
+			var atom = atoms[i];
+			atom["dx"] = 2*Math.random() - 1.0;
+			atom["dy"] = 2*Math.random() - 1.0;
+			atom["dz"] = 2*Math.random() - 1.0;
+
+		}
+		model.vibrate(10, 0.5);
+		swapViewer.animate({loop: "backAndForth"});
+
+		swapViewer.setBackgroundColor(0xffffff);
+		swapViewer.setStyle({}, {stick:$tsol3d.defaultStickStyle});
+
+		swapViewer.setView([-16.0,1.62,-23.1,-76.0,0.5599,0.5069,-0.0074114,0.6553]);
+		swapViewer.render();
+	}});
+
+};
 
 /******************************************
  * _1NEY_chain_B_with_ligand
@@ -1145,6 +1191,7 @@ $tsol3d.builderMap = {
 	TIM_loop_Q64_I78:$tsol3d.TIM_loop_Q64_I78.build,
 	TIM_tertiary_structure_monomer:$tsol3d.TIM_tertiary_structure_monomer.build,
 	TIM_tertiary_structure_dimer:$tsol3d.TIM_tertiary_structure_dimer.build,
+	TIM_thermal_motion:$tsol3d.TIM_thermal_motion.build,
 	_1NEY_chain_B_with_ligand:$tsol3d._1NEY_chain_B_with_ligand.build,
 	_1NEY_chain_B_with_ligand_and_residues:$tsol3d._1NEY_chain_B_with_ligand_and_residues.build,
 	_1NEY_chain_B_with_ligand_and_residue_Lys12:$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build,
