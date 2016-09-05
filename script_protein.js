@@ -660,7 +660,7 @@ $tsol3d.TIM_tertiary_structure_dimer = (function(window) {
 
 $tsol3d.TIM_tertiary_structure_dimer.residueIndexes = {A:[98, 70, 18, 75], B:[77, 17, 49, 11]};
 
-$tsol3d.TIM_tertiary_structure_dimer.hBondAtomPairs = [[1449,4872], [1043,3988], [270,4447], [270,4446], [1108,3879]];
+$tsol3d.TIM_tertiary_structure_dimer.hBondAtomPairs = [[1449,4872], [1043,3975], [270,4447], [270,4446], [1108,3879]];
 
 $tsol3d.TIM_tertiary_structure_dimer.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
 	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
