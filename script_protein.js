@@ -1047,7 +1047,6 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build = function(viewerDivId
 		swapViewer.setView([-58.0,-42.0,-19.4,-15.2,0.113,-0.988,0.0699,0.0814]);
 		swapViewer.render();
 	}});
-
 };
 
 /******************************************
@@ -1063,7 +1062,7 @@ $tsol3d._1NF0_active_site_loop_movement.build = function(viewerDivId, buttonsDiv
 	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
 	var swapViewer = initialSetup.swapViewer;
 	var usingAdmin = initialSetup.usingAdmin;
-	
+
 	if (usingAdmin) {
 		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
 	}
@@ -1090,7 +1089,7 @@ $tsol3d._1NF0_active_site_loop_movement.build = function(viewerDivId, buttonsDiv
 		logger.debug(startAtoms[0]);
 
 		var endAtoms = model.selectedAtoms({altLoc:'B'});
-	
+
 		var numFrames = 10;
 		var gradient = {};
 		var startAtomsMap = {};
@@ -1099,7 +1098,7 @@ $tsol3d._1NF0_active_site_loop_movement.build = function(viewerDivId, buttonsDiv
 			startAtomsMap[sa.serial] = sa;
 
 			var ea = endAtoms[i];
-			
+
 			var g = {};
 			g['dx'] = (ea.x - sa.x) / numFrames;
 			g['dy'] = (ea.y - sa.y) / numFrames;
@@ -1181,21 +1180,143 @@ $tsol3d._1NF0_active_site_loop_movement.build = function(viewerDivId, buttonsDiv
 	}});
 };
 
+
+/*******************************************
+ * simple_enantiomers
+ *******************************************/
+$tsol3d.simple_enantiomers = (function(window) {
+	var my = window['$tsol3d.simple_enantiomers'] || {};
+	return my;
+})(window);
+
+$tsol3d.simple_enantiomers.data = {xyz:'5\n' +
+	'* (null), Energy   -1000.0000000\n' +
+	'C     0.000000    0.000000    0.000000\n' +
+	'H     0.931955   -0.364989    0.000000\n' +
+	'F    -0.465975   -0.364992    0.807088\n' + //shows up as green in default 3DMol coloring scheme
+	'Cl   -0.465975   -0.364992   -0.807088\n' + //shows up as brown in default 3DMol coloring scheme
+	'I     0.000000    1.000000    0.000000'     //shows up as purple in default 3DMol coloring sheme
+};
+
+$tsol3d.simple_enantiomers.build = function(viewerDivId, buttonsDivId, adminDivId) {
+	logger.debug('$tsol3d.simple_enantiomers.build');
+
+	var usingAdmin = (typeof(adminDivId) != 'undefined') && (adminDivId != null);
+
+	var indivPrefixes = {left:{label:'(S)'}, right:{label:'(R)'}};
+	logger.debug('$tsol3d.simple_enantiomers.build indivPrefixes:  ' + JSON.stringify(indivPrefixes));
+
+	var viewerDiv = $('#' + viewerDivId);
+
+	for (var ivp in indivPrefixes) {
+		var indivViewerDivId = ivp + 'InnerViewer' + viewerDivId;
+		logger.debug('$tsol3d.simple_enantiomers.build indivViewerDivId:  ' + indivViewerDivId);
+
+		indivPrefixes[ivp]['indivViewerDivId'] = indivViewerDivId;
+
+		viewerDiv.append('<div id="' + indivViewerDivId + '" style="height:300px; width:300px; float:left; position:relative"></div>');
+
+		var indivSwapViewer = $3Dmol.createViewer(indivViewerDivId);
+		indivPrefixes[ivp]['swapViewer'] = indivSwapViewer;
+
+		if (usingAdmin) {
+			var indivAdminDivId = ivp + 'InnerAdmin' + adminDivId;
+			indivPrefixes[ivp]['indivAdminDivId'] = indivAdminDivId;
+
+			$('#' + adminDivId).append('<div id="' + indivAdminDivId + '" style="height:100%; width:50%; float: left"></div>');
+
+			$tsol3d.commonAdminSetup(indivAdminDivId, indivViewerDivId, indivSwapViewer);
+		}
+	}
+
+	var assertOne = function(name, array) {
+		if (array.length != 1) {
+			throw 'expected to find one and only one atom of ' + name + ', found array.length:  ' + array.length;
+		}
+	};
+
+	for (var ivp in indivPrefixes) {
+		var swapViewer = indivPrefixes[ivp]['swapViewer'];
+
+		var data = $tsol3d.simple_enantiomers.data['xyz'];
+		logger.trace('$tsol3d.simple_enantiomers.build :  ' + data);
+
+		var model = swapViewer.addModel(data, 'xyz');
+		var atoms = model.selectedAtoms({});
+
+		//swap atoms to make enantiomer if the first one
+		if ('left' == ivp) {
+			var fluorine = atoms.filter(function(a) {return a.elem == 'F';});
+			assertOne('fluorine', fluorine);
+			fluorine = fluorine[0];
+
+			var chlorine = atoms.filter(function(a) {return a.elem == 'Cl';});
+			assertOne('chlorine', chlorine);
+			chlorine = chlorine[0];
+
+			fluorine.atom = 'Cl';
+			fluorine.elem = 'Cl';
+			chlorine.atom = 'F';
+			chlorine.elem = 'F';
+		}
+
+		//delete the extra bonds
+		var carbon = atoms.filter(function(a) {return a.elem == 'C';});
+		assertOne('carbon', carbon);
+		carbon = carbon[0];
+		const carbonInd = atoms.indexOf(carbon);
+
+		for (var i = 0; i < atoms.length; i++) {
+			if (i != carbonInd) {
+				var atom = atoms[i];
+				atom.bonds = atom.bonds.filter(function(atomInd) {return carbonInd == atomInd;});
+			}
+		}
+
+		//add stereochem label
+		var iodine = atoms.filter(function(a) {return a.elem == 'I';});
+		assertOne('iodine', iodine);
+		iodine = iodine[0];
+		var labelData = $.extend({}, $tsol3d.defaultResidueLabelStyle);
+		labelData['x'] = iodine.x;
+		labelData['y'] = iodine.y;
+		labelData['z'] = iodine.z;
+		swapViewer.addLabel(indivPrefixes[ivp]['label'], labelData);
+
+		swapViewer.setBackgroundColor(0xffffff);
+		swapViewer.setStyle({}, {stick:$tsol3d.defaultStickStyle});
+		swapViewer.setView([0.00000,0.01899,0,135.8,-0.16617,-0.14539,0,-0.9753]);
+		swapViewer.render();
+	}
+};
+
 /*******************************************
  * Caller function & map
  *******************************************/
 $tsol3d.builderMap = {
-	TIM_6mer_fragment_A73_I78:$tsol3d.TIM_6mer_fragment_A73_I78.build, 
-	TIM_fragment_alpha_helix_Q19_N29:$tsol3d.TIM_fragment_alpha_helix_Q19_N29.build,
-	TIM_fragment_parallel_beta_sheet_F6_A42:$tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.build, 
-	TIM_loop_Q64_I78:$tsol3d.TIM_loop_Q64_I78.build,
-	TIM_tertiary_structure_monomer:$tsol3d.TIM_tertiary_structure_monomer.build,
-	TIM_tertiary_structure_dimer:$tsol3d.TIM_tertiary_structure_dimer.build,
-	TIM_thermal_motion:$tsol3d.TIM_thermal_motion.build,
-	_1NEY_chain_B_with_ligand:$tsol3d._1NEY_chain_B_with_ligand.build,
-	_1NEY_chain_B_with_ligand_and_residues:$tsol3d._1NEY_chain_B_with_ligand_and_residues.build,
-	_1NEY_chain_B_with_ligand_and_residue_Lys12:$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build,
-	_1NF0_active_site_loop_movement:$tsol3d._1NF0_active_site_loop_movement.build
+	TIM_6mer_fragment_A73_I78: $tsol3d.TIM_6mer_fragment_A73_I78.build,
+
+	TIM_fragment_alpha_helix_Q19_N29: $tsol3d.TIM_fragment_alpha_helix_Q19_N29.build,
+
+	TIM_fragment_parallel_beta_sheet_F6_A42: $tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.build,
+
+	TIM_loop_Q64_I78: $tsol3d.TIM_loop_Q64_I78.build,
+
+	TIM_tertiary_structure_monomer: $tsol3d.TIM_tertiary_structure_monomer.build,
+
+	TIM_tertiary_structure_dimer: $tsol3d.TIM_tertiary_structure_dimer.build,
+
+	TIM_thermal_motion: $tsol3d.TIM_thermal_motion.build,
+
+	_1NEY_chain_B_with_ligand: $tsol3d._1NEY_chain_B_with_ligand.build,
+
+	_1NEY_chain_B_with_ligand_and_residues: $tsol3d._1NEY_chain_B_with_ligand_and_residues.build,
+
+	_1NEY_chain_B_with_ligand_and_residue_Lys12: $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build,
+
+	_1NF0_active_site_loop_movement: $tsol3d._1NF0_active_site_loop_movement.build,
+
+	simple_stereoisomers: $tsol3d.simple_enantiomers.build
 };
 
 function callTsol3d(fragmentName, viewerName, adminFlag) {

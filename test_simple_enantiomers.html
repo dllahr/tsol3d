@@ -1,0 +1,33 @@
+<html>
+<head>
+<script src="https://3Dmol.csb.pitt.edu/build/3Dmol.js"></script>
+<script src="log4javascript.js"></script>
+<script src="script_protein.js"></script>
+</head>
+<body>
+<h2>Simple enantiomers</h2>
+<div id="viewerButtonsDiv"></div>
+<div id="viewerDiv" style="height: 400px; width: 600px; position: relative;"></div>
+<div id="viewerAdminDiv" style="width: 600px; position: relative;"></div>
+<script>
+	$(document).ready(function() {
+/*		var swapViewer = $3Dmol.createViewer('leftInnerViewerviewerDiv');
+		var data = '4\n' +
+			'* (null), Energy   -1000.0000000\n' +
+			'N     0.000005    0.019779   -0.000003   -0.157114    0.000052   -0.012746\n' +
+			'H     0.931955   -0.364989    0.000003    1.507100   -0.601158   -0.004108\n' +
+			'H    -0.465975   -0.364992    0.807088    0.283368    0.257996   -0.583024\n' +
+			'H    -0.465979   -0.364991   -0.807088    0.0392764    0.0342436    0.0764260\n';
+
+		swapViewer.addModel(data, 'xyz');
+		swapViewer.setBackgroundColor(0xffffff);
+		swapViewer.setStyle({}, {stick:$tsol3d.defaultStickStyle});
+		swapViewer.zoomTo();
+		swapViewer.render();
+
+		var swapViewer = $3Dmol.createViewer('rightInnerViewerviewerDiv');*/
+		$tsol3d.simple_enantiomers.build("viewerDiv", "viewerButtonsDiv", "viewerAdminDiv");
+	});
+</script>
+</body>
+</html>
