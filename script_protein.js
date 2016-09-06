@@ -843,7 +843,8 @@ $tsol3d._1NEY_chain_B_with_ligand.build = function(viewerDivId, buttonsDivId, ad
 	
 		$tsol3d._1NEY_chain_B_with_ligand.swapView({'data':{'swapViewer':swapViewer, viewName:buttonValues[0]}});
 
-		swapViewer.setView([-58.0,-42.0,-19.4,-15.2,0.113,-0.988,0.0699,0.0814]);
+		swapViewer.setView([-58.8,-43.6,-19.7,82.3,-0.1307,0.989,0.0275,-0.06288]);
+
 		swapViewer.render();
 	}});
 };
@@ -904,7 +905,7 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residues = (function(window) {
 	return my;
 })(window);
 
-$tsol3d._1NEY_chain_B_with_ligand_and_residues.defaults = {surfaceOpacity:0.6, color:'0x33a4e6'};
+$tsol3d._1NEY_chain_B_with_ligand_and_residues.defaults = {surfaceOpacity:0.7, color:'0x33a4e6'};
 
 $tsol3d._1NEY_chain_B_with_ligand_and_residues.data = {resi:[165, 95]};
 
@@ -948,7 +949,10 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residues.build = function(viewerDivId, but
 
 		var curEvent = {'data':{'swapViewer':swapViewer, viewName:buttonValues[0], 'resi':residueIndexes}};
 		$tsol3d._1NEY_chain_B_with_ligand_and_residues.swapView(curEvent);
-		swapViewer.setView([-58.0,-42.0,-19.4,-15.2,0.113,-0.988,0.0699,0.0814]);
+
+		swapViewer.addResLabels({resi:residueIndexes}, $tsol3d.defaultResidueLabelStyle);
+
+		swapViewer.setView([-58.8,-45.5,-13.7,91.6,0.0356,-0.978,-0.0799,0.191]);
 		swapViewer.render();
 	}});
 };
@@ -1011,7 +1015,7 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12 = (function(window) {
 	return my;
 })(window);
 
-$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.data = {resi:[12], hBondPairs:[[3968,7655], [3980,7652]]};
+$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.data = {resi:[12], hBondPairs:[[3980,7655], [3980,7652]]};
 
 $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
 	logger.debug('$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build');
@@ -1040,11 +1044,15 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build = function(viewerDivId
 		$tsol3d._1NEY_chain_B_with_ligand_and_residues.drawSurface(swapViewer);
 
 		swapViewer.setStyle({resn:"13P"}, {stick:$tsol3d.defaultStickStyle});
-		swapViewer.setStyle({resi:$tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.data['resi']}, {stick:$tsol3d.defaultStickStyle});
 
+		var residueIndexes = $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.data['resi'];
+		swapViewer.setStyle({resi:residueIndexes}, {stick:$tsol3d.defaultStickStyle});
+
+		swapViewer.addResLabels({resi:residueIndexes}, $tsol3d.defaultResidueLabelStyle);
+		
 		$tsol3d.addHBonds(swapViewer, $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.data['hBondPairs']);
 
-		swapViewer.setView([-58.0,-42.0,-19.4,-15.2,0.113,-0.988,0.0699,0.0814]);
+		swapViewer.setView([-56.8,-43.8,-18.8,84.15,-0.12179,0.9859,0.009899,-0.116]);
 		swapViewer.render();
 	}});
 };
