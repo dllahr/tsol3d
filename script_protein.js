@@ -415,7 +415,7 @@ $tsol3d.TIM_fragment_alpha_helix_Q19_N29.build = function(viewerDivId, buttonsDi
 
 		swapViewer.setBackgroundColor(0xffffff);
 		$tsol3d.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'ribbon + sticks', 'pdbData':pdbData, "hbondAtomPairs":hbondAtomPairs}});
-		swapViewer.setView([-25.5488,8.0181,-3.7173,79.6871,0.3267,0.6791,-0.3059,-0.5817]);
+		swapViewer.setView([-25.549,8.018,-3.717,75.986,0.625,0.5662,0.1431,-0.5180]);
 		swapViewer.render();
 	}});
 };
@@ -459,9 +459,7 @@ $tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.build = function(viewerDivId, bu
 
 		swapViewer.setBackgroundColor(0xffffff);
 		$tsol3d.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'ribbon + sticks', 'pdbData':pdbData, "hbondAtomPairs":hbondAtomPairs}});
-		swapViewer.zoomTo();
-		swapViewer.rotate(45, "x");
-		swapViewer.rotate(30, "y");
+		swapViewer.setView([-18.086,9.677,-4.584,41.386,-0.2834,-0.4869,-0.0164,-0.826]);
 		swapViewer.render();
 	}});
 };
@@ -503,7 +501,7 @@ $tsol3d.TIM_loop_Q64_I78.build = function(viewerDivId, buttonsDivId, adminDivId,
 
 		swapViewer.setBackgroundColor(0xffffff);
 		$tsol3d.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'ribbon + sticks', 'pdbData':pdbData, "hbondAtomPairs":null}});
-		swapViewer.zoomTo();
+		swapViewer.setView([-11.313,-1.57,-22.294,60.643,0.2455,0.1597,-0.3977,-0.8695]);
 		swapViewer.render();
 	}});
 };
