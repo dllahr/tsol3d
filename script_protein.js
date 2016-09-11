@@ -1249,6 +1249,8 @@ $tsol3d.simple_enantiomers.build = function(viewerDivId, buttonsDivId, adminDivI
 
 	var usingAdmin = (typeof(adminDivId) != 'undefined') && (adminDivId != null);
 
+	var elemLabelMap = {'I':'W', 'Cl':'Y', 'F':'Z', 'H':'X'};
+
 	var indivPrefixes = {left:{label:'(S)'}, right:{label:'(R)'}};
 	logger.debug('$tsol3d.simple_enantiomers.build indivPrefixes:  ' + JSON.stringify(indivPrefixes));
 
@@ -1319,16 +1321,21 @@ $tsol3d.simple_enantiomers.build = function(viewerDivId, buttonsDivId, adminDivI
 			}
 		}
 
-		//add stereochem label
-		var iodine = atoms.filter(function(a) {return a.elem == 'I';});
-		assertOne('iodine', iodine);
-		iodine = iodine[0];
-		var labelData = $.extend({}, $tsol3d.defaultResidueLabelStyle);
-		labelData['x'] = iodine.x;
-		labelData['y'] = iodine.y;
-		labelData['z'] = iodine.z;
-		swapViewer.addLabel(indivPrefixes[ivp]['label'], labelData);
+		//add atom labels
+		const labelPositionScale = 1.35;
+		var nonCAtoms = atoms.filter(function(a) {return a.elem != 'C';});
+		for (var i = 0; i < nonCAtoms.length; i++) {
+			var atom = nonCAtoms[i];
+			var label = elemLabelMap[atom.elem];
 
+			var labelData = $.extend({'position':{}}, $tsol3d.defaultResidueLabelStyle);
+
+			labelData['position']['x'] = labelPositionScale * atom.x;
+			labelData['position']['y'] = labelPositionScale * atom.y;
+			labelData['position']['z'] = labelPositionScale * atom.z;
+			swapViewer.addLabel(label, labelData);
+		}
+		
 		swapViewer.setBackgroundColor(0xffffff);
 		swapViewer.setStyle({}, {stick:$tsol3d.defaultStickStyle});
 		swapViewer.setView([0.00000,0.01899,0,135.8,-0.16617,-0.14539,0,-0.9753]);
