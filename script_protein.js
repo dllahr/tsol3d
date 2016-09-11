@@ -59,10 +59,10 @@ $tsol3d.addHBonds = function(swapViewer, atomPairSerialNumbers) {
 	}
 };
 
-$tsol3d.hydrophobicityColors = {hydrophobic:'0x97d4db', polar:'0xbce3eb', charged:'0xe1fbff'};
-$tsol3d.residueHydrophobicity = {hydrophobic:['Ala','Phe','Ile','Leu','Met','Val','Trp','Tyr','Cys'],
+$tsol3d.hydrophobicityColors = {hydrophobic:'0x217794', polar:'0x8acbd8', charged:'0xe1fbff'};
+$tsol3d.residueHydrophobicity = {hydrophobic:['Ala','Phe','Ile','Leu','Met','Val','Trp','Tyr','Cys','Pro'],
 	polar:['Asn','Gln','Ser','Thr','Gly'],
-	charged:['His','Lys','Arg','Asp','Glu','Pro']};
+	charged:['His','Lys','Arg','Asp','Glu']};
 
 $tsol3d.applyHydrophobicityColors = function(swapViewer, styleType, baseStyle, hydrophobicityColors) {
 	if (typeof hydrophobicityColors == 'undefined' || hydrophobicityColors == null) {
@@ -554,14 +554,15 @@ $tsol3d.TIM_tertiary_structure_monomer.build = function(viewerDivId, buttonsDivI
 			var bv = buttonValues[i];
 			var b = buttons[i];
 
-			var eventData = {'swapViewer':swapViewer, viewName:bv, 'terminalAtomMap':terminalAtomsMap, 'hydrophobicityColorFun':hydrophobicityColorFun};
+			var eventData = {'swapViewer':swapViewer, viewName:bv, 'terminalAtomsMap':terminalAtomsMap, 'hydrophobicityColorFun':hydrophobicityColorFun};
 			b.click(eventData, $tsol3d.TIM_tertiary_structure_monomer.swapView);
 		}
 		
 		swapViewer.setBackgroundColor(0xffffff);
 		$tsol3d.TIM_tertiary_structure_monomer.swapView({'data':{'swapViewer':swapViewer, viewName:'ribbon', 'terminalAtomsMap':terminalAtomsMap, 
 			'hydrophobicityColorFun':hydrophobicityColorFun}});
-		swapViewer.zoomTo();
+
+		swapViewer.setView([-7.067,11.737,-12.030,-22.718,0.688,0.3163,0.0435,-0.6516]);
 		swapViewer.render();
 	}});
 };
@@ -572,14 +573,14 @@ $tsol3d.TIM_tertiary_structure_monomer.addStyleControls = function(adminDivId) {
 	adminDiv.append('hydrophobicity colors:<br/>');
 	
 	var inputs = {};
-	adminDiv.append('hydrophobic:  <input id="hydrophobicColorInput" type="text" value="0x97d4db"/><br/>');
-	inputs['hydrophobic'] = adminDiv.children('#' + 'hydrophobicColorInput');
+	adminDiv.append('hydrophobic:  ');
+	for (var hydroType in $tsol3d.hydrophobicityColors) {
+		var hydroColor = $tsol3d.hydrophobicityColors[hydroType];
+		var hydroInputId = hydroType + 'ColorInput';
 
-	adminDiv.append('polar:  <input id="polarColorInput" type="text" value="0xbce3eb"/><br/>');
-	inputs['polar'] = adminDiv.children('#' + 'polarColorInput');
-
-	adminDiv.append('charged:  <input id="chargedColorInput" type="text" value="0xe1fbff"/><br/>');
-	inputs['charged'] = adminDiv.children('#' + 'chargedColorInput');
+		adminDiv.append('<input id="' + hydroInputId + '" type="text" value="' + hydroColor + '"/><br/>');
+		inputs[hydroType] = adminDiv.children('#' + hydroInputId);
+	}
 
 	return inputs;
 };
@@ -605,7 +606,9 @@ $tsol3d.TIM_tertiary_structure_monomer.swapView = function(event) {
 		$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
 		swapViewer.setStyle({}, {cartoon:curCartoonStyle});
 
-		var labelMap = $.extend({showBackground:false}, $tsol3d.defaultResidueLabelStyle);
+		var labelMap = $.extend({}, $tsol3d.defaultResidueLabelStyle);
+
+		logger.trace('$tsol3d.TIM_tertiary_structure_monomer.swapView terminalAtomsMap:  ' + JSON.stringify(terminalAtomsMap));
 
                 for (terminalAtomLabel in terminalAtomsMap) {
                         var terminalAtom = terminalAtomsMap[terminalAtomLabel];
