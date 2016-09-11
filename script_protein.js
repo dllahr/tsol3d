@@ -671,13 +671,20 @@ $tsol3d.TIM_tertiary_structure_dimer.residueIndexes = {A:[98, 70, 18, 75], B:[77
 
 $tsol3d.TIM_tertiary_structure_dimer.hBondAtomPairs = [[1449,4872], [1043,3975], [270,4447], [270,4446], [1108,3879]];
 
+$tsol3d.TIM_tertiary_structure_dimer.chainColorMap = {A:'0x33a4e6', B:'0x89cdf3'};
+
 $tsol3d.TIM_tertiary_structure_dimer.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
 	var initialSetup = $tsol3d.buildUtils.initialSetup(viewerDivId, adminDivId);
 	var swapViewer = initialSetup.swapViewer;
 	var usingAdmin = initialSetup.usingAdmin;
 
+	var chainColorMapFun = null;
 	if (usingAdmin) {
+		chainColorMapFun = $tsol3d.TIM_tertiary_structure_dimer.addStyleControls(adminDivId);
+
 		$tsol3d.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
+	} else {
+		chainColorMapFun = function() {return $tsol3d.TIM_tertiary_structure_dimer.chainColorMap;}
 	}
 
 	var buttonValues = ['ribbon', 'ribbon + surface', 'interacting amino acids (sticks)', 'interacting amino acids (spheres)'];
@@ -696,13 +703,13 @@ $tsol3d.TIM_tertiary_structure_dimer.build = function(viewerDivId, buttonsDivId,
 			var bv = buttonValues[i];
 			var b = buttons[i];
 
-			var eventData = {'swapViewer':swapViewer, viewName:bv};
+			var eventData = {'swapViewer':swapViewer, viewName:bv, 'chainColorMapFun':chainColorMapFun};
 			b.click(eventData, $tsol3d.TIM_tertiary_structure_dimer.swapView);
 		}
 		
 		swapViewer.setBackgroundColor(0xffffff);
-		$tsol3d.TIM_tertiary_structure_dimer.swapView({'data':{'swapViewer':swapViewer, viewName:'ribbon'}});
-		swapViewer.zoomTo();
+		$tsol3d.TIM_tertiary_structure_dimer.swapView({'data':{'swapViewer':swapViewer, viewName:'ribbon', 'chainColorMapFun':chainColorMapFun}});
+		swapViewer.setView([-15.957,1.653,-23.089,-83.885,-0.6206,-0.01984,-0.5243,0.5827]);
 		swapViewer.render();
 	}});
 
@@ -713,12 +720,12 @@ $tsol3d.TIM_tertiary_structure_dimer.swapView = function(event) {
 	logger.debug('$tsol3d.TIM_tertiary_structure_dimer.swapView viewName:  ' + viewName);
 
 	var swapViewer = event.data.swapViewer;
+	var chainColorMap = event.data.chainColorMapFun();
 
 	swapViewer.removeAllShapes();
 	swapViewer.removeAllLabels();
 	swapViewer.removeAllSurfaces();
 
-	var chainColorMap = {A:'red', B:'blue'};
 	var curCartoonStyle = {};
 	$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
 	for (var chn in chainColorMap) {
@@ -727,7 +734,7 @@ $tsol3d.TIM_tertiary_structure_dimer.swapView = function(event) {
 		swapViewer.setStyle({chain:chn}, {cartoon:curCartoonStyle});
 	}
 
-	//no if entry for style "ribbon" since it is default - its style is applied to all
+	//no entry for style "ribbon" since it is default - its style is applied to all
 	if ('ribbon + surface' == viewName) {
 		for (var chn in chainColorMap) {
         		swapViewer.addSurface('VDW', {opacity:0.8, color:chainColorMap[chn]}, {chain:chn});
@@ -755,6 +762,28 @@ $tsol3d.TIM_tertiary_structure_dimer.swapView = function(event) {
 	}
 
 	swapViewer.render();
+};
+
+$tsol3d.TIM_tertiary_structure_dimer.addStyleControls = function(adminDivId) {
+	var adminDiv = $('#' + adminDivId);
+	adminDiv.append('chain colors:  ');
+	var inputMap = {};
+	for (var chn in $tsol3d.TIM_tertiary_structure_dimer.chainColorMap) {
+		var clr = $tsol3d.TIM_tertiary_structure_dimer.chainColorMap[chn];
+		var inputId = 'chain' + chn + 'ColorInput';
+
+		adminDiv.append(chn + ':' + '<input type="text" id="' + inputId + '" value="' + clr + '"/>');
+		inputMap[chn] = adminDiv.children('#' + inputId);
+	}
+	adminDiv.append('<br/>');
+
+	return function() {
+		var colorMap = {};
+		for (var chn in inputMap) {
+			colorMap[chn] = inputMap[chn].val();
+		}
+		return colorMap;
+	};
 };
 
 /*******************************************
