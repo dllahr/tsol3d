@@ -17,10 +17,6 @@ $tsol3d = (function(window) {
 	return my;
 })(window);
 
-$tsol3d.getViewCoordinates = function(viewer) {
-	$('#viewCoordinatesDiv').html(JSON.stringify(viewer.getView()));
-};
-
 $tsol3d.helloWorld = function() {
 	var message = 'test that $tsol3d has loaded correctly and a function can be called:  hello world!';
 	console.log(message);
@@ -85,7 +81,7 @@ $tsol3d.applyHydrophobicityColors = function(swapViewer, styleType, baseStyle, h
  * build utils
  * *******************************************************/
 $tsol3d.buildUtils = (function(window) {
-	var my = window['$tsol3d.TIM_6mer_fragment_A73_I78'] || {};
+	var my = window['$tsol3d.buildUtils'] || {};
 	return my;
 })(window);
 
@@ -136,7 +132,13 @@ $tsol3d.getViewCoordinates = function(event) {
 	var viewCoordinatesDiv = event.data.viewCoordinatesDiv;
 
 	logger.debug('tsol3d.getViewCoordinates swapViewer:  ' + JSON.stringify(swapViewer) + '  viewCoordinatesDivId:  ' + JSON.stringify(viewCoordinatesDiv));
-	viewCoordinatesDiv.html(JSON.stringify(swapViewer.getView()));
+
+	var viewCoords = swapViewer.getView();
+	for (var i = 0; i < viewCoords.length; i++) {
+		viewCoords[i] = Math.round(viewCoords[i] * 10000) / 10000;
+	}
+
+	viewCoordinatesDiv.html(JSON.stringify(viewCoords));
 };
 
 $tsol3d.commonAdminSetup = function(adminDivId, viewerDivId, swapViewer) {
@@ -177,12 +179,18 @@ $tsol3d.TIM_6mer_fragment_A73_I78 = (function(window) {
 	return my;
 })(window);
 
-
 $tsol3d.TIM_6mer_fragment_A73_I78.defaultRibbonOpacity = 0.8;
 
-
 $tsol3d.TIM_6mer_fragment_A73_I78.colorResidues = function(stylesAndAdditionalSpecMap, swapViewer) {
-	var residueColorMap = {73:"0xe7e7e7", 74:"0xacacac", 75:"0xe7e7e7", 76:"0xacacac", 77:"0xe7e7e7", 78:"0xacacac"};
+	//setup residueColorMap with alternating shades of gray
+	var residueColorMap = {};
+	for (var resi = 73; resi <= 78; resi++) {
+		if ((resi % 2) == 0) {
+			residueColorMap[resi] = '0x848484';
+		} else {
+			residueColorMap[resi] = '0xdadada';
+		}
+	}
 
 	for (var curResi in residueColorMap) {
 		var curColor = residueColorMap[curResi];
@@ -198,7 +206,6 @@ $tsol3d.TIM_6mer_fragment_A73_I78.colorResidues = function(stylesAndAdditionalSp
 		swapViewer.setStyle({resi:curResi}, styleMap);
 	}
 };
-
 
 $tsol3d.TIM_6mer_fragment_A73_I78.swapView = function(event) {
 	var viewName = event.data.viewName;
@@ -295,8 +302,9 @@ $tsol3d.TIM_6mer_fragment_A73_I78.build = function(viewerDivId, buttonsDivId, ad
 		swapViewer.addModel(data, "pdb");
 		swapViewer.setBackgroundColor(0xffffff);
 		$tsol3d.TIM_6mer_fragment_A73_I78.swapView({'data':{'swapViewer':swapViewer, viewName:'stick'}});
-		swapViewer.zoomTo();
-		swapViewer.zoom(0.95);
+
+		swapViewer.setView([-12.462,-4.1474,-26.124,95.808,0.45268,0.3443,-0.4976,-0.6550]);
+
 		swapViewer.render();
 	}});
 };
