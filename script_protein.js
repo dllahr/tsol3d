@@ -25,12 +25,14 @@ $tsol3d.helloWorld = function() {
 
 
 $tsol3d.defaultElementColors = $.extend({}, $3Dmol.elementColors.defaultColors);
-$tsol3d.defaultElementColors['C'] = '0xC8C8C8'; //previous:  '0xe7e7e7';
+$tsol3d.defaultElementColors['C'] = '0xC8C8C8';
 $tsol3d.defaultElementColors['N'] = '0x0070ff';
 $tsol3d.defaultElementColors['O'] = '0xF00000';
 $tsol3d.defaultElementColors['S'] = '0xFFC832';
 
 $tsol3d.defaultStickStyle = {singleBonds:true, colorscheme:$tsol3d.defaultElementColors};
+
+$tsol3d.defaultHiddenStyle = {hidden:true, colorscheme:$tsol3d.defaultElementColors};
 
 
 $tsol3d.defaultCartoonStyle = {style:'oval', outline:true, arrow:true};
@@ -359,7 +361,7 @@ $tsol3d.fragmentSwapView = function(event) {
 	} else if ('backbone sticks + H-bonding' == viewName) {
 		swapViewer.addModel(pdbData, 'pdb', {keepH:true});
 		swapViewer.setStyle({atom:['CA','C','N','H','O']}, {stick:$tsol3d.defaultStickStyle});
-		swapViewer.setStyle({atom:['CA','C','N','H','O'], invert:true}, {stick:{hidden:true}});
+		swapViewer.setStyle({atom:['CA','C','N','H','O'], invert:true}, {stick:$tsol3d.defaultHiddenStyle});
 		$tsol3d.addHBonds(swapViewer, hbondAtomPairs);
 	} else if ('ribbon + H-bonding' == viewName) {
 		swapViewer.addModel(pdbData, 'pdb', {keepH:true});
@@ -370,7 +372,7 @@ $tsol3d.fragmentSwapView = function(event) {
 		var curCartoonStyle = {opacity:$tsol3d.defaultCartoonOpacity};
 		$.extend(curCartoonStyle, $tsol3d.defaultCartoonStyle);
 		swapViewer.setStyle({atom:['CA','C','N','H','O']}, {cartoon:curCartoonStyle, stick:$tsol3d.defaultStickStyle});
-		swapViewer.setStyle({atom:['CA','C','N','H','O'], invert:true}, {cartoon:curCartoonStyle, stick:{hidden:true}});
+		swapViewer.setStyle({atom:['CA','C','N','H','O'], invert:true}, {cartoon:curCartoonStyle, stick:$tsol3d.defaultHiddenStyle});
 	}
 
 	swapViewer.render();
@@ -876,7 +878,7 @@ $tsol3d._1NEY_chain_B_with_ligand.build = function(viewerDivId, buttonsDivId, ad
 		swapViewer.setBackgroundColor(0xffffff);
 		
 		$tsol3d._1NEY_chain_B_with_ligand.drawSurface(swapViewer);
-		swapViewer.setStyle({}, {stick:{hidden:true}});
+		swapViewer.setStyle({}, {stick:$tsol3d.defaultHiddenStyle});
 	
 		$tsol3d._1NEY_chain_B_with_ligand.swapView({'data':{'swapViewer':swapViewer, viewName:buttonValues[0]}});
 
@@ -924,7 +926,7 @@ $tsol3d._1NEY_chain_B_with_ligand.swapView = function(event) {
 	var swapViewer = event.data.swapViewer;
 
 	if ('TIM (surface)' == viewName) {
-		swapViewer.setStyle({resn:"13P"}, {stick:{hidden:true}});
+		swapViewer.setStyle({resn:"13P"}, {stick:$tsol3d.defaultHiddenStyle});
 	} else if ('TIM (surface) + DHAP (sticks)' == viewName) {
 		swapViewer.setStyle({resn:"13P"}, {stick:$tsol3d.defaultStickStyle});
 	} else if ('TIM (surface) + DHAP (spheres)' == viewName) {
@@ -981,7 +983,7 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residues.build = function(viewerDivId, but
 		
 		swapViewer.setBackgroundColor(0xffffff);
 
-		swapViewer.setStyle({}, {stick:{hidden:true}});
+		swapViewer.setStyle({}, {stick:$tsol3d.defaultHiddenStyle});
 		$tsol3d._1NEY_chain_B_with_ligand_and_residues.drawSurface(swapViewer);
 
 		var curEvent = {'data':{'swapViewer':swapViewer, viewName:buttonValues[0], 'resi':residueIndexes}};
@@ -1077,7 +1079,7 @@ $tsol3d._1NEY_chain_B_with_ligand_and_residue_Lys12.build = function(viewerDivId
 
 		swapViewer.setBackgroundColor(0xffffff);
 
-		swapViewer.setStyle({}, {stick:{hidden:true}});
+		swapViewer.setStyle({}, {stick:$tsol3d.defaultHiddenStyle});
 		$tsol3d._1NEY_chain_B_with_ligand_and_residues.drawSurface(swapViewer);
 
 		swapViewer.setStyle({resn:"13P"}, {stick:$tsol3d.defaultStickStyle});
@@ -1123,9 +1125,9 @@ $tsol3d._1NF0_active_site_loop_movement.build = function(viewerDivId, buttonsDiv
 
 		swapViewer.setBackgroundColor(0xffffff);
 	        swapViewer.addSurface($3Dmol.SurfaceType.VDW, {opacity:0.8, color:'0x33a4e6'}, {altLoc:' '});
-		swapViewer.setStyle({}, {stick:{hidden:true}});
+		swapViewer.setStyle({}, {stick:$tsol3d.defaultHiddenStyle});
 		swapViewer.setStyle({altLoc:'A'}, {stick:$tsol3d.defaultStickStyle});
-		swapViewer.setStyle({resi:[209,210,211,212]}, {stick:{hidden:true}});
+		swapViewer.setStyle({resi:[209,210,211,212]}, {stick:$tsol3d.defaultHiddenStyle});
 
 		var allAtoms = model.selectedAtoms({});
 
