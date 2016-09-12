@@ -415,7 +415,7 @@ $tsol3d.TIM_fragment_alpha_helix_Q19_N29.build = function(viewerDivId, buttonsDi
 
 		swapViewer.setBackgroundColor(0xffffff);
 		$tsol3d.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'ribbon + sticks', 'pdbData':pdbData, "hbondAtomPairs":hbondAtomPairs}});
-		swapViewer.setView([-25.549,8.018,-3.717,75.986,0.625,0.5662,0.1431,-0.5180]);
+		swapViewer.setView([-25.549,8.018,-3.717,75.986,-0.0653,-0.8458,0.2518,0.4659]);
 		swapViewer.render();
 	}});
 };
@@ -830,7 +830,6 @@ $tsol3d.TIM_thermal_motion.build = function(viewerDivId, buttonsDivId, adminDivI
 		swapViewer.setView([-16.0,1.62,-23.1,-76.0,0.5599,0.5069,-0.0074114,0.6553]);
 		swapViewer.render();
 	}});
-
 };
 
 /******************************************
