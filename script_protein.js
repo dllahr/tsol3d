@@ -553,10 +553,10 @@ $tsol3d.TIM_tertiary_structure_monomer.build = function(viewerDivId, buttonsDivI
 
 		swapViewer.addModel(pdbData, "pdb", {keepH:true});
 		
-		var terminalAtoms = swapViewer.getModel().selectedAtoms({serial:[1,3716]});
+		var terminalAtoms = swapViewer.getModel().selectedAtoms({serial:[1,3708]});
                 var terminalAtomsMap = {};
 		terminalAtomsMap["N"] = terminalAtoms[0];
-		terminalAtomsMap["O"] = terminalAtoms[1];
+		terminalAtomsMap["C"] = terminalAtoms[1];
 
 		for (var i = 0; i < buttons.length; i++) {
 			var bv = buttonValues[i];
