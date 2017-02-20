@@ -1,0 +1,34 @@
+<html>
+<head>
+<script src="../../lib/3Dmol.js"></script>
+<script src="../../lib/log4javascript.js"></script>
+<script src="../../build/assembledBuildUtils.js"></script>
+</head>
+<body>
+<h2>testBuildUtils.html</h2>
+<div id="viewerButtonsDiv"></div>
+<div id="viewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
+<div id="viewerAdminDiv"></div>
+<script>
+	$(document).ready(function() {
+		console.log('abu:');
+		console.log(abu);
+
+		console.log('buttonHtml:');
+		$("#viewerAdminDiv").html(abu.default.buttonHtml('hello'));
+		console.log(abu.default.buttonHtml('hello'));
+
+		var r = abu.default.initialSetup('viewerDiv', 'viewerAdminDiv');
+		console.log('initialSetup r:  ');
+		console.log(r);
+		console.assert('swapViewer' in r, 'expected to find swapViewer in r');
+		console.assert(r.usingAdmin, 'expected usingAdmin to be in r and to be true');
+
+		r = abu.default.basicButtonSetup(['a button', 'b-nother button'], 'viewerButtonsDiv');
+		console.log('basicButtonSetup:');
+		console.log(r);
+		console.assert(r.length == 2);
+	});
+</script>
+</body>
+</html>
