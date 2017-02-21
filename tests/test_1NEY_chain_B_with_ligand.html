@@ -1,8 +1,8 @@
 <html>
 <head>
-<script src="3Dmol.js"></script>
-<script src="log4javascript.js"></script>
-<script src="script_protein.js"></script>
+<script src="../lib/3Dmol.js"></script>
+<script src="../lib/log4javascript.js"></script>
+<script src="../build/assembledTsol3d.js"></script>
 </head>
 <body>
 <h2>1NEY_chain_B_with_ligand</h2>
@@ -11,7 +11,8 @@
 <div id="viewerAdminDiv"></div>
 <script>
 	$(document).ready(function() {
-		$tsol3d._1NEY_chain_B_with_ligand.build("viewerDiv", "viewerButtonsDiv", "viewerAdminDiv", "1ney_cleanedHETATM_justChainB.pdb");
+		$tsol3d.export__1neyChainBWithLigand.build("viewerDiv", "viewerButtonsDiv", "viewerAdminDiv",
+			"../data/1ney_cleanedHETATM_justChainB.pdb");
 	});
 </script>
 </body>

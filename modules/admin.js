@@ -29,11 +29,11 @@ admin.commonAdminSetup = function(adminDivId, viewerDivId, swapViewer) {
     var canvas = canvases[canvases.length - 1];
     var captureButton = adminDiv.children('input[value="get image"]');
     var cbData = {'_3dmolCanvas':canvas, 'staticImageDiv':staticImageDiv};
-    captureButton.click(cbData, admin.getImage);
+    captureButton.click(cbData, getImage);
 
     var getViewCoordinatesButton = adminDiv.children('input[value="get view coordinates"]');
     var gvcData = {'swapViewer':swapViewer, 'viewCoordinatesDiv':viewCoordinatesDiv};
-    getViewCoordinatesButton.click(gvcData, admin.getViewCoordinates);
+    getViewCoordinatesButton.click(gvcData, getViewCoordinates);
 };
 
 
@@ -43,7 +43,7 @@ const getImage = function(event) {
     logger.debug('admin.getImage _3dmolCanvas:  ' + JSON.stringify(_3dmolCanvas) + '  staticImageDiv:  ' + JSON.stringify(staticImageDiv));
 
     var img = _3dmolCanvas.toDataURL("image/png");
-        staticImageDiv.html('<img src="' + img + '"  />');
+    staticImageDiv.html('<img src="' + img + '"  />');
 };
 
 

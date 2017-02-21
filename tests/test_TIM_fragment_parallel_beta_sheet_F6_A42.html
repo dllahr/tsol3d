@@ -1,8 +1,8 @@
 <html>
 <head>
-<script src="3Dmol.js"></script>
-<script src="log4javascript.js"></script>
-<script src="script_protein.js"></script>
+<script src="../lib/3Dmol.js"></script>
+<script src="../lib/log4javascript.js"></script>
+<script src="../build/assembledTsol3d.js"></script>
 </head>
 <body>
 <h2>TIM_fragment_parallel_beta_sheet_F6_A42</h2>
@@ -11,7 +11,7 @@
 <div id="viewerAdminDiv"></div>
 <script>
 	$(document).ready(function() {
-		$tsol3d.TIM_fragment_parallel_beta_sheet_F6_A42.build("viewerDiv", "viewerButtonsDiv", "viewerAdminDiv", "4poc F6-A42 parallel beta-sheet.pdb");
+		$tsol3d.export_timFragmentParallelBetaSheetF6A42.build("viewerDiv", "viewerButtonsDiv", "viewerAdminDiv", "../data/4poc F6-A42 parallel beta-sheet.pdb");
 	});
 </script>
 </body>

@@ -1,8 +1,8 @@
 <html>
 <head>
-<script src="3Dmol.js"></script>
-<script src="log4javascript.js"></script>
-<script src="script_protein.js"></script>
+<script src="../lib/3Dmol.js"></script>
+<script src="../lib/log4javascript.js"></script>
+<script src="../build/assembledTsol3d.js"></script>
 </head>
 <body>
 <h2>Simple enantiomers</h2>
@@ -11,7 +11,7 @@
 <div id="viewerAdminDiv" style="width: 600px; position: relative;"></div>
 <script>
 	$(document).ready(function() {
-		$tsol3d.simple_enantiomers.build("viewerDiv", "viewerButtonsDiv", "viewerAdminDiv");
+		$tsol3d.export_simpleEnantiomers.build("viewerDiv", "viewerButtonsDiv", "viewerAdminDiv");
 	});
 </script>
 </body>

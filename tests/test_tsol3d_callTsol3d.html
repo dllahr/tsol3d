@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="../lib/3Dmol.js"></script>
+<script src="../lib/log4javascript.js"></script>
+<script src="../build/assembledTsol3d.js"></script>
+</head>
+<body>
+<h2>tsol3d callTsol3d</h2>
+<h3>NB currently fails because it is trying to use default data source and cross origin fails</h3>
+<div>enter tsol3d buildMap key / fragmentName:
+	<input type="text" id="fragmentNameInput" value="TIM_6mer_fragment_A73_I78"/>
+	<input type="submit" value="do it!" id="doItInput"/></div>
+<div id="viewerButtonsDiv"></div>
+<div id="viewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
+<div id="viewerAdminDiv"></div>
+<script>
+	$(document).ready(function() {
+		$('#doItInput').click(function(event) {
+			console.log('hello world do it! clicked');
+			var fragmentName = $('#fragmentNameInput').val();
+			console.log('fragmentName:  ' + fragmentName);
+
+			$tsol3d.callTsol3d(fragmentName, 'viewer', true);
+			console.log('NB currently fails because it is trying to use default data source and cross origin failes');
+		});
+	});
+</script>
+</body>
+</html>
