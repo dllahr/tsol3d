@@ -1,12 +1,11 @@
 
 export default function defaults() {};
 
-defaults.elementColors = $.extend({
-    'C': '0xC8C8C8',
-    'N': '0x0070ff',
-    'O': '0xF00000',
-    'S': '0xFFC832'
-}, $3Dmol.elementColors.defaultColors);
+defaults.elementColors = $.extend({}, $3Dmol.elementColors.defaultColors);
+defaults.elementColors['C'] = '0xC8C8C8';
+defaults.elementColors['N'] = '0x0070ff';
+defaults.elementColors['O'] = '0xF00000';
+defaults.elementColors['S'] = '0xFFC832';
 
 defaults.stickStyle = {singleBonds:true, colorscheme:defaults.elementColors};
 
