@@ -18,7 +18,7 @@ var appender = new log4javascript.BrowserConsoleAppender();
 var layout = new log4javascript.PatternLayout('%-5p %d{HH:mm:ss} - %m{1}%n');
 appender.setLayout(layout);
 logger.addAppender(appender);
-logger.debug("log4javascript is working");
+logger.debug("log4javascript is working.  tsol3d v2.0");
 
 
 export function helloWorld() {
