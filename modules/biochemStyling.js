@@ -1,4 +1,4 @@
-import defaults from './defaults.js';
+import defaults from './defaults';
 
 
 export default function biochemStyling() {};
@@ -90,6 +90,30 @@ biochemStyling.fragmentSwapView = function(event) {
             stick:defaults.stickStyle});
         swapViewer.setStyle({atom:['CA','C','N','H','O'], invert:true}, {cartoon:curCartoonStyle,
             stick:defaults.hiddenStyle});
+
+        var myModel = swapViewer.getModel();
+        var atom = myModel.selectedAtoms({serial:275})[0];
+        var labelData = $.extend({
+            position: {
+                x: atom.x, // + 2.2
+                y: atom.y,
+                z: atom.z// + 0.7
+            },
+            inFront: false
+        }, defaults.residueLabelStyle);
+        console.log(labelData.position);
+        /*swapViewer.addSphere({
+            center: {
+                x: atom.x,
+                y: atom.y,
+                z: atom.z
+            },
+            radius: 1.0,
+            alpha: 0.5
+        });*/
+        var myLabel = swapViewer.addLabel('R', labelData);
+        console.log('myLabel:');
+        console.log(myLabel);
     }
 
     swapViewer.render();

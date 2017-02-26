@@ -33,13 +33,17 @@ timFragmentAlphaHelixQ19N29.build = function(viewerDivId, buttonsDivId, adminDiv
             var bv = buttonValues[i];
             var b = buttons[i];
 
-            var eventData = {'swapViewer':swapViewer, viewName:bv, "pdbData":pdbData, "hbondAtomPairs":hbondAtomPairs};
+            var eventData = {'swapViewer':swapViewer, viewName:bv, "pdbData":pdbData,
+                "hbondAtomPairs":hbondAtomPairs};
             b.click(eventData, biochemStyling.fragmentSwapView);
         }
 
         swapViewer.setBackgroundColor(0xffffff);
-        biochemStyling.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'ribbon + sticks', 'pdbData':pdbData, "hbondAtomPairs":hbondAtomPairs}});
-        swapViewer.setView([-25.549,8.018,-3.717,75.986,-0.0653,-0.8458,0.2518,0.4659]);
+        biochemStyling.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'ribbon + sticks',
+            'pdbData':pdbData, "hbondAtomPairs":hbondAtomPairs}});
+        swapViewer.setView(
+            //[-25.549,8.018,-3.717,75.986,-0.0653,-0.8458,0.2518,0.4659]
+            [-25.549,8.018,-3.717,74.9601,-0.0465,0.5804,-0.2521,-0.773]);
         swapViewer.render();
     }});
 };
