@@ -6,10 +6,12 @@ export default function biochemStyling() {};
 var logger = log4javascript.getLogger("tsol3dmolLogger");
 
 const defaultHBondLineStyle = {
-    dashed:true,
-    linewidth:1,
-    dashLength:0.25,
-    gapLength:0.25
+    dashed: true,
+    radius: 0.05,
+    dashLength: 0.25,
+    gapLength: 0.25,
+    toCap: 1,
+    fromCap: 1,
 };
 
 biochemStyling.addHBonds = function(swapViewer, atomPairSerialNumbers) {
@@ -28,7 +30,7 @@ biochemStyling.addHBonds = function(swapViewer, atomPairSerialNumbers) {
         }, defaultHBondLineStyle);
         logger.debug("hBondLineStyle:  " + JSON.stringify(hBondLineStyle));
 
-        swapViewer.addLine(hBondLineStyle);
+        swapViewer.addCylinder(hBondLineStyle);
     }
 };
 
