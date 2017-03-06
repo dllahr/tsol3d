@@ -28,7 +28,7 @@ biochemStyling.addHBonds = function(swapViewer, atomPairSerialNumbers) {
             start:{x:p0.x, y:p0.y, z:p0.z},
             end:{x:p1.x, y:p1.y, z:p1.z}
         }, defaultHBondLineStyle);
-        logger.debug("hBondLineStyle:  " + JSON.stringify(hBondLineStyle));
+        logger.trace("hBondLineStyle:  " + JSON.stringify(hBondLineStyle));
 
         swapViewer.addCylinder(hBondLineStyle);
     }

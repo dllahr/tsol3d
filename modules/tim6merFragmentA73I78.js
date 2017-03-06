@@ -137,9 +137,6 @@ const adjustStyle = function(event) {
 };
 
 
-
-
-
 const addStyleControls = function(adminDivId, swapViewer) {
     var adminDiv = $('#' + adminDivId);
 
