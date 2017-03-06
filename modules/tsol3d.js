@@ -10,6 +10,7 @@ import _1neyChainBWithLigandAndResidues from './1neyChainBWithLigandAndResidues'
 import _1neyChainBWithLigandAndResidueLys12 from './1neyChainBWithLigandAndResidueLys12';
 import _1nf0ActiveSiteLoopMovement from './1nf0ActiveSiteLoopMovement';
 import simpleEnantiomers from './simpleEnantiomers';
+import dnaAlphaHelixOligo from './dnaAlphaHelixOligo';
 
 
 var logger = log4javascript.getLogger("tsol3dmolLogger");
@@ -18,7 +19,7 @@ var appender = new log4javascript.BrowserConsoleAppender();
 var layout = new log4javascript.PatternLayout('%-5p %d{HH:mm:ss} - %m{1}%n');
 appender.setLayout(layout);
 logger.addAppender(appender);
-logger.debug("log4javascript is working.  tsol3d v2.0");
+logger.debug("log4javascript is working.  tsol3d v2.1");
 
 
 export function helloWorld() {
@@ -52,6 +53,7 @@ export const export__1nf0ActiveSiteLoopMovement = _1nf0ActiveSiteLoopMovement;
 
 export const export_simpleEnantiomers = simpleEnantiomers;
 
+export const export_dnaAlphaHelixOligo = dnaAlphaHelixOligo;
 
 /*******************************************
  * Caller function & map
@@ -79,7 +81,9 @@ const builderMap = {
 
     _1NF0_active_site_loop_movement: _1nf0ActiveSiteLoopMovement.build,
 
-    simple_stereoisomers: simpleEnantiomers.build
+    simple_stereoisomers: simpleEnantiomers.build,
+
+    DNA_Alpha_Helix_Oligo: dnaAlphaHelixOligo.build,
 };
 
 
