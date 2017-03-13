@@ -1,0 +1,19 @@
+<html>
+<head>
+<script src="../lib/3Dmol.js"></script>
+<script src="../lib/log4javascript.js"></script>
+<script src="../build/assembledTsol3d.js"></script>
+</head>
+<body>
+<h2>DNA_alpha_helix_oligo</h2>
+<div id="viewerButtonsDiv"></div>
+<div id="viewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
+<div id="viewerAdminDiv"></div>
+<script>
+    $(document).ready(function() {
+        $tsol3d.export_dnaAlphaHelixOligo.build("viewerDiv", "viewerButtonsDiv",
+            "viewerAdminDiv", "../data/DNAv2.pdb");
+    });
+</script>
+</body>
+</html>
