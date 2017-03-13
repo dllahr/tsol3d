@@ -35,7 +35,6 @@ timLoopQ64I78.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
             b.click(eventData, biochemStyling.fragmentSwapView);
         }
 
-        swapViewer.setBackgroundColor(0xffffff);
         biochemStyling.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'ribbon + sticks', 'pdbData':pdbData, "hbondAtomPairs":null}});
         swapViewer.setView([-11.313,-1.57,-22.294,60.643,0.2455,0.1597,-0.3977,-0.8695]);
         swapViewer.render();

@@ -63,7 +63,6 @@ tertiaryStructureMonomer.build = function(viewerDivId, buttonsDivId, adminDivId,
             b.click(eventData, swapView);
         }
 
-        swapViewer.setBackgroundColor(0xffffff);
         swapView({'data':{'swapViewer':swapViewer, viewName:'ribbon', 'terminalAtomsMap':terminalAtomsMap,
             'hydrophobicityColorFun':hydrophobicityColorFun}});
 

@@ -37,7 +37,6 @@ timFragmentParallelBetaSheetF6A42.build = function(viewerDivId, buttonsDivId, ad
             b.click(eventData, biochemStyling.fragmentSwapView);
         }
 
-        swapViewer.setBackgroundColor(0xffffff);
         biochemStyling.fragmentSwapView({'data':{'swapViewer':swapViewer, viewName:'ribbon + sticks', 'pdbData':pdbData, "hbondAtomPairs":hbondAtomPairs}});
         swapViewer.setView([-18.086,9.677,-4.584,41.386,-0.2834,-0.4869,-0.0164,-0.826]);
         swapViewer.render();

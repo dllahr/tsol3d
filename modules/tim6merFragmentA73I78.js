@@ -45,7 +45,7 @@ tim6merFragmentA73I78.build = function(viewerDivId, buttonsDivId, adminDivId, pd
         logger.trace('tim6merFragmentA73I78.build retrieved pdb data:  ' + data.substring(0,100));
 
         swapViewer.addModel(data, "pdb");
-        swapViewer.setBackgroundColor(0xffffff);
+
         swapView({'data':{'swapViewer':swapViewer, viewName:'stick'}});
 
         swapViewer.setView([-12.462,-4.1474,-26.124,95.808,0.45268,0.3443,-0.4976,-0.6550]);

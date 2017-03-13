@@ -14,6 +14,8 @@ const defaultHBondLineStyle = {
     fromCap: 1,
 };
 
+const rLabelPositionScale = 1.4;
+
 biochemStyling.addHBonds = function(swapViewer, atomPairSerialNumbers) {
     var myModel = swapViewer.getModel();
 
@@ -55,7 +57,7 @@ biochemStyling.applyHydrophobicityColors = function(swapViewer, styleType, baseS
 
 biochemStyling.fragmentSwapView = function(event) {
     var viewName = event.data.viewName;
-    logger.debug("biochemStyling.fragmentSwapView viewName:  " + viewName);
+    logger.debug('biochemStyling.fragmentSwapView viewName:  ' + viewName);
 
     var swapViewer = event.data.swapViewer;
     var pdbData = event.data.pdbData;
@@ -63,6 +65,7 @@ biochemStyling.fragmentSwapView = function(event) {
 
     swapViewer.removeAllModels();
     swapViewer.removeAllShapes();
+    swapViewer.removeAllLabels();
 
     if ('ribbon' == viewName) {
         swapViewer.addModel(pdbData, 'pdb');
@@ -80,6 +83,7 @@ biochemStyling.fragmentSwapView = function(event) {
         swapViewer.setStyle({atom:['CA','C','N','H','O']}, {stick:defaults.stickStyle});
         swapViewer.setStyle({atom:['CA','C','N','H','O'], invert:true}, {stick:defaults.hiddenStyle});
         biochemStyling.addHBonds(swapViewer, hbondAtomPairs);
+        addRGroupLabels(swapViewer);
     } else if ('ribbon + H-bonding' == viewName) {
         swapViewer.addModel(pdbData, 'pdb', {keepH:true});
         swapViewer.setStyle({}, {cartoon:defaults.cartoonStyle});
@@ -92,31 +96,49 @@ biochemStyling.fragmentSwapView = function(event) {
             stick:defaults.stickStyle});
         swapViewer.setStyle({atom:['CA','C','N','H','O'], invert:true}, {cartoon:curCartoonStyle,
             stick:defaults.hiddenStyle});
-
-        var myModel = swapViewer.getModel();
-        var atom = myModel.selectedAtoms({serial:275})[0];
-        var labelData = $.extend({
-            position: {
-                x: atom.x, // + 2.2
-                y: atom.y,
-                z: atom.z// + 0.7
-            },
-            inFront: false
-        }, defaults.residueLabelStyle);
-        console.log(labelData.position);
-        /*swapViewer.addSphere({
-            center: {
-                x: atom.x,
-                y: atom.y,
-                z: atom.z
-            },
-            radius: 1.0,
-            alpha: 0.5
-        });*/
-        var myLabel = swapViewer.addLabel('R', labelData);
-        console.log('myLabel:');
-        console.log(myLabel);
+        addRGroupLabels(swapViewer);
     }
 
     swapViewer.render();
 };
+
+
+const addRGroupLabels = function(swapViewer) {
+    var labelData = $.extend({
+        inFront: false,
+        alignment: 'center'
+    }, defaults.residueLabelStyle);
+
+    var myModel = swapViewer.getModel();
+    var allAtoms = myModel.selectedAtoms({});
+    var atoms = myModel.selectedAtoms({atom:'CB'});
+
+    for (var i = 0; i < atoms.length; i++) {
+        var curAtom = atoms[i];
+
+        var bondedAtom = null;
+        for (var j = 0; j < curAtom.bonds.length; j++) {
+            var bondedAtomIndex = curAtom.bonds[j];
+            if (allAtoms[bondedAtomIndex].atom == 'CA') {
+                bondedAtom = allAtoms[bondedAtomIndex];
+            }
+        }
+
+        if (bondedAtom != null) {
+            var bondX = curAtom.x - bondedAtom.x;
+            var bondY = curAtom.y - bondedAtom.y;
+            var bondZ = curAtom.z - bondedAtom.z;
+
+            var position = {
+                x: rLabelPositionScale * bondX + bondedAtom.x,
+                y: rLabelPositionScale * bondY + bondedAtom.y,
+                z: rLabelPositionScale * bondZ + bondedAtom.z
+            };
+            labelData['position'] = position;
+
+            swapViewer.addLabel('R', labelData); //{serial:curAtom.serial}
+        } else {
+            logger.warning('biochemStyling.fragmentSwapView ribbon + backbone sticks view could not find bonded CA atom to correctly position R label - curAtom:  ' + JSON.stringify(curAtom));
+        }
+    }
+}

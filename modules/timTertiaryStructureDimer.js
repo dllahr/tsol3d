@@ -49,7 +49,6 @@ timTertiaryStructureDimer.build = function(viewerDivId, buttonsDivId, adminDivId
             b.click(eventData, swapView);
         }
 
-        swapViewer.setBackgroundColor(0xffffff);
         swapView({'data':{'swapViewer':swapViewer, viewName:'ribbon', 'chainColorMapFun':chainColorMapFun}});
         swapViewer.setView([-15.957,1.653,-23.089,-83.885,-0.6206,-0.01984,-0.5243,0.5827]);
         swapViewer.render();

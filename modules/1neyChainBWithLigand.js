@@ -42,8 +42,6 @@ _1neyChainBWithLigand.build = function(viewerDivId, buttonsDivId, adminDivId, pd
             b.click(eventData, swapView);
         }
 
-        swapViewer.setBackgroundColor(0xffffff);
-
         drawSurface(swapViewer);
         swapViewer.setStyle({}, {stick:defaults.hiddenStyle});
 

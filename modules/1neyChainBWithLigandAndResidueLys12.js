@@ -34,8 +34,6 @@ _1neyChainBWithLigandAndResidueLys12.build = function(viewerDivId, buttonsDivId,
 
         swapViewer.addModel(pdbData, "pdb", {keepH:true});
 
-        swapViewer.setBackgroundColor(0xffffff);
-
         swapViewer.setStyle({}, {stick:defaults.hiddenStyle});
         _1neyChainBWithLigandAndResidues.drawSurface(swapViewer);
 

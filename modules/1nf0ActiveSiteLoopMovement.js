@@ -27,8 +27,7 @@ _1nf0ActiveSiteLoopMovement.build = function(viewerDivId, buttonsDivId, adminDiv
 
         var model = swapViewer.addModel(pdbData, "pdb", {keepH:true, altLoc:'*'});
 
-        swapViewer.setBackgroundColor(0xffffff);
-            swapViewer.addSurface($3Dmol.SurfaceType.VDW, {opacity:0.8, color:'0x33a4e6'}, {altLoc:' '});
+        swapViewer.addSurface($3Dmol.SurfaceType.VDW, {opacity:0.8, color:'0x33a4e6'}, {altLoc:' '});
         swapViewer.setStyle({}, {stick:defaults.hiddenStyle});
         swapViewer.setStyle({altLoc:'A'}, {stick:defaults.stickStyle});
         swapViewer.setStyle({resi:[209,210,211,212]}, {stick:defaults.hiddenStyle});

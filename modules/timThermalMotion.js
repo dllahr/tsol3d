@@ -38,7 +38,6 @@ timThermalMotion.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl)
         model.vibrate(10, 0.5);
         swapViewer.animate({loop: "backAndForth"});
 
-        swapViewer.setBackgroundColor(0xffffff);
         swapViewer.setStyle({}, {stick:defaults.stickStyle});
 
         swapViewer.setView([-16.0,1.62,-23.1,-76.0,0.5599,0.5069,-0.0074114,0.6553]);

@@ -1,3 +1,5 @@
+import defaults from './defaults';
+
 
 export default function buildUtils() {};
 
@@ -9,7 +11,8 @@ buildUtils.buttonHtml = function(value) {
 
 buildUtils.initialSetup = function(viewerDivId, adminDivId) {
     var swapViewer = $3Dmol.createViewer(viewerDivId);
-
+    swapViewer.setBackgroundColor(defaults.backgroundColor);
+    
     var usingAdmin = (typeof adminDivId != 'undefined') && (adminDivId != null);
 
     return {"swapViewer":swapViewer, "usingAdmin":usingAdmin};

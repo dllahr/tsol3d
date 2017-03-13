@@ -101,7 +101,6 @@ dnaAlphaHelixOligo.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUr
         logger.trace('dnaAlphaHelixOligo.build retrieved pdbData:  ' + pdbData.substring(0,100));
 
         swapViewer.addModel(pdbData, 'pdb');
-        swapViewer.setBackgroundColor(0xffffff);
 
         add5Prime3PrimeLabels(swapViewer);
 

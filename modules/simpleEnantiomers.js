@@ -97,13 +97,16 @@ simpleEnantiomers.build = function(viewerDivId, buttonsDivId, adminDivId) {
         }
 
         //add atom labels
-        const labelPositionScale = 1.35;
+        const labelPositionScale = 1.45;
         var nonCAtoms = atoms.filter(function(a) {return a.elem != 'C';});
         for (var i = 0; i < nonCAtoms.length; i++) {
             var atom = nonCAtoms[i];
             var label = elemLabelMap[atom.elem];
 
-            var labelData = $.extend({'position':{}}, defaults.residueLabelStyle);
+            var labelData = $.extend({
+                'position':{},
+                alignment: 'center'
+                }, defaults.residueLabelStyle);
 
             labelData['position']['x'] = labelPositionScale * atom.x;
             labelData['position']['y'] = labelPositionScale * atom.y;
@@ -111,7 +114,6 @@ simpleEnantiomers.build = function(viewerDivId, buttonsDivId, adminDivId) {
             swapViewer.addLabel(label, labelData);
         }
 
-        swapViewer.setBackgroundColor(0xffffff);
         swapViewer.setStyle({}, {stick:defaults.stickStyle});
         swapViewer.setView([0.00000,0.01899,0,135.8,-0.16617,-0.14539,0,-0.9753]);
         swapViewer.render();
