@@ -34,12 +34,16 @@ for (var atomSerial in _5Prime3PrimeInfo) {
     _5Prime3PrimeSerialNumbers.push(atomSerial);
 }
 
-const add5Prime3PrimeLabels = function(swapViewer) {
+const add5Prime3PrimeLabels = function(swapViewer, serialNumbers) {
     var labelStyle = $.extend({}, defaults.residueLabelStyle);
+
+    if (typeof serialNumbers == 'undefined' || serialNumbers == null) {
+        serialNumbers = _5Prime3PrimeSerialNumbers;
+    }
 
     var myModel = swapViewer.getModel();
 
-    var atoms = myModel.selectedAtoms({serial:_5Prime3PrimeSerialNumbers});
+    var atoms = myModel.selectedAtoms({serial:serialNumbers});
 
     for (var i = 0; i < atoms.length; i++) {
         var atm = atoms[i];
@@ -51,6 +55,31 @@ const add5Prime3PrimeLabels = function(swapViewer) {
     }
 };
 
+const structureColorsSelection = {
+    '#2B8BFF': {atom:['C1\'', 'C2\'', 'C3\'', 'O3\'', 'C4\'', 'O4\'',
+        'C5\'', 'O5\'', 'P', 'O1P', 'O2P']}
+};
+structureColorsSelection['#86BAE5'] = $.extend({invert:true},
+    structureColorsSelection['#2B8BFF']);
+
+const colorByStructure = function(swapViewer, baseStyles) {
+    for (var styleName in baseStyles) {
+        var baseStyle = baseStyles[styleName];
+        var curStyle = $.extend({}, baseStyle);
+
+        for (var color in structureColorsSelection) {
+            var selection = structureColorsSelection[color];
+
+            curStyle['color'] = color;
+
+            var fullStyle = {};
+            fullStyle[styleName] = curStyle;
+
+            swapViewer.setStyle(selection, fullStyle);
+        }
+    }
+}
+
 const swapView = function(event) {
     var viewName = event.data.viewName;
     logger.debug('dnaAlphaHelixOligo.swapView viewName:  ' + viewName);
@@ -60,14 +89,25 @@ const swapView = function(event) {
     const hBondAtomPairs = event.data.hBondAtomPairs;
 
     swapViewer.removeAllShapes();
+    swapViewer.removeAllLabels();
 
     if ('ribbon' == viewName) {
-        swapViewer.setStyle({}, {cartoon:defaults.cartoonStyle});
+        colorByStructure(swapViewer, {cartoon:defaults.cartoonStyle});
+        add5Prime3PrimeLabels(swapViewer);
     } else if ('spheres' == viewName) {
         swapViewer.setStyle({}, {sphere:{colorscheme:defaults.elementColors}});
+        add5Prime3PrimeLabels(swapViewer);
     } else if ('sticks + H-bonding' == viewName) {
         swapViewer.setStyle({}, {stick:defaults.stickStyle});
         biochemStyling.addHBonds(swapViewer, hBondAtomPairs);
+        add5Prime3PrimeLabels(swapViewer);
+    } else if ('color by element one nucleotide' == viewName) {
+        swapViewer.setStyle({resi:9, invert:true}, {stick:defaults.hiddenStyle});
+        swapViewer.setStyle({resi:9}, {stick:defaults.stickStyle});
+    } else if ('color by element one strand' == viewName) {
+        swapViewer.setStyle({chain:'A', invert:true}, {stick:defaults.hiddenStyle});
+        swapViewer.setStyle({chain:'A'}, {stick:defaults.stickStyle});
+        add5Prime3PrimeLabels(swapViewer, [1, 355]);
     }
 
     swapViewer.render();
@@ -83,7 +123,8 @@ dnaHelixOligo.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
         admin.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
     }
 
-    var buttonValues = ['ribbon', 'spheres', 'sticks + H-bonding'];
+    var buttonValues = ['ribbon', 'spheres', 'sticks + H-bonding',
+        'color by element one nucleotide', 'color by element one strand'];
 
     var buttons = buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
 
@@ -103,8 +144,6 @@ dnaHelixOligo.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
         logger.trace('dnaAlphaHelixOligo.build retrieved pdbData:  ' + pdbData.substring(0,100));
 
         swapViewer.addModel(pdbData, 'pdb');
-
-        add5Prime3PrimeLabels(swapViewer);
 
         swapView({'data':{'swapViewer':swapViewer, viewName:'ribbon', 'hBondAtomPairs':hBondAtomPairs}});
 
