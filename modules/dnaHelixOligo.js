@@ -4,7 +4,7 @@ import biochemStyling from './biochemStyling';
 import defaults from './defaults';
 
 
-export default function dnaAlphaHelixOligo() {};
+export default function dnaHelixOligo() {};
 
 var logger = log4javascript.getLogger('tsol3dmolLogger');
 
@@ -71,7 +71,7 @@ const swapView = function(event) {
 };
 
 
-dnaAlphaHelixOligo.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
+dnaHelixOligo.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
     var initialSetup = buildUtils.initialSetup(viewerDivId, adminDivId);
     var swapViewer = initialSetup.swapViewer;
     var usingAdmin = initialSetup.usingAdmin;
