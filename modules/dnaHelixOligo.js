@@ -45,18 +45,11 @@ const swapView = function(event) {
 
     if ('ribbon' == viewName) {
         swapViewer.setStyle({}, {cartoon:defaults.cartoonStyle});
-    } else if ('sticks' == viewName) {
-        swapViewer.setStyle({}, {stick:defaults.stickStyle});
     } else if ('spheres' == viewName) {
         swapViewer.setStyle({}, {sphere:{colorscheme:defaults.elementColors}});
-    } else if ('ribbon + H-bonding' == viewName) {
-        swapViewer.setStyle({}, {cartoon:defaults.cartoonStyle});
-        biochemStyling.addHBonds(swapViewer, hBondAtomPairs);
     } else if ('sticks + H-bonding' == viewName) {
         swapViewer.setStyle({}, {stick:defaults.stickStyle});
         biochemStyling.addHBonds(swapViewer, hBondAtomPairs);
-    } else if ('ribbon color by bases' == viewName) {
-        colorByBases(swapViewer, baseColors);
     }
 
     swapViewer.render();
@@ -72,8 +65,7 @@ dnaHelixOligo.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
         admin.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
     }
 
-    var buttonValues = ['ribbon', 'sticks', 'spheres', 'ribbon + H-bonding', 'sticks + H-bonding',
-        'ribbon color by bases'];
+    var buttonValues = ['ribbon', 'spheres', 'sticks + H-bonding'];
 
     var buttons = buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
 
