@@ -108,6 +108,8 @@ const addRGroupLabels = function(swapViewer) {
         inFront: false,
         alignment: 'center'
     }, defaults.residueLabelStyle);
+    labelData.font = "Chalkboard";
+    labelData.fontColor = "gray";
 
     var myModel = swapViewer.getModel();
     var allAtoms = myModel.selectedAtoms({});
@@ -136,9 +138,9 @@ const addRGroupLabels = function(swapViewer) {
             };
             labelData['position'] = position;
 
-            swapViewer.addLabel('R', labelData); //{serial:curAtom.serial}
+            swapViewer.addLabel('R', labelData);
         } else {
-            logger.warning('biochemStyling.fragmentSwapView ribbon + backbone sticks view could not find bonded CA atom to correctly position R label - curAtom:  ' + JSON.stringify(curAtom));
+            logger.warning('biochemStyling.fragmentSwapView ribbon + backbone sticks view could not find bonded CA atom to correctly position R label - curAtom:  ', curAtom);
         }
     }
 }
