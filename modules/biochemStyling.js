@@ -21,7 +21,7 @@ biochemStyling.addHBonds = function(swapViewer, atomPairSerialNumbers) {
 
     for (var i = 0; i < atomPairSerialNumbers.length; i++) {
         var pairAtoms = myModel.selectedAtoms({serial:atomPairSerialNumbers[i]});
-        logger.debug('biochemStyling.addHBonds pairAtoms.length:  ' + pairAtoms.length);
+        logger.trace('biochemStyling.addHBonds pairAtoms.length:  ' + pairAtoms.length);
 
         var p0 = pairAtoms[0];
         var p1 = pairAtoms[1];
