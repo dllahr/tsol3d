@@ -23,14 +23,32 @@ const colorByBases = function(swapViewer, baseColors) {
     }
 }
 
+const _5Prime3PrimeInfo = {
+    1: '5\'',
+    355: '3\'',
+    368: '5\'',
+    727: '3\''
+};
+const _5Prime3PrimeSerialNumbers = [];
+for (var atomSerial in _5Prime3PrimeInfo) {
+    _5Prime3PrimeSerialNumbers.push(atomSerial);
+}
+
 const add5Prime3PrimeLabels = function(swapViewer) {
-    var myModel = swapViewer.getModel();
-    var atoms = myModel.selectedAtoms({serial:[1, 727]});
     var labelStyle = $.extend({}, defaults.residueLabelStyle);
-    labelStyle['position'] = {x:(atoms[0].x-1), y:(atoms[0].y), z:(atoms[0].z+3)};
-    swapViewer.addLabel('5\'', labelStyle);
-    labelStyle['position'] = {x:(atoms[1].x-1), y:(atoms[1].y), z:(atoms[1].z+3)};
-    swapViewer.addLabel('3\'', labelStyle);
+
+    var myModel = swapViewer.getModel();
+
+    var atoms = myModel.selectedAtoms({serial:_5Prime3PrimeSerialNumbers});
+
+    for (var i = 0; i < atoms.length; i++) {
+        var atm = atoms[i];
+
+        var label = _5Prime3PrimeInfo[atm.serial];
+
+        labelStyle['position'] = {x:(atm.x), y:(atm.y), z:(atm.z)};
+        swapViewer.addLabel(label, labelStyle);
+    }
 };
 
 const swapView = function(event) {
@@ -90,7 +108,7 @@ dnaHelixOligo.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
 
         swapView({'data':{'swapViewer':swapViewer, viewName:'ribbon', 'hBondAtomPairs':hBondAtomPairs}});
 
-        swapViewer.setView([-4.7088,-4.3625,26.5175,-43.174,-0.3531,-0.5031,-0.6647,0.4248]);
+        swapViewer.setView([-5.4222,-4.8156,29.8175,-43.174,-0.3531,-0.5031,-0.6647,0.4248]);
     }});
 };
 
