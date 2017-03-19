@@ -8,14 +8,7 @@ export default function dnaHelixOligo() {};
 
 var logger = log4javascript.getLogger('tsol3dmolLogger');
 
-const baseColors1 = {
-    A: '#8DEBB0',
-    C: '#3CBBFA',
-    G: '#FFCF73',
-    T: '#FF979C'
-};
-
-const baseColors2 = {
+const baseColors = {
     A: '#45D180',
     C: '#41AAF7',
     G: '#F9BD3A',
@@ -62,11 +55,10 @@ const swapView = function(event) {
     } else if ('sticks + H-bonding' == viewName) {
         swapViewer.setStyle({}, {stick:defaults.stickStyle});
         biochemStyling.addHBonds(swapViewer, hBondAtomPairs);
-    } else if ('ribbon color by bases 1' == viewName) {
-        colorByBases(swapViewer, baseColors1);
-    } else if ('ribbon color by bases 2' == viewName) {
-        colorByBases(swapViewer, baseColors2);
+    } else if ('ribbon color by bases' == viewName) {
+        colorByBases(swapViewer, baseColors);
     }
+
     swapViewer.render();
 };
 
@@ -81,7 +73,7 @@ dnaHelixOligo.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
     }
 
     var buttonValues = ['ribbon', 'sticks', 'spheres', 'ribbon + H-bonding', 'sticks + H-bonding',
-        'ribbon color by bases 1', 'ribbon color by bases 2'];
+        'ribbon color by bases'];
 
     var buttons = buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
 
