@@ -8,6 +8,7 @@ export default function dnaHelixOligo() {};
 
 var logger = log4javascript.getLogger('tsol3dmolLogger');
 
+
 const baseColors = {
     A: '#45D180',
     C: '#41AAF7',
@@ -15,13 +16,41 @@ const baseColors = {
     T: '#F95360'
 };
 
-const colorByBases = function(swapViewer, baseColors) {
-    for (var b in baseColors) {
-        var curBaseStyle = $.extend({}, defaults.cartoonStyle);
-        curBaseStyle['color'] = baseColors[b];
-        swapViewer.setStyle({resn:b}, {'cartoon': curBaseStyle});
+const groupColorsSelection = {
+    '#CCEAFF': {atom: ['P', 'O1P', 'O2P']},
+    '#B8CFFF': {atom:['C1\'', 'C2\'', 'C3\'', 'O3\'', 'C4\'', 'O4\'',
+        'C5\'', 'O5\'']}
+};
+
+const colorByGroup = function(swapViewer, baseStyles) {
+    for (var styleName in baseStyles) {
+        var baseStyle = baseStyles[styleName];
+        var curStyle = $.extend({}, baseStyle);
+        if ('colorscheme' in curStyle) {
+            delete curStyle.colorscheme;
+        }
+        for (var base in baseColors) {
+            curStyle['color'] = baseColors[base];
+
+            var fullStyle = {};
+            fullStyle[styleName] = curStyle;
+            logger.trace('fullStyle:  ' + JSON.stringify(fullStyle));
+
+            swapViewer.setStyle({resn:base}, fullStyle);
+        }
+
+        for (var color in groupColorsSelection) {
+            var selection = groupColorsSelection[color];
+
+            curStyle['color'] = color;
+
+            var fullStyle = {};
+            fullStyle[styleName] = curStyle;
+
+            swapViewer.setStyle(selection, fullStyle);
+        }
     }
-}
+};
 
 const _5Prime3PrimeInfo = {
     1: '5\'',
@@ -78,7 +107,7 @@ const colorByStructure = function(swapViewer, baseStyles) {
             swapViewer.setStyle(selection, fullStyle);
         }
     }
-}
+};
 
 const swapView = function(event) {
     var viewName = event.data.viewName;
@@ -108,6 +137,17 @@ const swapView = function(event) {
         swapViewer.setStyle({chain:'A', invert:true}, {stick:defaults.hiddenStyle});
         swapViewer.setStyle({chain:'A'}, {stick:defaults.stickStyle});
         add5Prime3PrimeLabels(swapViewer, [1, 355]);
+    } else if ('color by group one nucleotide' == viewName) {
+        colorByGroup(swapViewer, {stick:defaults.stickStyle});
+        swapViewer.setStyle({resi:9, invert:true}, {stick:defaults.hiddenStyle});
+    } else if ('color by group one strand' == viewName) {
+        colorByGroup(swapViewer, {stick:defaults.stickStyle});
+        swapViewer.setStyle({chain:'A', invert:true}, {stick:defaults.hiddenStyle});
+        add5Prime3PrimeLabels(swapViewer, [1, 355]);
+    } else if ('color by group both strands' == viewName) {
+        colorByGroup(swapViewer, {stick:defaults.stickStyle});
+        biochemStyling.addHBonds(swapViewer, hBondAtomPairs);
+        add5Prime3PrimeLabels(swapViewer);
     }
 
     swapViewer.render();
@@ -124,7 +164,9 @@ dnaHelixOligo.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
     }
 
     var buttonValues = ['ribbon', 'spheres', 'sticks + H-bonding',
-        'color by element one nucleotide', 'color by element one strand'];
+        'color by element one nucleotide', 'color by element one strand',
+        'color by group one nucleotide', 'color by group one strand',
+        'color by group both strands'];
 
     var buttons = buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
 
