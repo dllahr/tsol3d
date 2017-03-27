@@ -1,0 +1,50 @@
+<html>
+<head>
+<script src="../lib/3Dmol.js"></script>
+<script src="../lib/log4javascript.js"></script>
+<script src="../build/assembledTsol3d.js"></script>
+</head>
+<body>
+<h2>amino_acids</h2>
+
+<div style="position:relative;">
+    <div id="imagesDiv"></div>
+    <div id="staticDiv" class="large-image" style="position:relative; float:right;"></div>
+</div>
+<div id="viewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
+
+<script>
+    const aminoAcidList = [
+        {"abbr":"ala","aaName":"alanine"},
+        {"abbr":"cys","aaName":"cysteine"},
+        {"abbr":"asp","aaName":"aspartic-acid"},
+        {"abbr":"glu","aaName":"glutamic-acid"},
+        {"abbr":"phe","aaName":"phenylalanine"},
+        {"abbr":"gly","aaName":"glycine"},
+        {"abbr":"his","aaName":"histidine"},
+        {"abbr":"ile","aaName":"isoleucine"},
+        {"abbr":"lys","aaName":"lysine"},
+        {"abbr":"leu","aaName":"leucine"},
+        {"abbr":"met","aaName":"methionine"},
+        {"abbr":"asn","aaName":"asparagine"},
+        {"abbr":"pro","aaName":"proline"},
+        {"abbr":"gln","aaName":"glutamine"},
+        {"abbr":"arg","aaName":"arginine"},
+        {"abbr":"ser","aaName":"serine"},
+        {"abbr":"thr","aaName":"threonine"},
+        {"abbr":"val","aaName":"valine"},
+        {"abbr":"trp","aaName":"tryptophan"},
+        {"abbr":"tyr","aaName":"tyrosine"}
+    ];
+    var imagesDiv = $('#imagesDiv');
+    for (var i = 0; i < aminoAcidList.length; i++) {
+        var aaAbbr = aminoAcidList[i].abbr;
+        imagesDiv.append(aaAbbr + ':  <img id="' + aaAbbr + 'Img" style="border: 1px solid; height: 10px; width: 10px;"/> ');
+    }
+
+    $(document).ready(function() {
+        $tsol3d.export_aminoAcids.build('viewerDiv', '../data/amino_acids/', './test_amino_acids_files/');
+    });
+</script>
+</body>
+</html>

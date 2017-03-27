@@ -11,6 +11,7 @@ import _1neyChainBWithLigandAndResidueLys12 from './1neyChainBWithLigandAndResid
 import _1nf0ActiveSiteLoopMovement from './1nf0ActiveSiteLoopMovement';
 import simpleEnantiomers from './simpleEnantiomers';
 import dnaHelixOligo from './dnaHelixOligo';
+import aminoAcids from './aminoAcids';
 
 
 var logger = log4javascript.getLogger("tsol3dmolLogger");
@@ -54,6 +55,8 @@ export const export__1nf0ActiveSiteLoopMovement = _1nf0ActiveSiteLoopMovement;
 export const export_simpleEnantiomers = simpleEnantiomers;
 
 export const export_dnaHelixOligo = dnaHelixOligo;
+
+export const export_aminoAcids = aminoAcids;
 
 /*******************************************
  * Caller function & map
