@@ -17,10 +17,31 @@ const baseColors = {
 };
 
 const groupColorsSelection = {
-    '#CCEAFF': {atom: ['P', 'O1P', 'O2P']},
-    '#B8CFFF': {atom:['C1\'', 'C2\'', 'C3\'', 'O3\'', 'C4\'', 'O4\'',
+    '#c8e8ff': {atom: ['P', 'O1P', 'O2P']}, //'#CCEAFF'
+    '#99b7ff': {atom:['C1\'', 'C2\'', 'C3\'', 'O3\'', 'C4\'', 'O4\'', //'#B8CFFF'
         'C5\'', 'O5\'']}
 };
+
+const _5Prime3PrimeInfo = {
+    1: '5\'',
+    355: '3\'',
+    368: '5\'',
+    727: '3\''
+};
+const _5Prime3PrimeSerialNumbers = [];
+for (var atomSerial in _5Prime3PrimeInfo) {
+    _5Prime3PrimeSerialNumbers.push(atomSerial);
+}
+
+const ribbonColorSelection = {
+    '#4593ff': {atom:['C1\'', 'C2\'', 'C3\'', 'O3\'', 'C4\'', 'O4\'', //'#2B8BFF'
+        'C5\'', 'O5\'', 'P', 'O1P', 'O2P']}
+};
+//copy the dictionary of atoms from above, add inversion to selection, for the
+//other color used in the ribbon
+ribbonColorSelection['#93cfff'] = $.extend({invert:true}, //'#86BAE5'
+    ribbonColorSelection['#4593ff']);  //'#2B8BFF'
+
 
 const colorByGroup = function(swapViewer, baseStyles) {
     for (var styleName in baseStyles) {
@@ -52,17 +73,6 @@ const colorByGroup = function(swapViewer, baseStyles) {
     }
 };
 
-const _5Prime3PrimeInfo = {
-    1: '5\'',
-    355: '3\'',
-    368: '5\'',
-    727: '3\''
-};
-const _5Prime3PrimeSerialNumbers = [];
-for (var atomSerial in _5Prime3PrimeInfo) {
-    _5Prime3PrimeSerialNumbers.push(atomSerial);
-}
-
 const add5Prime3PrimeLabels = function(swapViewer, serialNumbers) {
     var labelStyle = $.extend({}, defaults.residueLabelStyle);
 
@@ -84,20 +94,13 @@ const add5Prime3PrimeLabels = function(swapViewer, serialNumbers) {
     }
 };
 
-const structureColorsSelection = {
-    '#2B8BFF': {atom:['C1\'', 'C2\'', 'C3\'', 'O3\'', 'C4\'', 'O4\'',
-        'C5\'', 'O5\'', 'P', 'O1P', 'O2P']}
-};
-structureColorsSelection['#86BAE5'] = $.extend({invert:true},
-    structureColorsSelection['#2B8BFF']);
-
-const colorByStructure = function(swapViewer, baseStyles) {
+const colorRibbon = function(swapViewer, baseStyles) {
     for (var styleName in baseStyles) {
         var baseStyle = baseStyles[styleName];
         var curStyle = $.extend({}, baseStyle);
 
-        for (var color in structureColorsSelection) {
-            var selection = structureColorsSelection[color];
+        for (var color in ribbonColorSelection) {
+            var selection = ribbonColorSelection[color];
 
             curStyle['color'] = color;
 
@@ -120,31 +123,34 @@ const swapView = function(event) {
     swapViewer.removeAllShapes();
     swapViewer.removeAllLabels();
 
-    if ('ribbon' == viewName) {
-        colorByStructure(swapViewer, {cartoon:defaults.cartoonStyle});
+    if ('color by group ribbons' == viewName) {
+        colorRibbon(swapViewer, {cartoon:defaults.cartoonStyle});
         add5Prime3PrimeLabels(swapViewer);
-    } else if ('spheres' == viewName) {
+    } else if ('color by element spheres' == viewName) {
         swapViewer.setStyle({}, {sphere:{colorscheme:defaults.elementColors}});
         add5Prime3PrimeLabels(swapViewer);
-    } else if ('sticks + H-bonding' == viewName) {
+    } else if ('color by element double helix' == viewName) {
         swapViewer.setStyle({}, {stick:defaults.stickStyle});
         biochemStyling.addHBonds(swapViewer, hBondAtomPairs);
         add5Prime3PrimeLabels(swapViewer);
-    } else if ('color by element one nucleotide' == viewName) {
+    } else if ('color by element nucleotide: A' == viewName) {
         swapViewer.setStyle({resi:9, invert:true}, {stick:defaults.hiddenStyle});
         swapViewer.setStyle({resi:9}, {stick:defaults.stickStyle});
-    } else if ('color by element one strand' == viewName) {
+    } else if ('color by element strand' == viewName) {
         swapViewer.setStyle({chain:'A', invert:true}, {stick:defaults.hiddenStyle});
         swapViewer.setStyle({chain:'A'}, {stick:defaults.stickStyle});
         add5Prime3PrimeLabels(swapViewer, [1, 355]);
-    } else if ('color by group one nucleotide' == viewName) {
+    } else if ('color by group nucleotide: A' == viewName) {
         colorByGroup(swapViewer, {stick:defaults.stickStyle});
-        swapViewer.setStyle({resi:9, invert:true}, {stick:defaults.hiddenStyle});
-    } else if ('color by group one strand' == viewName) {
+        var specialHiddenStyle = $.extend({}, defaults.hiddenStyle);
+        delete specialHiddenStyle.colorscheme;
+        specialHiddenStyle['color'] = '#c8e8ff';
+        swapViewer.setStyle({resi:9, invert:true}, {stick:specialHiddenStyle});
+    } else if ('color by group strand' == viewName) {
         colorByGroup(swapViewer, {stick:defaults.stickStyle});
         swapViewer.setStyle({chain:'A', invert:true}, {stick:defaults.hiddenStyle});
         add5Prime3PrimeLabels(swapViewer, [1, 355]);
-    } else if ('color by group both strands' == viewName) {
+    } else if ('color by group double helix' == viewName) {
         colorByGroup(swapViewer, {stick:defaults.stickStyle});
         biochemStyling.addHBonds(swapViewer, hBondAtomPairs);
         add5Prime3PrimeLabels(swapViewer);
@@ -163,22 +169,50 @@ dnaHelixOligo.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
         admin.commonAdminSetup(adminDivId, viewerDivId, swapViewer);
     }
 
-    var buttonValues = ['ribbon', 'spheres', 'sticks + H-bonding',
-        'color by element one nucleotide', 'color by element one strand',
-        'color by group one nucleotide', 'color by group one strand',
-        'color by group both strands'];
+    var colorByGroupButtonValueViewNames = {
+        'double helix': 'color by group double helix',
+        'strand': 'color by group strand',
+        'nucleotide: A': 'color by group nucleotide: A',
+        'ribbons':  'color by group ribbons'
+    };
+    var colorByGroupButtonValues = Object.keys(colorByGroupButtonValueViewNames);
 
-    var buttons = buildUtils.basicButtonSetup(buttonValues, buttonsDivId);
+    var colorByElementButtonValueViewNames = {
+        'double helix': 'color by element double helix',
+        'strand': 'color by element strand',
+        'nucleotide: A': 'color by element nucleotide: A',
+        'spheres': 'color by element spheres'
+    };
+    var colorByElementButtonValues = Object.keys(colorByElementButtonValueViewNames);
+
+    var buttonsDiv = $('#' + buttonsDivId);
+    buttonsDiv.append('<div id="buttonsColorByGroupDiv">color by group:</div>');
+    buttonsDiv.append('<div id="buttonsColorByElementDiv">color by element:</div>');
+
+    var colorByGroupButtons = buildUtils.basicButtonSetup(
+        colorByGroupButtonValues, 'buttonsColorByGroupDiv');
+    var colorByElementButtons = buildUtils.basicButtonSetup(
+        colorByElementButtonValues, 'buttonsColorByElementDiv');
 
     if (typeof pdbUrl == 'undefined' || pdbUrl == null) {
         pdbUrl = 'https://www.secretoflife.org/sites/default/files/pdb/DNAv2.pdb';
     }
 
-    for (var i = 0; i < buttons.length; i++) {
-        var bv = buttonValues[i];
-        var b = buttons[i];
+    for (var i = 0; i < colorByGroupButtonValues.length; i++) {
+        var bv = colorByGroupButtonValues[i];
+        var vn = colorByGroupButtonValueViewNames[bv];
+        var b = colorByGroupButtons[i];
 
-        var eventData = {'swapViewer':swapViewer, viewName:bv, 'hBondAtomPairs':hBondAtomPairs};
+        var eventData = {'swapViewer':swapViewer, viewName:vn, 'hBondAtomPairs':hBondAtomPairs};
+        b.click(eventData, swapView);
+    }
+
+    for (var i = 0; i < colorByElementButtonValues.length; i++) {
+        var bv = colorByElementButtonValues[i];
+        var vn = colorByElementButtonValueViewNames[bv];
+        var b = colorByElementButtons[i];
+
+        var eventData = {'swapViewer':swapViewer, viewName:vn, 'hBondAtomPairs':hBondAtomPairs};
         b.click(eventData, swapView);
     }
 
@@ -187,9 +221,10 @@ dnaHelixOligo.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
 
         swapViewer.addModel(pdbData, 'pdb');
 
-        swapView({'data':{'swapViewer':swapViewer, viewName:'ribbon', 'hBondAtomPairs':hBondAtomPairs}});
+        swapView({'data':{'swapViewer':swapViewer, viewName:'color by group double helix',
+            'hBondAtomPairs':hBondAtomPairs}});
 
-        swapViewer.setView([-5.4222,-4.8156,29.8175,-43.174,-0.3531,-0.5031,-0.6647,0.4248]);
+        swapViewer.setView([-5.4222,-4.8156,29.8175,-43.174,0.6188,-0.4064,-0.3732,-0.5592]);
     }});
 };
 
