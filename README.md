@@ -64,3 +64,19 @@ In this example we'll make a rendering of the structure of glucose.
      0. change it to call export_glucose instead of export_simpleTemplate
      0. change the location of the data to be ../data/glucose.pdb
 0. try it out in your local browser
+0. if it is working, add it to your git repo / github repository
+  0. check which files were modified:  git status
+    * should be modules/tsol3d.js
+    * untracked should be:
+      * modules/glucose.js
+      * tests/test_glucose.html
+  0. update your repository
+    0. git fetch
+    0. git pull
+  0. add files to be committed
+    * git add modules/glucose.js
+    * git add tests/test_glucose.html
+    * git add modules/tsol3d.js
+  0. commit:  git commit -m "added view of glucose"
+    * (with a message relevant to the view you've added)
+  0. push to github:  git push
