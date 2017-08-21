@@ -12,6 +12,8 @@ import _1nf0ActiveSiteLoopMovement from './1nf0ActiveSiteLoopMovement';
 import simpleEnantiomers from './simpleEnantiomers';
 import dnaHelixOligo from './dnaHelixOligo';
 import aminoAcids from './aminoAcids';
+import simpleTemplate from './simpleTemplate';
+import glucose from './glucose';
 
 
 var logger = log4javascript.getLogger("tsol3dmolLogger");
@@ -58,6 +60,10 @@ export const export_dnaHelixOligo = dnaHelixOligo;
 
 export const export_aminoAcids = aminoAcids;
 
+export const export_simpleTemplate = simpleTemplate;
+
+export const export_glucose = glucose;
+
 /*******************************************
  * Caller function & map
  *******************************************/
@@ -87,6 +93,10 @@ const builderMap = {
     simple_stereoisomers: simpleEnantiomers.build,
 
     DNA_Helix_Oligo: dnaHelixOligo.build,
+
+    simple_template: simpleTemplate.build,
+
+    glucose:  glucose.build
 };
 
 
