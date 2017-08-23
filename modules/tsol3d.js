@@ -13,6 +13,7 @@ import simpleEnantiomers from './simpleEnantiomers';
 import dnaHelixOligo from './dnaHelixOligo';
 import aminoAcids from './aminoAcids';
 import simpleTemplate from './simpleTemplate';
+import molecules from './molecules';
 import glucose from './glucose';
 
 
@@ -64,6 +65,8 @@ export const export_simpleTemplate = simpleTemplate;
 
 export const export_glucose = glucose;
 
+export const export_molecules = molecules;
+
 /*******************************************
  * Caller function & map
  *******************************************/
@@ -96,7 +99,9 @@ const builderMap = {
 
     simple_template: simpleTemplate.build,
 
-    glucose:  glucose.build
+    glucose:  glucose.build,
+
+    molecules: molecules.build
 };
 
 
