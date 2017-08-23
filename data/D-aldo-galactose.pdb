@@ -1,0 +1,57 @@
+REMARK   4      COMPLIES WITH FORMAT V. 3.0, 1-DEC-2006
+REMARK 888
+REMARK 888 WRITTEN BY MAESTRO (A PRODUCT OF SCHRODINGER, LLC)
+TITLE     D-aldo-galactose
+MODEL        1
+HETATM    1  C1  UNK     1       2.019  -0.494  -2.017  1.00  0.00           C  
+HETATM    2  C2  UNK     1       0.775  -0.563  -1.109  1.00  0.00           C  
+HETATM    3  C3  UNK     1       1.070  -0.403   0.421  1.00  0.00           C  
+HETATM    4  C4  UNK     1      -0.158  -0.666   1.354  1.00  0.00           C  
+HETATM    5  C5  UNK     1      -0.654  -2.149   1.404  1.00  0.00           C  
+HETATM    6  O1  UNK     1      -1.328  -2.538   0.210  1.00  0.00           O  
+HETATM    7  O2  UNK     1      -0.181   0.405  -1.555  1.00  0.00           O  
+HETATM    8  O3  UNK     1       1.580   0.903   0.712  1.00  0.00           O  
+HETATM    9  O4  UNK     1      -1.239   0.227   1.054  1.00  0.00           O  
+HETATM   10  C6  UNK     1      -1.602  -2.424   2.603  1.00  0.00           C  
+HETATM   11  O5  UNK     1      -2.807  -1.662   2.519  1.00  0.00           O  
+HETATM   12  O6  UNK     1       3.113  -0.948  -1.666  1.00  0.00           O  
+HETATM   13  H1  UNK     1      -0.849   0.466  -0.844  1.00  0.00           H  
+HETATM   14  H2  UNK     1       0.847   1.525   0.582  1.00  0.00           H  
+HETATM   15  H3  UNK     1      -3.381  -1.921   3.258  1.00  0.00           H  
+HETATM   16  H4  UNK     1       0.359  -1.554  -1.286  1.00  0.00           H  
+HETATM   17  H5  UNK     1       1.850  -1.116   0.700  1.00  0.00           H  
+HETATM   18  H6  UNK     1       0.175  -0.429   2.369  1.00  0.00           H  
+HETATM   19  H7  UNK     1       0.218  -2.796   1.524  1.00  0.00           H  
+HETATM   20  H8  UNK     1      -1.991  -0.069   1.603  1.00  0.00           H  
+HETATM   21  H9  UNK     1      -1.852  -3.486   2.647  1.00  0.00           H  
+HETATM   22  H10 UNK     1      -1.098  -2.194   3.544  1.00  0.00           H  
+HETATM   23  H11 UNK     1       1.857  -0.030  -2.991  1.00  0.00           H  
+HETATM   24  H12 UNK     1      -2.213  -2.143   0.259  1.00  0.00           H  
+CONECT    1    2   12   23
+CONECT    1   12
+CONECT    2    1    3    7   16
+CONECT    3    2    4    8   17
+CONECT    4    3    5    9   18
+CONECT    5    4    6   10   19
+CONECT    6    5   24
+CONECT    7    2   13
+CONECT    8    3   14
+CONECT    9    4   20
+CONECT   10    5   11   21   22
+CONECT   11   10   15
+CONECT   13    7
+CONECT   14    8
+CONECT   15   11
+CONECT   16    2
+CONECT   17    3
+CONECT   18    4
+CONECT   19    5
+CONECT   20    9
+CONECT   21   10
+CONECT   22   10
+CONECT   12    1
+CONECT   12    1
+CONECT   23    1
+CONECT   24    6
+ENDMDL
+END   

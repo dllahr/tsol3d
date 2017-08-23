@@ -1,0 +1,23 @@
+REMARK   4      COMPLIES WITH FORMAT V. 3.0, 1-DEC-2006
+REMARK 888
+REMARK 888 WRITTEN BY MAESTRO (A PRODUCT OF SCHRODINGER, LLC)
+TITLE     Cysteine
+MODEL        1
+ATOM      1  N   CYS A   2       1.000   0.328  -1.535  1.00  0.00           N1+
+ATOM      2  CA  CYS A   2       1.046  -1.019  -0.802  1.00  0.00           C  
+ATOM      3  C   CYS A   2       2.518  -1.488  -0.830  1.00  0.00           C  
+ATOM      4  O   CYS A   2       3.390  -0.731  -1.316  1.00  0.00           O  
+ATOM      5  CB  CYS A   2       0.077  -2.036  -1.460  1.00  0.00           C  
+ATOM      6  SG  CYS A   2      -1.616  -1.373  -1.530  1.00  0.00           S  
+ATOM      7  O1  CYS A   2       2.742  -2.615  -0.354  1.00  0.00           O1-
+ATOM      8  HA  CYS A   2       0.751  -0.769   0.217  1.00  0.00           H  
+ATOM      9  HB2 CYS A   2       0.401  -2.314  -2.466  1.00  0.00           H  
+ATOM     10  HB3 CYS A   2       0.063  -2.964  -0.881  1.00  0.00           H  
+ATOM     11  HG  CYS A   2      -2.218  -2.518  -1.877  1.00  0.00           H  
+ATOM     12  H1  CYS A   2       0.065   0.706  -1.521  1.00  0.00           H  
+ATOM     13  H2  CYS A   2       1.637   0.971  -1.085  1.00  0.00           H  
+ATOM     14  H3  CYS A   2       1.301   0.200  -2.490  1.00  0.00           H  
+CONECT    3    7
+CONECT    7    3
+ENDMDL
+END   
