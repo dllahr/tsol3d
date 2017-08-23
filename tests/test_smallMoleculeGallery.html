@@ -5,14 +5,14 @@
 <script src="../build/assembledTsol3d.js"></script>
 </head>
 <body>
-<h2>Small molecules</h2>
+<h2>Small molecule gallery</h2>
 <div id="viewerButtonsDiv"></div>
 <div id="viewerDiv" style="height: 800px; width: 800px; position: relative;"></div>
 <div id="viewerAdminDiv"></div>
 <script>
 	$(document).ready(function() {
 		console.log($tsol3d);
-		$tsol3d.export_molecules.build("viewerDiv", "viewerButtonsDiv", "viewerAdminDiv", "../data/estradiol.pdb");
+		$tsol3d.export_smallMoleculeGallery.build("viewerDiv", "viewerButtonsDiv", "viewerAdminDiv", "../data/smallMoleculeGallery_dir/estradiol.pdb");
 	});
 </script>
 </body>

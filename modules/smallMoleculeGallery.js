@@ -2,13 +2,13 @@ import defaults from './defaults';
 import buildUtils from './buildUtils';
 
 
-export default function molecules() {};
+export default function smallMoleculeGallery() {};
 
 var logger = log4javascript.getLogger("tsol3dmolLogger");
 
 
 //basic build function is how the rendering is done
-molecules.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
+smallMoleculeGallery.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
     var initialSetup = buildUtils.initialSetup(viewerDivId, adminDivId);
     var swapViewer = initialSetup.swapViewer;
 
@@ -19,7 +19,7 @@ molecules.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
 
     //load the pdb data, and when finished render it
     $.ajax({url: pdbUrl, success: function(data) {
-        logger.trace('molecules.build retrieved pdb data:  ' + data.substring(0,100));
+        logger.trace('smallMoleculeGallery.build retrieved pdb data:  ' + data.substring(0,100));
 
         swapViewer.addModel(data, "pdb");
 
