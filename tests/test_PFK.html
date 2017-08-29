@@ -5,14 +5,15 @@
 <script src="../build/assembledTsol3d.js"></script>
 </head>
 <body>
-<h2>Glucose</h2>
+<h2>Phosphofructokinase</h2>
 <div id="viewerButtonsDiv"></div>
 <div id="viewerDiv" style="height: 600px; width: 600px; position: relative;"></div>
 <div id="viewerAdminDiv"></div>
 <script>
 	$(document).ready(function() {
 		console.log($tsol3d);
-		$tsol3d.export_glucose.build("viewerDiv", "viewerButtonsDiv", "viewerAdminDiv", "../data/PFK_monomer_ATP.pdb");
+
+		$tsol3d.export_PFK.build("viewerDiv", "viewerButtonsDiv", "viewerAdminDiv", "../data/PFK_monomer_ATP.pdb");
 	});
 </script>
 </body>

@@ -15,6 +15,7 @@ import aminoAcids from './aminoAcids';
 import simpleTemplate from './simpleTemplate';
 import smallMoleculeGallery from './smallMoleculeGallery';
 import glucose from './glucose';
+import PFK from './PFK';
 
 
 var logger = log4javascript.getLogger("tsol3dmolLogger");
@@ -67,6 +68,8 @@ export const export_glucose = glucose;
 
 export const export_smallMoleculeGallery = smallMoleculeGallery;
 
+export const export_PFK = PFK;
+
 /*******************************************
  * Caller function & map
  *******************************************/
@@ -101,7 +104,9 @@ const builderMap = {
 
     glucose:  glucose.build,
 
-    smallMoleculeGallery: smallMoleculeGallery.build
+    smallMoleculeGallery: smallMoleculeGallery.build,
+
+    PFK: PFK.build
 
 };
 
