@@ -33,11 +33,12 @@ PFK.build = function(viewerDivId, buttonsDivId, adminDivId, pdbUrl) {
         //default stick style, as it is definied in defaults (imported above)
 
         swapViewer.setView([27.7501,-202.6822,-175.3222,-144.7486,0.1204,-0.0615,0.5768,0.8057]);
-        swapViewer.setStyle({resn:'ADP',invert:true}, {sphere:{color:0xced676}});
-        swapViewer.setStyle({resn:'ADP',byres:true,expand:5},{sphere:{color:0xfffcbc}})
-        swapViewer.setStyle({resn:'ADP',byres:true},{sphere:defaults.stickStyle})
 
-
+        //swapViewer.setStyle({resn:['ADP','F6P'],invert:true}, {sphere:{color:0xced676}});
+        //swapViewer.setStyle({resn:['ADP','F6P'],byres:true,expand:5},{sphere:{color:0xfffcbc}})
+        swapViewer.setStyle({resn:['ADP','F6P'],byres:true},{sphere:defaults.stickStyle})
+        swapViewer.addSurface("MS", {opacity:1.0, color:0xced676}, {resn:['ADP','F6P'],byres:true,expand:5,invert:true});
+        swapViewer.addSurface("MS", {opacity:1.0, color:0xfffcbc}, {resi:[32,33,34,64,96,97,98,99,101,102,126,127,128,129,130,132,133,136,172,173,174,175,177,217,218,219,273,307,310],byres:true});
         swapViewer.render();
     }});
 };
