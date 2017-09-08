@@ -15,13 +15,15 @@ const data = {xyz:'5\n' +
     'I     0.000000    1.000000    0.000000'     //shows up as purple in default 3DMol coloring sheme
 };
 
+const elemLabelMap = {'I':'W', 'Cl':'Y', 'F':'Z', 'H':'X'};
+
+const elemColorMap = {'H': '#ff00ff'};
+
 
 simpleEnantiomers.build = function(viewerDivId, buttonsDivId, adminDivId) {
     logger.debug('simpleEnantiomers.build');
 
     var usingAdmin = (typeof(adminDivId) != 'undefined') && (adminDivId != null);
-
-    var elemLabelMap = {'I':'W', 'Cl':'Y', 'F':'Z', 'H':'X'};
 
     var indivPrefixes = {left:{label:'(S)'}, right:{label:'(R)'}};
     logger.debug('simpleEnantiomers.build indivPrefixes:  ' + JSON.stringify(indivPrefixes));
@@ -115,7 +117,20 @@ simpleEnantiomers.build = function(viewerDivId, buttonsDivId, adminDivId) {
         }
 
         swapViewer.setStyle({}, {stick:defaults.stickStyle});
-        swapViewer.setView([0.00000,0.01899,0,135.8,-0.16617,-0.14539,0,-0.9753]);
+        for (var elem in elemColorMap) {
+            const adjustedStyle = $.extend({'color':elemColorMap[elem]},
+                defaults.stickStyle);
+            delete adjustedStyle.colorscheme;
+
+            swapViewer.setStyle({atom:elem}, {stick:adjustedStyle});
+        }
+
+        if ('left' == ivp) {
+            swapViewer.setView([0,0.019,0,135.8,0.2138,0.2465,0.0572,0.9435])
+        } else {
+            swapViewer.setView([0,0.019,0,135.8,0.0641,0.9472,0.2137,0.2302]);
+        }
+
         swapViewer.render();
     }
 };

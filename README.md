@@ -9,7 +9,7 @@ can add ```--optimize-minimize``` to generate minimized / optimized version
 
 dev mode for build - monitor files and rebuild when they are saved:
 ```
-    ~/node_modules/.bin/webpack tsol3d.js  ../build/assembledTsol3d.js --output-library '$tsol3d'  --progress --watch
+~/node_modules/.bin/webpack tsol3d.js  ../build/assembledTsol3d.js --output-library '$tsol3d'  --progress --watch
 ```
 
 ### setting up the development environment ###
